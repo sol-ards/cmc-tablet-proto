@@ -2026,7 +2026,7 @@ function dgSug(){
  const el=$('dgs'); if(!el)return;
  const v=($('dgi')?.value||'').trim();
  const list=v?DRUGLIST.filter(x=>x.includes(v)&&!OBD.drugs.includes(x)).slice(0,8):[];
- el.innerHTML=list.map(x=>`<span class="chip" onclick="dgPick('${x}')">${x}</span>`).join('')||(v?`<span style="font-size:13.5px;color:#9CA3AF;">목록에 없어요 — [추가]를 누르면 직접 등록돼요</span>`:`<span style="font-size:13.5px;color:#9CA3AF;">입력하면 자동완성 후보가 떠요 · 목록 외 약제는 자유 입력</span>`);
+ el.innerHTML=list.map(x=>`<span class="chip" onclick="dgPick('${x}')">${x}</span>`).join('')||(v?`<span style="font-size:13.5px;color:#9CA3AF;">목록에 없어요 — [추가]를 누르면 직접 등록돼요</span>`:'');
 }
 function dgChips(){ const el=$('dgc'); if(!el)return;
  el.innerHTML=OBD.drugs.map((x,i)=>`<span class="chip on" onclick="OBD.drugs.splice(${i},1);dgChips();dgSug()">${x} ×</span>`).join('');
