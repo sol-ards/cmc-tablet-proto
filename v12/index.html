@@ -2048,7 +2048,7 @@ function renderOB(){
   const ph=OB.phone, fmt=ph.length>7?`${ph.slice(0,3)}-${ph.slice(3,7)}-${ph.slice(7)}`:(ph.length>3?`${ph.slice(0,3)}-${ph.slice(3)}`:ph);
   h=`<div class="obcard">${obBackHTML()}
    <div class="obt">캔모어차일드 시작하기</div>
-   <div class="obs">문자로 받으신 6자리 승인번호와 휴대폰 번호를 입력해 주세요.</div>
+   <div class="obs">휴대폰 번호와 문자로 받은 6자리 승인번호를 입력해 주세요.</div>
    <div class="obfld"><label>휴대폰 번호</label><input class="obinp" id="ob-ph" type="text" inputmode="numeric" autocomplete="off" placeholder="010-0000-0000" value="${fmt}" oninput="obPhone(this)"></div>
    <div class="obfld"><label>승인번호 (6자리)</label>
      <div class="obotp">${[...Array(6)].map((_,i)=>`<input id="ob-otp${i}" type="text" inputmode="numeric" autocomplete="off" maxlength="2" value="${OB.otp[i]||''}" oninput="obOtp(this,${i})" onkeydown="obOtpKey(event,this,${i})" onpaste="obOtpPaste(event)">`).join('')}</div></div>
