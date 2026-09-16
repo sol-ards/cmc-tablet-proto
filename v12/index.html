@@ -853,8 +853,15 @@ function openPast(key,i){
 }
 function openLab(i){
   const today=i==='today';
-  openPop(`<div class="pt"><span class="t">CBC · ${today?mdOf(0)+(dLab(0)?' ('+dLab(0)+')':''):mdOf(-2)+(dLab(-2)?' ('+dLab(-2)+')':'')}</span><span class="psub" style="margin:0;">${today?'오늘':'외래'} · 셀 = ANC 대표값</span></div>
-    <div class="hv">${today?`WBC <b>${CBCV.wbc}</b> · Hb <b>${CBCV.hb}</b> · Plt <b>${CBCV.plt}</b> · Reti ${CBCV.reti} · ANC <b>${CBCV.anc}</b><br>검사일 ${mdOf(0)} (촬영일)`:`WBC <b>1,400</b> (60.9%) · Hb <b>9.1</b> · Plt <b>45</b> · Reti — · ANC <b>850</b><br>검사일 ${mdOf(-2)}`}</div>`);
+  const v=today?CBCV:(H[i]&&H[i].cbcv);
+  if(!v){ toast('CBC 기록이 없어요'); return; }
+  const dd=today?mdOf(0):DAYS[i].d;
+  const lab=today?dLab(0):dLab(DAYS[i].off);
+  const ctx=today?(S.visitAsk==='inpat'?'오늘 · 입원':'오늘 · 외래'):(DAYS[i].inpat?'입원':'외래');
+  const src=today?(S.visit.cbcSrc==='manual'?`검사일 ${dd} · 직접 입력`:`검사일 ${dd} (촬영일)`):`검사일 ${dd}`;
+  openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${today&&!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="S.visit.cbc=false;closePop();render();toast('삭제했어요 · CBC 기록')">삭제</button>`:''}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+    <div class="psub" style="margin:0;">${ctx} · 셀 = ANC 대표값</div>
+    <div class="hv">WBC <b>${v.wbc}</b> · Hb <b>${v.hb}</b> · Plt <b>${v.plt}</b> · Reti ${v.reti} · ANC <b>${v.anc}</b><br>${src}</div>`);
 }
 
 /* ---------- 입력 도구 ---------- */
@@ -1244,23 +1251,46 @@ function saveTrans(){
 }
 function tCbc(){
   if(S.visit.cbc){ openLab('today'); return; }
-  openPop(`<div class="pt"><span class="t">CBC — 스티커 촬영</span><span class="r"><button class="btn sm" onclick="cbcConfirm()">⌨ 직접 입력</button></span></div>
+  openPop(`<div class="pt"><span class="t">CBC — 스티커 촬영</span><span class="r"><button class="btn sm" onclick="cbcConfirm('manual')">⌨ 직접 입력</button></span></div>
     <div class="cam"><div class="guide">WBC · Hb · Plt · Reti<br>스티커를 테두리 안에 맞춰 주세요</div><button class="shutter" onclick="cbcScan()"></button></div>
     <div class="psub">OCR은 목업</div>`);
 }
 function cbcScan(){
   openPop(`<div class="pt"><span class="t">CBC — 인식 중</span></div>
     <div style="font-size:12.5px;font-weight:800;color:#33506e;background:#eef2f8;border-radius:12px;padding:14px;text-align:center;margin-top:12px;">🔍 인식 중 — 값을 읽고 있어요 …</div>`);
-  setTimeout(cbcConfirm,1100);
+  setTimeout(()=>cbcConfirm('ocr'),1100);
 }
-function cbcConfirm(){
+let _cbMode='ocr', _cbDate=0;
+function cbcSetDate(off){ _cbDate=off; $('cbcd-0').classList.toggle('on',off===0); $('cbcd-1').classList.toggle('on',off===-1); }
+function cbcConfirm(mode){
+  _cbMode=mode; _cbDate=0;
   const F=[['wbc','WBC','/µL · %'],['hb','Hb','g/dL'],['plt','Plt','×10³/µL'],['reti','Reti','%'],['anc','ANC','/µL']];
-  openPop(`<div class="pt"><span class="t">수치 확인 · 직접 입력</span><span class="r"><button class="btn pri sm" onclick="saveCbcV()">저장</button></span></div>
-    <div class="psub">인식된 값을 확인하고, 다르면 칸을 눌러 직접 고쳐 주세요.</div>
-    ${F.map(([k,n,u])=>`<div style="display:flex;align-items:center;gap:10px;margin-top:9px;"><span style="flex:none;width:64px;font-size:14px;font-weight:700;color:#33506e;">${n}</span><input class="obinp" id="cbcv-${k}" style="flex:1;padding:9px 12px;font-size:15px;" value="${CBCV[k]}"><span style="flex:none;font-size:12px;color:#9CA3AF;width:66px;">${u}</span></div>`).join('')}
-    <div class="psub" style="margin-top:10px;">검사일 ${mdOf(0)} (촬영일 · 수정 가능)</div>`);
+  const pre=(mode==='ocr'||mode==='edit');
+  const title=mode==='ocr'?'인식 결과 확인':(mode==='edit'?'CBC 수정':'CBC 직접 입력');
+  const psub=mode==='ocr'?'인식된 값을 확인하고, 다르면 칸을 눌러 고쳐 주세요.':(mode==='edit'?'값을 고치고 저장해 주세요.':'검사 결과지의 값을 입력해 주세요.');
+  openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" onclick="saveCbcV()">저장</button></span></div>
+    <div class="psub">${psub}</div>
+    ${F.map(([k,n,u])=>`<div style="display:flex;align-items:center;gap:10px;margin-top:9px;"><span style="flex:none;width:64px;font-size:14px;font-weight:700;color:#33506e;">${n}</span><input class="obinp" id="cbcv-${k}" style="flex:1;padding:9px 12px;font-size:15px;" value="${pre?CBCV[k]:''}"><span style="flex:none;font-size:12px;color:#9CA3AF;width:66px;">${u}</span></div>`).join('')}
+    <div class="psub" style="margin-top:12px;">검사일 — 값이 채워질 날짜예요</div>
+    <div class="hact"><span class="chip on" id="cbcd-0" onclick="cbcSetDate(0)">오늘 ${mdOf(0)}${_cbMode==='ocr'?' (촬영일)':''}</span><span class="chip" id="cbcd-1" onclick="cbcSetDate(-1)">어제 ${mdOf(-1)}</span></div>`);
 }
-function saveCbcV(){ ['wbc','hb','plt','reti','anc'].forEach(k=>{const el=$('cbcv-'+k); if(el&&el.value.trim())CBCV[k]=el.value.trim();}); S.visit.cbc=true; toast(`기록했어요 · CBC (ANC ${CBCV.anc}) — 셀을 탭하면 전체 수치`); closePop(); render(); }
+function saveCbcV(){
+  const vals={}; let any=false;
+  ['wbc','hb','plt','reti','anc'].forEach(k=>{const el=$('cbcv-'+k); const v=el?el.value.trim():''; vals[k]=v||'—'; if(v)any=true;});
+  if(!any){ toast('값을 입력해 주세요'); return; }
+  if(_cbDate===-1){
+    const hi=DAYS.find(d=>d.off===-1).hidx;
+    H[hi].cbcv=vals; H[hi].cbc='A)'+vals.anc;
+    if(_cbMode==='edit') S.visit.cbc=false;
+    toast(`어제(${mdOf(-1)}) 열에 기록했어요 · CBC (ANC ${vals.anc})`);
+  } else {
+    Object.assign(CBCV,vals);
+    S.visit.cbc=true; S.visit.cbcSrc=(_cbMode==='ocr')?'ocr':(S.visit.cbcSrc==='ocr'&&_cbMode==='edit'?'ocr':'manual');
+    if(_cbMode==='manual') S.visit.cbcSrc='manual';
+    toast(`기록했어요 · CBC (ANC ${CBCV.anc}) — 셀을 탭하면 전체 수치`);
+  }
+  closePop(); render();
+}
 
 /* ---------- 메모 · 항목 · 응급 ---------- */
 function openDday(){
