@@ -881,12 +881,12 @@ function keypadPop(opt){
         <div class="bigval" id="kp-val"><span class="ghost">${opt.ghost}</span><small>${opt.unit}</small></div>
         <div class="rangewarn" id="kp-warn"></div>
       </div>
-      <div class="segbar">
+      ${opt.noVoice?'':`<div class="segbar">
         <span class="chip seg on">${SEGSVG.pen} 직접 입력</span>
         <span class="chip seg" onclick="voicePop('${opt.title}')">${SEGSVG.mic} 음성 입력</span>
         ${opt.deviceChip?`<span class="chip seg" onclick="toast('기기 연동(블루투스 체온계) — 데모 범위 외')">${SEGSVG.chart} 기기 연동</span>`:''}
         ${opt.timeChip?`<span class="chip seg" id="kp-time" onclick="pickTempTime()">${SEGSVG.clock} 측정 시간</span>`:''}
-      </div>
+      </div>`}
       <div class="pad">
         ${[7,8,9,4,5,6,1,2,3].map(n=>`<button onclick="kpIn('${n}')">${n}</button>`).join('')}
         <button class="fn" onclick="kpIn('.')">.</button><button onclick="kpIn('0')">0</button><button class="fn" onclick="kpIn('⌫')">⌫</button>
@@ -1913,7 +1913,7 @@ render();
 
 /* ========== v1.2 — 회원가입·온보딩 오버레이 · 코치마크 · 첫 사용 툴팁 · 가입 정보(P-1) ========== */
 const OBD={ht:null,wt:null,dx:null,dxEtc:null,ym:null,doc:null,d1o:null,d1NA:false,next:null,nextNA:false,drugs:[],cvc:null,cvcType:null,noti:null,age:null};
-const OB={step:'o0',slide:0,gslide:0,agree:[false,false,false,false,false],phone:'',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
+const OB={step:'o0',slide:0,gslide:0,agree:[false,false,false,false,false],phone:'010',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
 const OB_TODAY=ymdOf(0);
 const DXLIST=['급성 림프모구 백혈병(ALL)','급성 골수성 백혈병(AML)','만성 골수성 백혈병(CML)','호지킨림프종','비호지킨림프종','수모세포종','별아교세포종','교모세포종','뇌실막세포종','두개인두종','생식세포종양(뇌)','신경모세포종','윌름스종양(신모세포종)','간모세포종','골육종','유잉육종','횡문근육종','망막모세포종','생식세포종양(고환/난소)','갑상선암','랑게르한스세포조직구증','기타 (직접 입력)'];
 const DRUGLIST=['빈크리스틴','메토트렉세이트','사이클로포스파마이드','시타라빈','독소루비신','다우노루비신','시스플라틴','카보플라틴','에토포시드','이포스파마이드','닥티노마이신','엘-아스파라기나제','6-메르캅토퓨린','6-티오구아닌','빈블라스틴','블레오마이신','이리노테칸','토포테칸','테모졸로미드','미톡산트론','부설판','멜팔란','티오테파','카무스틴','덱사메타손','프레드니솔론','류코보린','이소트레티노인','디누툭시맙베타','리툭시맙','이매티닙'];
@@ -2155,9 +2155,9 @@ function renderOB(){
  if(OB.step==='o1'){ obOtpCur(); }
 }
 function obTerm(i){ openPop(`<div class="pt"><span class="t">${TERMS5[i]}</span></div>
- <div class="hv">전문 카피 = 가입로그인 기획서 확정본 (데모 생략)</div>
+ <div class="hv">약관 전문 — 추후 확정 (플레이스홀더)</div>
  <div class="pact hact" style="justify-content:flex-end;"><button class="btn pri" onclick="OB.agree[${i}]=true;closePop();renderOB()">뒤로가기 (자동 동의)</button></div>`); }
-function obKey(k){ keypadPop({noClose:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:k==='ht'?3:2,min:k==='ht'?40:3,max:k==='ht'?200:99.9,ghost:k==='ht'?'110.0':'20.0',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
+function obKey(k){ keypadPop({noClose:true,noVoice:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:k==='ht'?3:2,min:k==='ht'?40:3,max:k==='ht'?200:99.9,ghost:k==='ht'?'110.0':'20.0',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
 function obDx(){ openPop(`<div class="pt"><span class="t">진단명 — 소아암 목록</span></div>
  <div class="hact" style="flex-wrap:wrap;max-height:380px;overflow-y:auto;">${DXLIST.map(x=>`<span class="chip ${OBD.dx===x?'on':''}" onclick="OBD.dx='${x}';closePop();renderOB()">${x}</span>`).join('')}</div>`); }
 function obYm(){ renderYm(); }
@@ -2251,7 +2251,7 @@ function guideR(){ const g=GUIDE[OB.gslide];
  <div class="obind">${GUIDE.map((_,i)=>`<i class="${i===OB.gslide?'on':''}" onclick="OB.gslide=${i};guideR()"></i>`).join('')}</div>
  <div class="hact" style="justify-content:center;margin-top:16px;"><button class="btn" onclick="OB.gslide=Math.max(0,OB.gslide-1);guideR()">‹ 이전</button><button class="btn pri" onclick="OB.gslide=Math.min(3,OB.gslide+1);guideR()">다음 ›</button></div></div>`); }
 function p1Terms(){ openPop(`<div class="pt"><span class="t">약관</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
- <div style="margin-top:4px;">${TERMS5.map(t=>`<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 — 가입로그인 기획서 확정 카피 (열람 전용)')"><span class="pv">${t}</span><span class="pe" style="color:#9CA3AF;">2026. 8. 26 동의</span></div>`).join('')}</div>`); }
+ <div style="margin-top:4px;">${TERMS5.map(t=>`<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 — 추후 확정 (열람 전용)')"><span class="pv">${t}</span><span class="pe" style="color:#9CA3AF;">2026. 8. 26 동의</span></div>`).join('')}</div>`); }
 
 renderOB();
 </script>
