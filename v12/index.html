@@ -874,6 +874,7 @@ const SEGSVG={
 function keypadPop(opt){
   let digits='';
   const fmt=()=>{ if(!digits) return null;
+    if(opt.flex) return digits;
     if(digits.includes('.')) return digits;
     if(digits.length<=opt.intLen) return digits;
     return digits.slice(0,-opt.dec)+'.'+digits.slice(-opt.dec); };
@@ -902,7 +903,7 @@ function keypadPop(opt){
     const v=fmt();
     $('kp-val').innerHTML=v?v+`<small>${opt.unit}</small>`:`<span class="ghost">${opt.ghost}</span><small>${opt.unit}</small>`;
     const num=parseFloat(v);
-    const complete=v&&digits.replace('.','').length>=opt.intLen;
+    const complete=v&&!String(v).endsWith('.')&&(opt.flex?true:digits.replace('.','').length>=opt.intLen);
     const inRange=complete&&num>=opt.min&&num<=opt.max;
     $('kp-warn').textContent=(complete&&!inRange)?`입력 범위 ${opt.min.toFixed(1)}~${opt.max.toFixed(1)}${opt.unit}`:'';
     $('kp-save').disabled=!inRange;
@@ -2150,7 +2151,7 @@ function renderOB(){
 function obTerm(i){ openPop(`<div class="pt"><span class="t">${TERMS5[i]}</span></div>
  <div class="hv">약관 전문 — 추후 확정 (플레이스홀더)</div>
  <div class="pact hact" style="justify-content:flex-end;"><button class="btn pri" onclick="OB.agree[${i}]=true;closePop();renderOB()">뒤로가기 (자동 동의)</button></div>`); }
-function obKey(k){ keypadPop({noClose:true,noVoice:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:k==='ht'?3:2,min:k==='ht'?40:3,max:k==='ht'?200:99.9,ghost:k==='ht'?'110.0':'20.0',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
+function obKey(k){ keypadPop({noClose:true,noVoice:true,flex:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:3,min:k==='ht'?40:2,max:k==='ht'?200:150,ghost:k==='ht'?'예) 85.5':'예) 12.3',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
 function obDx(){ openPop(`<div class="pt"><span class="t">진단명 — 소아암 목록</span></div>
  <div class="hact" style="flex-wrap:wrap;max-height:380px;overflow-y:auto;">${DXLIST.map(x=>`<span class="chip ${OBD.dx===x?'on':''}" onclick="OBD.dx='${x}';closePop();renderOB()">${x}</span>`).join('')}</div>`); }
 function obYm(){ renderYm(); }
