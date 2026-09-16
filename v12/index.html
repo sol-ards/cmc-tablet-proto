@@ -1511,7 +1511,7 @@ const CH={
    ov.innerHTML=`<div style="position:absolute;inset:0;background:rgba(20,30,42,.55);"></div>
     <div class="cmtipbox" style="left:50%;top:44%;transform:translate(-50%,-50%);max-width:620px;text-align:center;padding:32px 46px;word-break:keep-all;">
       <img src="${cimg('byeori.png')}" style="width:88px;">
-      <div style="font-size:21px;font-weight:800;color:#2b3a44;line-height:1.5;margin-top:8px;">귀여운 캐릭터 벼리와 함께,<br>오늘 몸 상태를 기록해봐</div>
+      <div style="font-size:21px;font-weight:800;color:#2b3a44;line-height:1.5;margin-top:8px;">귀여운 벼리와 함께,<br>오늘 몸 상태를 기록해봐</div>
       <div style="font-size:15px;font-weight:500;color:#6B7280;margin-top:12px;line-height:1.75;">항암 치료 중 느끼는 증상을 기록하면 선생님이 다음 치료를 계획하는 데 도움이 돼.<br>증상이 없는 날도 기록해줘!</div>
       <span class="cmbtn" style="background:#3FB9C0;margin-top:18px;padding:8px 28px;">다음</span></div>`;
    cv.appendChild(ov); return;
@@ -1524,7 +1524,7 @@ const CH={
   const tip=this.tutStep<=3?`left:${x+w+22}px;bottom:${cb.height-(y+h)}px;`
     :(this.tutStep===4?`right:${Math.max(24,cb.width-(x+w))}px;top:${y+h+16}px;`:`right:24px;top:${y+h+16}px;`);
   ov.innerHTML=`<div class="cmhole" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;border-radius:22px;"></div>
-   <div class="cmtipbox" style="${tip}max-width:380px;word-break:keep-all;"><div style="display:flex;gap:11px;align-items:flex-start;"><img src="${cimg('byeori.png')}" style="width:52px;flex:none;"><div><b class="step" style="color:#0c8a91;">${this.tutStep-1} / 4</b><br>${TXT[this.tutStep]}<br><span class="cmbtn" style="background:#3FB9C0;">${this.tutStep===5?'알았어':'다음'}</span></div></div></div>`;
+   <div class="cmtipbox" style="${tip}max-width:380px;word-break:keep-all;"><div style="display:flex;gap:11px;align-items:flex-start;"><img src="${cimg('byeori.png')}" style="width:52px;flex:none;"><div><b class="step" style="color:#0c8a91;">${this.tutStep-1} / 4</b><br>${TXT[this.tutStep]}${this.tutStep===5?'':'<br><span class="cmbtn" style="background:#3FB9C0;">다음</span>'}</div></div></div>`;
   cv.appendChild(ov);
  },
  exit(){ $('childview').hidden=true; },
