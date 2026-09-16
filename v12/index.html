@@ -1123,11 +1123,18 @@ function symToday(sym){
   const ch=SYM_TODAY_CHILD.find(r=>r.sym===sym);
   return ch?ch.g:undefined;
 }
-const SYM_IMG={[mdOf(-2)]:['구내염'],[mdOf(-3)]:['구내염']};
-function openSymImg(sym,day){
- openPop(`<div class="pt"><span class="t">${sym} · ${day} — 첨부 이미지</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
-  <div style="margin-top:10px;background:#F3F4F6;border-radius:14px;height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#9CA3AF;font-size:15px;font-weight:600;"><span style="font-size:34px;">📷</span>환아 모드에서 첨부한 증상 사진 (데모)</div>
-  <div class="psub">원본 = 환아 모드 증상 기록의 첨부 사진 — 피부 · 점막 증상 등</div>`);
+const SYM_IMG={[mdOf(-2)]:{'구내염':2},[mdOf(-3)]:{'구내염':1}};
+let _si=null;
+function openSymImg(sym,day){ _si={sym:sym,day:day,i:1,n:(SYM_IMG[day]&&SYM_IMG[day][sym])||1}; renderSymImg(); }
+function symImgNav(d){ _si.i=Math.max(1,Math.min(_si.n,_si.i+d)); renderSymImg(); }
+function renderSymImg(){
+ const g=(SYM_DATA[_si.day]&&SYM_DATA[_si.day][_si.sym])||'';
+ openPop(`<div class="pt"><span class="t">첨부 이미지 확대 보기</span><span class="r"><button class="btn sm" onclick="closePop()">✕</button></span></div>
+  <div style="margin-top:10px;background:#1F2937;border-radius:14px;height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#9CA3AF;font-size:14px;font-weight:600;position:relative;">
+    <span style="font-size:38px;">📷</span>증상 사진 (데모 — 핀치 줌 지원)
+    ${_si.n>1?`<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:22px;cursor:pointer;color:#fff;" onclick="symImgNav(-1)">‹</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;cursor:pointer;color:#fff;" onclick="symImgNav(1)">›</span><span style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:12px;color:#fff;">${_si.i} / ${_si.n}</span>`:''}
+  </div>
+  <div class="psub" style="margin-top:8px;">${_si.sym} · ${_si.day} 21:10${g?` · <b>G${g}</b>`:''} — 여러 장은 가로 스와이프(진료노트 기획 B-4 준용)</div>`);
 }
 function buildSymGrid(fromNote){
   const days = fromNote? symDays() : VD;
@@ -1139,7 +1146,7 @@ function buildSymGrid(fromNote){
     if(g===null||g===undefined) return `<span class="sn-c nr${tdy?' tdy2':''}"></span>`;
     if(g===0) return `<span class="sn-c g0"></span>`;
     if(!fromNote){
-      const hasImg=SYM_IMG[day]&&SYM_IMG[day].includes(sym);
+      const hasImg=SYM_IMG[day]&&SYM_IMG[day][sym];
       return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>G${g}${hasImg?'<i style="font-style:normal;font-size:12px;margin-left:4px;">📷</i>':''}</span>`;
     }
     return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
