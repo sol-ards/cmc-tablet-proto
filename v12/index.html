@@ -1496,7 +1496,28 @@ const CH={
  enter(){
   if(!window.CHDATA||!window.CHPRO){ toast('환아 데이터(child-data.js)를 찾을 수 없어요 — 폴더째 열어 주세요'); return; }
   this.D=window.CHDATA; this.P=window.CHPRO;
-  $('childview').hidden=false; this.render();
+  $('childview').hidden=false;
+  if(!this.tutDone) this.tutStep=1;
+  this.render();
+ },
+ tutDone:false, tutStep:0,
+ tutNext(){ if(this.tutStep>=2){ this.tutDone=true; this.tutStep=0; } else this.tutStep++; this.render(); },
+ rTut(){
+  const cv=$('childview'), cb=cv.getBoundingClientRect();
+  const sel=this.tutStep===1?'[onclick="CH.startSurvey()"]':'[onclick="CH.exit()"]';
+  const el=cv.querySelector(sel); if(!el){ this.tutDone=true; this.tutStep=0; return; }
+  const r=el.getBoundingClientRect();
+  const x=r.left-cb.left-6, y=r.top-cb.top-6, w=r.width+12, h=r.height+12;
+  const txt=this.tutStep===1?'항암 치료로 아프거나 불편한 게 있으면<br>여기서 알려줘':'보호자 화면으로 돌아갈 땐<br>여기를 눌러줘';
+  const tip=this.tutStep===1
+    ?`left:${x+w+22}px;bottom:${cb.height-(y+h)}px;`
+    :`right:24px;top:${y+h+16}px;`;
+  const ov=document.createElement('div');
+  ov.style.cssText='position:absolute;inset:0;z-index:80;overflow:hidden;';
+  ov.onclick=()=>this.tutNext();
+  ov.innerHTML=`<div class="cmhole" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;border-radius:22px;"></div>
+   <div class="cmtipbox" style="${tip}max-width:360px;word-break:keep-all;"><div style="display:flex;gap:11px;align-items:flex-start;"><img src="${cimg('byeori.png')}" style="width:52px;flex:none;"><div><b class="step" style="color:#0c8a91;">${this.tutStep} / 2</b><br>${txt}<br><span class="cmbtn" style="background:#3FB9C0;">${this.tutStep===2?'알았어':'다음'}</span></div></div></div>`;
+  cv.appendChild(ov);
  },
  exit(){ $('childview').hidden=true; },
 
@@ -1625,6 +1646,7 @@ const CH={
   if(S.busy) html+=`<div style="position:absolute;inset:0;background:rgba(20,28,38,.45);z-index:40;display:flex;align-items:center;justify-content:center;"><div style="background:#fff;border-radius:24px;padding:32px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;"><img src="${cimg('byeori.png')}" style="width:100px;"><div style="font-size:18px;font-weight:800;line-height:1.55;">기록 정리 중...<br>잠시만 기다려줘.</div></div></div>`;
   if(S.toast) html+=`<div style="position:absolute;left:50%;transform:translateX(-50%);top:84px;background:rgba(20,28,38,.88);color:#fff;font-size:15px;font-weight:700;border-radius:14px;padding:12px 22px;z-index:70;white-space:nowrap;">${S.toast}</div>`;
   $('childview').innerHTML=html;
+  if(this.tutStep>0&&this.top().n==='home') this.rTut();
  },
 
  rHome(){
@@ -2236,12 +2258,12 @@ function cmRender(){
   ov.innerHTML=`<div style="position:absolute;inset:0;background:rgba(20,30,42,.55);"></div>
    <div class="cmtipbox" style="left:50%;top:44%;transform:translate(-50%,-50%);max-width:440px;text-align:center;padding:28px 32px;">
      <div style="font-size:21px;font-weight:700;color:#374151;letter-spacing:-0.3px;">종이에 적던 하루가, 화면 속으로</div>
-     <div style="font-size:15px;font-weight:500;color:#6B7280;margin-top:11px;line-height:1.7;">병원에서 쓰던 기록판 그대로예요 — 늘 하던 대로, 칸을 짚듯 터치하면 돼요.<br>다 채우지 못한 날도 괜찮아요. 점수도, 평가도 없어요.</div>
+     <div style="font-size:15px;font-weight:500;color:#6B7280;margin-top:11px;line-height:1.7;">매일의 기록이 서준이의 상태를 가장 먼저 알아채는 신호가 되고, 진료실 대화도 더 정확해져요.<br>다 채우지 못한 날도 괜찮아요.</div>
      <span class="cmbtn" style="margin-top:16px;padding:8px 26px;">다음</span></div>`;
   return;
  }
  const axes=['','기록','기록','기록','열람','환아 모드'];
- const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요','여기를 밀거나 누르면 아이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
+ const copy=['','오늘, 터치 한 번이면<br>기록이 시작돼요','필요 없는 항목은 꺼도 괜찮아요 —<br>서준이에게 맞는 기록만 남겨요','껐던 항목도 언제든<br>다시 켜서 기록할 수 있어요','매일 쌓아온 기록이 한 화면에 모여요 —<br>진료실 대화가 더 정확해져요','여기를 누르면 서준이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
  let r, tipStyle='';
  if(cmStep===1){ const hd=$('sheet').children[1+TIDX], hr=cmRect(hd), sr=cmRect($('sheet')), ww=cmRect($('sheetwrap'));
    const bot=Math.min(sr.y+sr.h, ww.y+ww.h);
@@ -2256,10 +2278,10 @@ function cmRender(){
 /* ---- 기능별 첫 사용 툴팁 ---- */
 const FTIP={emg:false,memo:false,sym:false,p1:false};
 const FT={
- emg:{ax:'열람',c:'위급한 순간의 기준<br>미리 읽어 응급 신호를 이해하면 헤매지 않아요.',fn:()=>openEmergency()},
- memo:{ax:'기록',c:'개인 메모도, 의료진에게 궁금한 메모도 척척<br>질문은 진료 날 의료진에게 그대로 전해져요.',fn:()=>{memoWeek=0;memoEditIdx=null;openMemo();}},
- sym:{ax:'열람',c:'아이가 기록한 증상이 한눈에 —<br>기록한 증상 결과를 누르면 관리법까지 열려요.',fn:()=>{symWeek=0;tSym();}},
- p1:{ax:'열람 · 수정',c:'가입할 때 입력한 정보들이에요 —<br>정보가 달라지면 여기서 고쳐요.',fn:()=>openP1()}
+ emg:{ax:'열람',c:'응급실에 가야 할 기준을 미리 확인해요 —<br>갑작스러운 순간에도 헤매지 않아요',fn:()=>openEmergency()},
+ memo:{ax:'기록',c:'개인 메모와 진료 시 질문을 따로 남길 수 있어요 —<br>진료 시 질문은 의료진도 함께 확인해요',fn:()=>{memoWeek=0;memoEditIdx=null;openMemo();}},
+ sym:{ax:'열람',c:'환아 모드에서 기록한 항암 치료 부작용 증상을 한눈에 확인하고<br>증상 관리법까지 바로 확인해요',fn:()=>{symWeek=0;tSym();}},
+ p1:{ax:'열람 · 수정',c:'가입할 때 입력한 정보들이에요 —<br>달라진 정보가 있다면 여기서 바로 고쳐요',fn:()=>openP1()}
 };
 let ftipKey=null;
 function ftip(k,el){
