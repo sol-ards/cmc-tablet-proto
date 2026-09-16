@@ -79,6 +79,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .cel .mdot{color:#c4ccd6;font-weight:800;}
 .cel.fut{cursor:default;}
 .cel.lock{color:#c0c8d2;font-size:12px;font-weight:600;}
+.cel.cbcs.lock{font-size:12px;font-weight:600;color:#c0c8d2;}
 .cel.vday{background:#fff;}
 .cel.iday{background:#fff;}
 .cel.td{background:var(--tdb);}
@@ -404,7 +405,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 <div class="topbar">
   <h1>캔모어차일드 보호자 모드 — 태블릿 신호등 기록 프로토타입 <span class="ver">v1.3 작업본 · sol 박지현 · 2026-09-16</span></h1>
 </div>
-<div class="hint">디자인 시안(joy) 적용 — 상단 텍스트 버튼 바(응급 · 메모 · 증상 노트 · 의료진 열람 · 모드 전환 스와이프 토글) + 주간 이동 · 오늘 = 실행일 기준 동적(진료 미응답, 지난 3일 = 진료 없음 / 외래 진료 / 병원 입원) · 체온 = 주에서 가장 높은 도트 하나 크게 · 체중 = 점 터치 · 마우스 오버 = 전일 대비 · <b>키 = 별도 행(외래일만)</b> · <b>수분 = 가로 채움 바("누적 / 1,500mL")</b> · CBC = 값별 행(검사일 기준) · 항생제 = 옮겨 적기 행 · 컨디션 · 식사량 · 배변 = 보호자 선택([＋ 항목 추가]에서 켜면 시트 하단에 노출) · 증상은 상단 [증상 노트] 버튼(증상 × 7일 G등급 격자 — 환아 PRO + 보호자 기록 함께) · 메모 = 날짜 선택형 팝업(주간 스트립에서 날짜 선택 → 유형 칩 + 작성 + 그날 목록 · 질문만 의료진 열람의 하단 질문 바에 노출). 외래 · 입원 = 날짜 헤더 [진료?] 터치. 시나리오 : 체온 키패드(기준 초과) → 좌욕 [했어요]+[증상 관찰] → 문진 → 헤더 [진료?] [외래 진료] → CBC 촬영 → 값별 행 채움 → 항생제 "#1 세페핌" → [＋ 항목]에서 배변 켜기 → 하단 행 노출 → [의료진 열람] 잠금. 음성 · OCR · 블루투스는 진입까지만 · 지난 날짜 열람 · 미래 터치 불가. 체온 · 체중 그래프의 점 터치 = 정확한 값 툴팁(예 : 오전 5:15 37.4℃ · 전일 대비 -0.1kg). 의료진 열람 = 오늘 포함 최근 7일. 보호자 ⇄ 환아 스왑 = 환아 모드 태블릿 전환(홈 · 홈테마 18종 · 증상 기록 S1~S5 · 기록 모아보기 · 증상 관리법 — 데이터 · 로직은 환아 폰 프로토타입과 동일, 진료노트 버튼 없음).</div>
+<div class="hint">디자인 시안(joy) 적용 — 상단 텍스트 버튼 바(응급 · 메모 · 증상 노트 · 의료진 열람 · 모드 전환 스와이프 토글) + 주간 이동 · 오늘 = 실행일 기준 동적(진료 미응답, 지난 3일 = 진료 없음 / 외래 진료 / 병원 입원) · 체온 = 주에서 가장 높은 도트 하나 크게 · 체중 = 점 터치 · 마우스 오버 = 전일 대비 · <b>키 = 별도 행(진료일만)</b> · <b>수분 = 가로 채움 바("누적 / 1,500mL")</b> · CBC = 값별 행(검사일 기준) · 항생제 = 옮겨 적기 행 · 컨디션 · 식사량 · 배변 = 보호자 선택([＋ 항목 추가]에서 켜면 시트 하단에 노출) · 증상은 상단 [증상 노트] 버튼(증상 × 7일 G등급 격자 — 환아 PRO + 보호자 기록 함께) · 메모 = 날짜 선택형 팝업(주간 스트립에서 날짜 선택 → 유형 칩 + 작성 + 그날 목록 · 질문만 의료진 열람의 하단 질문 바에 노출). 외래 · 입원 = 날짜 헤더 [진료?] 터치. 시나리오 : 체온 키패드(기준 초과) → 좌욕 [했어요]+[증상 관찰] → 문진 → 헤더 [진료?] [외래 진료] → CBC 촬영 → 값별 행 채움 → 항생제 "#1 세페핌" → [＋ 항목]에서 배변 켜기 → 하단 행 노출 → [의료진 열람] 잠금. 음성 · OCR · 블루투스는 진입까지만 · 지난 날짜 열람 · 미래 터치 불가. 체온 · 체중 그래프의 점 터치 = 정확한 값 툴팁(예 : 오전 5:15 37.4℃ · 전일 대비 -0.1kg). 의료진 열람 = 오늘 포함 최근 7일. 보호자 ⇄ 환아 스왑 = 환아 모드 태블릿 전환(홈 · 홈테마 18종 · 증상 기록 S1~S5 · 기록 모아보기 · 증상 관리법 — 데이터 · 로직은 환아 폰 프로토타입과 동일, 진료노트 버튼 없음).</div>
 
 <div class="stage">
   <div class="tablet" id="tablet">
@@ -634,7 +635,7 @@ function weightRow(){
   const dots=pts.map((p,k)=>`<i class="wdot" style="left:${p.px.toFixed(2)}%;top:${p.y.toFixed(1)}px;" onclick="wtTip(${k},event)" onmouseenter="wtHover(${k})" onmouseleave="wtHover(null)"></i>`).join('');
   const tip=(tipW!==null&&pts[tipW])?`<div class="ttip" style="left:${pts[tipW].px.toFixed(2)}%;top:${pts[tipW].y.toFixed(1)}px;"><b style="margin:0;">${pts[tipW].diff===null?pts[tipW].v+'kg':(pts[tipW].diff>0?'+':'')+pts[tipW].diff.toFixed(1)+'kg'}</b></div>`:'';
   const labs=pts.map(p=>`<div class="wval" style="left:${p.px}%;">${p.v}<small>kg</small></div>`).join('');
-  const plus=S.weightToday===null?`<div class="rplus" style="left:${(TIDX+0.5)/7*100}%;top:38%;"><span class="addbtn">＋</span></div>`:'';
+  const plus=S.weightToday===null?`<div class="rplus" style="left:${(TIDX+0.5)/7*100}%;top:50%;"><span class="addbtn">＋</span></div>`:'';
   return rlabel('체중','wk')+`<div class="rowg" style="height:${H2}px;">
     <div class="cols">${VD.map((d,i)=>`<i class="${i===TIDX?'t':''}"></i>`).join('')}</div>
     <div class="wbase" style="top:${Y(21.5).toFixed(1)}px;"></div>
@@ -648,7 +649,7 @@ function wtHover(k){ if(tipW===k) return; tipW=k; render(); }
 function heightRow(){
   if(!S.items.height) return '';
   return row('키','ht',
-    (S.visitAsk==='clinic'||S.visitAsk==='inpat')?(S.visit.height?fill(S.visit.height+'cm'):emp()):(S.visitAsk===null?emp():{html:'외래일만',cls:'lock'}),
+    (S.visitAsk==='clinic'||S.visitAsk==='inpat')?(S.visit.height?fill(S.visit.height+'cm'):emp()):(S.visitAsk===null?emp():{html:'진료일만',cls:'lock'}),
     d=>d.ht?{html:d.ht,cls:'fill'}:{html:''});
 }
 function waterRow(){
@@ -672,7 +673,7 @@ function cbcRows(){
     VD.forEach((d,i)=>{
       if(d.type==='future'){ h+='<div class="cel cbcs fut"></div>'; return; }
       if(d.type==='past'){ const v=(d.hidx!=null&&H[d.hidx].cbcv)?H[d.hidx].cbcv[k]:''; h+=cell('cbc',i,v||'<span class="mdot">·</span>','cbcs'+(v?' fill':''),d.hidx!=null); return; }
-      if(!hosp){ h+=cell('cbc',i,ri===0?(S.visitAsk===null?'<span class="addbtn">＋</span>':'외래일만'):'','cbcs lock',true); return; }
+      if(!hosp){ h+=cell('cbc',i,ri===0?(S.visitAsk===null?'<span class="addbtn">＋</span>':'진료일만'):'','cbcs lock',true); return; }
       if(S.visit.cbc){ h+=cell('cbc',i,today[k],'cbcs fill',true); return; }
       h+=cell('cbc',i,ri===0?'<span class="addbtn">＋</span>':'','cbcs emp',true);
     });
@@ -780,7 +781,7 @@ function render(){
   if(S.items.abx) h+=row('항생제','abx',
     S.abx?fill(S.abx):emp(), d=>d.abx?{html:d.abx,cls:'fill'}:{html:''});
   // 진료 행
-  const lockCel=S.visitAsk===null?emp():{html:'외래일만',cls:'lock'};
+  const lockCel=S.visitAsk===null?emp():{html:'진료일만',cls:'lock'};
   if(S.items.shot) h+=row('수치주사','shot',
     (S.visitAsk==='clinic'||S.visitAsk==='inpat')?(S.visit.shot?fill('↑ '+S.visit.shotDrug):emp()):lockCel,
     d=>({html:d.shot,cls:d.shot?'fill':''}));
@@ -919,15 +920,17 @@ function keypadPop(opt){
   window.kpSetVoice=(v)=>{ digits=v.replace('.',''); window.kpIn(''); };
   window.kpReset=()=>{ digits=''; window.kpIn(''); };
 }
+const VOICE_DEMO={'체온':{v:'37.2',u:'℃',tool:'temp'},'체중':{v:'21.8',u:'kg',tool:'wk'},'키':{v:'118.5',u:'cm',tool:'ht'}};
 function voicePop(what){
+  const d=VOICE_DEMO[what]||VOICE_DEMO['체온'];
   openPop(`<div class="pt"><span class="t">${what} — 말씀해 주세요</span><span style="font-size:22px;">🎤</span></div>
   <div class="bigval" id="vc-val" style="color:#9aa6b0;font-size:30px;">듣는 중 …</div>
   <div class="hact" id="vc-act" style="justify-content:flex-end;"></div>
   <div class="psub">음성 인식은 목업 — 1초 뒤 예시값이 들어옵니다</div>`);
   setTimeout(()=>{
     if(!$('vc-val'))return;
-    $('vc-val').innerHTML='37.2<small style="font-size:14px;color:#9aa6b0;">℃</small>'; $('vc-val').style.color='';
-    $('vc-act').innerHTML=`<button class="btn sm" onclick="voicePop('${what}')">다시 말하기</button><button class="btn pri sm" onclick="openTool('temp');kpSetVoice('37.2')">확인</button>`;
+    $('vc-val').innerHTML=`${d.v}<small style="font-size:14px;color:#9aa6b0;">${d.u}</small>`; $('vc-val').style.color='';
+    $('vc-act').innerHTML=`<button class="btn sm" onclick="voicePop('${what}')">다시 말하기</button><button class="btn pri sm" onclick="openTool('${d.tool}');kpSetVoice('${d.v}')">확인</button>`;
   },1000);
 }
 
@@ -1031,7 +1034,7 @@ function tWeight(){
 }
 function tHeight(){
   keypadPop({
-    title:'키 — 외래 측정값', unit:'cm', dec:1, intLen:3, min:50.0, max:200.0, ghost:'118.2',
+    title:'키 — 진료일 측정값', unit:'cm', dec:1, intLen:3, min:50.0, max:200.0, ghost:'118.2',
     onSave:(v)=>{ S.visit.height=v; toast(`기록했어요 · 키 ${v}cm`); afterSave(); }
   });
 }
