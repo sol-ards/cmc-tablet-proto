@@ -905,7 +905,7 @@ function keypadPop(opt){
     const num=parseFloat(v);
     const complete=v&&!String(v).endsWith('.')&&(opt.flex?true:digits.replace('.','').length>=opt.intLen);
     const inRange=complete&&num>=opt.min&&num<=opt.max;
-    $('kp-warn').textContent=(complete&&!inRange)?`입력 범위 ${opt.min.toFixed(1)}~${opt.max.toFixed(1)}${opt.unit}`:'';
+    $('kp-warn').textContent=(complete&&!inRange)?'입력 범위를 넘어섰어요':'';
     $('kp-save').disabled=!inRange;
     $('kp-save').onclick=()=>opt.onSave(num.toFixed(opt.dec));
   };
@@ -2016,7 +2016,7 @@ function obOtpPaste(e){ e.preventDefault(); const d=(e.clipboardData.getData('te
 function drugEditorHTML(){ return `
  <div class="obfld" style="margin-top:14px;"><label>항암제 이름</label>
   <div style="display:flex;gap:8px;">
-   <input class="obinp" id="dgi" placeholder="예) 메토트렉세이트" oninput="dgSug()" onkeydown="if(event.key==='Enter'){event.preventDefault();dgAdd();}">
+   <input class="obinp" id="dgi" placeholder="메토트렉세이트" oninput="dgSug()" onkeydown="if(event.key==='Enter'){event.preventDefault();dgAdd();}">
    <button class="btn pri" style="flex:none;" onclick="dgAdd()">추가</button>
   </div>
   <div class="obchips" id="dgs" style="margin-top:9px;"></div>
@@ -2082,7 +2082,7 @@ function renderOB(){
    <div class="obfld"><label>진단명</label><div class="obin ${d.dx?'':'ph'}" onclick="obDx()">${d.dx||'목록에서 선택'}<i>▾</i></div>
    ${d.dx==='기타 (직접 입력)'?`<input class="obinp" style="margin-top:8px;" placeholder="진단명을 직접 입력해 주세요" value="${d.dxEtc||''}" oninput="OBD.dxEtc=this.value.trim()||null;obCtaSync()">`:''}</div>
    <div class="obfld"><label>진단 시기 (연·월)</label><div class="obin ${d.ym?'':'ph'}" onclick="obYm()">${d.ym||'연·월 선택'}<i>📅</i></div></div>
-   <div class="obfld"><label>주치의 (선택)</label><input class="obinp" placeholder="예) 김OO 교수" value="${d.doc||''}" oninput="OBD.doc=this.value.trim()||null"></div>
+   <div class="obfld"><label>주치의 (선택)</label><input class="obinp" placeholder="김OO 교수" value="${d.doc||''}" oninput="OBD.doc=this.value.trim()||null"></div>
    ${obCtaHTML()}</div>`;
  }
  else if(OB.step==='o5'){
@@ -2152,7 +2152,7 @@ function renderOB(){
 function obTerm(i){ openPop(`<div class="pt"><span class="t">${TERMS5[i]}</span></div>
  <div class="hv">약관 전문 — 추후 확정 (플레이스홀더)</div>
  <div class="pact hact" style="justify-content:flex-end;"><button class="btn pri" onclick="OB.agree[${i}]=true;closePop();renderOB()">뒤로가기 (자동 동의)</button></div>`); }
-function obKey(k){ keypadPop({noClose:true,noVoice:true,flex:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:3,min:k==='ht'?40:2,max:k==='ht'?200:150,ghost:k==='ht'?'예) 85.5':'예) 12.3',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
+function obKey(k){ keypadPop({noClose:true,noVoice:true,flex:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:3,min:k==='ht'?40:2,max:k==='ht'?200:150,ghost:k==='ht'?'85.5':'12.3',onSave:(v)=>{OBD[k]=v; closePop(); renderOB(); toast((k==='ht'?'키':'체중')+' '+v+(k==='ht'?'cm':'kg')+' — 저장했어요');}}); }
 function obDx(){ openPop(`<div class="pt"><span class="t">진단명 — 소아암 목록</span></div>
  <div class="hact" style="flex-wrap:wrap;max-height:380px;overflow-y:auto;">${DXLIST.map(x=>`<span class="chip ${OBD.dx===x?'on':''}" onclick="OBD.dx='${x}';closePop();renderOB()">${x}</span>`).join('')}</div>`); }
 function obYm(){ renderYm(); }
