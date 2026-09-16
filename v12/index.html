@@ -1123,6 +1123,12 @@ function symToday(sym){
   const ch=SYM_TODAY_CHILD.find(r=>r.sym===sym);
   return ch?ch.g:undefined;
 }
+const SYM_IMG={[mdOf(-2)]:['구내염'],[mdOf(-3)]:['구내염']};
+function openSymImg(sym,day){
+ openPop(`<div class="pt"><span class="t">${sym} · ${day} — 첨부 이미지</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  <div style="margin-top:10px;background:#F3F4F6;border-radius:14px;height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#9CA3AF;font-size:15px;font-weight:600;"><span style="font-size:34px;">📷</span>환아 모드에서 첨부한 증상 사진 (데모)</div>
+  <div class="psub">원본 = 환아 모드 증상 기록의 첨부 사진 — 피부 · 점막 증상 등</div>`);
+}
 function buildSymGrid(fromNote){
   const days = fromNote? symDays() : VD;
   let rows=[];
@@ -1132,7 +1138,10 @@ function buildSymGrid(fromNote){
   const cellHtml=(g,sym,day,tdy)=>{
     if(g===null||g===undefined) return `<span class="sn-c nr${tdy?' tdy2':''}"></span>`;
     if(g===0) return `<span class="sn-c g0"></span>`;
-    if(!fromNote) return `<span class="sn-c gc g${g}">G${g}</span>`;
+    if(!fromNote){
+      const hasImg=SYM_IMG[day]&&SYM_IMG[day].includes(sym);
+      return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>G${g}${hasImg?'<i style="font-style:normal;font-size:12px;margin-left:4px;">📷</i>':''}</span>`;
+    }
     return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
   };
   const grid=rows.map(sym=>{
