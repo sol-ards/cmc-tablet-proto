@@ -715,6 +715,7 @@ function render(){
   let h='';
   // 날짜 헤더 — 오늘 헤더 = 외래 확인 담당
   h+=`<div class="rl off dhead" style="font-size:14px;color:#9CA3AF;background:#fafbfd;" onclick="openDday()">날짜 · D<span class="om">⋯</span></div>`;
+  const _nx=parseNext();
   VD.forEach((d,i)=>{
     const c=['hd'];
     if(d.visit||(d.type==='today'&&S.visitAsk==='clinic')) c.push('visit');
@@ -730,9 +731,11 @@ function render(){
       else if(S.visitAsk===false) sub='<span class="vsub">오늘 · 진료 없음</span>';
       else sub='<span class="hplus">＋</span>';
     }
+    else if(d.type==='future'&&_nx&&offOfYMD(_nx.y,_nx.m,_nx.d)===d.off) sub='<span class="vsub" style="color:#2563EB;font-weight:700;">항암 예정</span>';
     const tapH=d.type==='today'&&!S.present;
+    const tapN=d.type==='future'&&sub&&!S.present;
     if(tapH) c.push('tapH');
-    h+=`<div class="${c.join(' ')}" ${tapH?`onclick="cellTap('visitq',${TIDX})"`:''}>${d.d}(${d.w}) <span class="dd">${dnum}</span>${sub?'<br>'+sub:''}</div>`;
+    h+=`<div class="${c.join(' ')}" ${tapH?`onclick="cellTap('visitq',${TIDX})"`:(tapN?`onclick="obNextCal('sheet')" style="cursor:pointer;"`:'')}>${d.d}(${d.w}) <span class="dd">${dnum}</span>${sub?'<br>'+sub:''}</div>`;
   });
   // 체온 그래프 — 오전 · 오후 시간축 · 도트 터치 = 정확한 체온
   const GH=112, AXTOP=25;
@@ -1912,23 +1915,17 @@ const CH={
 render();
 
 /* ========== v1.2 — 회원가입·온보딩 오버레이 · 코치마크 · 첫 사용 툴팁 · 가입 정보(P-1) ========== */
-const OBD={ht:null,wt:null,dx:null,dxEtc:null,ym:null,doc:null,d1o:null,d1NA:false,next:null,nextNA:false,drugs:[],cvc:null,cvcType:null,noti:null,age:null};
+var OBD={ht:null,wt:null,dx:null,dxEtc:null,ym:null,doc:null,d1o:null,d1NA:false,next:null,nextNA:false,drugs:[],cvc:null,cvcType:null,noti:null,age:null};
 const OB={step:'o0',slide:0,gslide:0,agree:[false,false,false,false,false],phone:'010',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
 const OB_TODAY=ymdOf(0);
 const DXLIST=['급성 림프모구 백혈병(ALL)','급성 골수성 백혈병(AML)','만성 골수성 백혈병(CML)','호지킨림프종','비호지킨림프종','수모세포종','별아교세포종','교모세포종','뇌실막세포종','두개인두종','생식세포종양(뇌)','신경모세포종','윌름스종양(신모세포종)','간모세포종','골육종','유잉육종','횡문근육종','망막모세포종','생식세포종양(고환/난소)','갑상선암','랑게르한스세포조직구증','기타 (직접 입력)'];
-const DRUGLIST=['빈크리스틴','메토트렉세이트','사이클로포스파마이드','시타라빈','독소루비신','다우노루비신','시스플라틴','카보플라틴','에토포시드','이포스파마이드','닥티노마이신','엘-아스파라기나제','6-메르캅토퓨린','6-티오구아닌','빈블라스틴','블레오마이신','이리노테칸','토포테칸','테모졸로미드','미톡산트론','부설판','멜팔란','티오테파','카무스틴','덱사메타손','프레드니솔론','류코보린','이소트레티노인','디누툭시맙베타','리툭시맙','이매티닙'];
+const DRUGLIST=['빈크리스틴','메토트렉세이트','사이클로포스파마이드','시타라빈','독소루비신','다우노루비신','시스플라틴','카보플라틴','에토포시드','이포스파마이드','닥티노마이신','엘-아스파라기나제','6-메르캅토퓨린','6-티오구아닌','빈블라스틴','블레오마이신','이리노테칸','토포테칸','테모졸로미드','미톡산트론','부설판','멜팔란','티오테파','카무스틴','덱사메타손','프레드니솔론','이소트레티노인','디누툭시맙베타','리툭시맙','이매티닙'];
 const TERMS5=['서비스 이용약관','개인정보처리방침','위치기반 서비스 이용약관','개인정보 수집 및 이용 동의','민감정보 수집 및 이용 동의'];
-const GUIDE=[
- {ax:'기록',vis:'🗒️',t:'종이에 적던 하루가, 화면 속으로',b:'병원에서 쓰던 기록 판형 그대로 옮겼어요.<br>늘 하던 대로, 칸을 짚듯 터치하면 돼요.'},
- {ax:'기록',vis:'🌱',t:'오늘 칸을 채우면, 하루가 남아요',b:'빈칸은 남은 기록일 뿐이에요. 다 채우지 못한<br>날도 괜찮아요 — 점수도, 평가도 없어요.'},
- {ax:'열람',vis:'🩺',t:'진료 날엔, 시트를 그대로 내밀어요',b:'[의료진 열람]으로 잠그면 한 주의 기록이 한눈에<br>전해져요. 적어 두신 진료 시 질문도 함께 열려요.'},
- {ax:'환아 모드',vis:'🐥',t:'아이의 화면에는 벼리가 있어요',b:'모드 전환 버튼 하나면 아이의 화면으로 바뀌어요.<br>캐릭터 벼리가 아이 곁에서 증상 기록을 함께해요.'}
-];
 function dxDisp(){ return OBD.dx==='기타 (직접 입력)'?(OBD.dxEtc||'기타'):OBD.dx; }
 function d1Disp(){ return OBD.d1o?`${OBD.d1o.y}. ${OBD.d1o.m}. ${OBD.d1o.d}`:''; }
 function obSteps(n){ return `<div class="obsteps">${[1,2,3,4,5].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}<span>정보 입력 ${n}/5</span></div>`; }
 function obGo(s){ OB.step=s; renderOB(); }
-const OB_BACK={o1:'o0',o2:'o1',o3:'o2',o4:'o3',o5:'o4',o6:'o5',o7:'o6',o8:'o7',o9:'o8',o10:'o9'};
+const OB_BACK={o1:'o0',o2:'o1',o3:'o2',o4:'o3',o5:'o4',o6:'o5',o7:'o6',o9:'o7',o10:'o9'};
 function obBack(){ const b=OB_BACK[OB.step]; if(b) obGo(b); }
 function obBackHTML(){ return (OB.step==='o0'||OB.step==='o1')?'':`<div style="text-align:left;margin-bottom:10px;"><span class="obback" onclick="obBack()">‹</span></div>`; }
 function obValid(){
@@ -1949,7 +1946,7 @@ function obTryNext(){
   const hint={o1:'휴대폰 번호 11자리와 승인번호 6자리를 입력해 주세요',o2:'약관 5개에 모두 동의해 주세요',o3:'키와 체중을 입력해 주세요',o4:'진단명과 진단 시기를 선택해 주세요',o5:'첫 항암일을 달력에서 골라 주세요',o6:'항암제를 1개 이상 추가해 주세요',o7:'삽입 여부를 골라 주세요 — [있어요]는 종류까지'}[OB.step];
   toast(hint||'입력을 확인해 주세요'); return;
  }
- obGo({o1:'o2',o2:'o3',o3:'o4',o4:'o5',o5:'o6',o6:'o7',o7:'o8'}[OB.step]);
+ obGo({o1:'o2',o2:'o3',o3:'o4',o4:'o5',o5:'o6',o6:'o7',o7:'o9'}[OB.step]);
 }
 function obCtaHTML(label){ return `<button class="obcta ${obValid()?'':'off'}" id="obcta" onclick="obTryNext()">${label||'다음'}</button>`; }
 /* --- 달력 공통 --- */
@@ -1987,17 +1984,19 @@ function obNextCal(from){ OB._nextFrom=from;
  OB.c2={y:base.getFullYear(),m:base.getMonth()+1};
  renderNextCal(); }
 function obC2Nav(dir){ const base=OBD.d1o?dOff(offOfYMD(OBD.d1o.y,OBD.d1o.m,OBD.d1o.d)+1):_RT; const b=base.getFullYear()*12+base.getMonth()+1; let mi=OB.c2.y*12+OB.c2.m+dir; mi=Math.max(b,Math.min(b+5,mi)); OB.c2={y:Math.floor((mi-1)/12),m:((mi-1)%12)+1}; renderNextCal(); }
-function parseNext(){ if(!OBD.next)return null; const a=OBD.next.split('.').map(x=>parseInt(x,10)); return {y:a[0],m:a[1],d:a[2]}; }
+function parseNext(){ if(typeof OBD==='undefined'||!OBD||!OBD.next)return null; const a=OBD.next.split('.').map(x=>parseInt(x,10)); return {y:a[0],m:a[1],d:a[2]}; }
 function renderNextCal(){
  const {y,m}=OB.c2;
- openPop(`<div class="pt"><span class="t">다음 항암 예정일</span><span class="r"><button class="btn sm" onclick="${OB._nextFrom==='p1'?'openP1()':'closePop();renderOB()'}">${OB._nextFrom==='p1'?'← 가입 정보':'닫기'}</button></span></div>
+ openPop(`<div class="pt"><span class="t">다음 항암 예정일</span><span class="r"><button class="btn sm" onclick="${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?'closePop()':'closePop();renderOB()')}">${OB._nextFrom==='p1'?'← 가입 정보':'닫기'}</button></span></div>
   <div class="hv">병원에서 잡아 준 다음 일정을 골라 주세요${OBD.d1o?` — 첫 항암일(${OBD.d1o.m}/${OBD.d1o.d}) 뒤부터 선택할 수 있어요`:''}.</div>
   <div class="obcal" style="margin-top:8px;"><div class="cm2"><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(-1)">‹</span><span>${y}년 ${m}월</span><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(1)">›</span></div><div class="gr2">${calGridHTML(y,m,parseNext(),'next')}</div></div>
-  <div class="hact" style="justify-content:flex-end;margin-top:10px;"><button class="btn sm" onclick="OBD.next=null;OBD.nextNA=true;${OB._nextFrom==='p1'?'openP1()':'closePop();renderOB()'}">아직 몰라요</button></div>`);
+  <div class="hact" style="justify-content:flex-end;margin-top:10px;"><button class="btn sm" onclick="OBD.next=null;OBD.nextNA=true;${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?`closePop();render();toast('다음 항암 예정일을 지웠어요')`:'closePop();renderOB()')}">${OB._nextFrom==='sheet'?'예정일 지우기':'아직 몰라요'}</button></div>`);
 }
 function obPickNext(y,m,d){
  OBD.next=`${y}. ${m}. ${d}`; OBD.nextNA=false;
- if(OB._nextFrom==='p1'){ openP1(); toast('다음 항암 예정일을 바꿨어요'); } else { closePop(); renderOB(); }
+ if(OB._nextFrom==='p1'){ openP1(); toast('다음 항암 예정일을 바꿨어요'); }
+ else if(OB._nextFrom==='sheet'){ closePop(); render(); toast('다음 항암 예정일을 바꿨어요'); }
+ else { closePop(); renderOB(); }
 }
 /* --- O-1 실입력 --- */
 function obPhone(el){
@@ -2121,12 +2120,6 @@ function renderOB(){
    ${d.cvc==='none'?`<div class="obs" style="font-size:14.5px;">괜찮아요 — 삽입한 뒤에 기록 화면의 중심정맥관 칸에서 등록하면 돼요.</div>`:''}
    ${obCtaHTML()}</div>`;
  }
- else if(OB.step==='o8'){ const g=GUIDE[OB.slide], last=OB.slide===3;
-  h=`<div class="obcard center">${obBackHTML()}
-   <div class="obslide"><span class="axis">${g.ax}</span><div class="vis2">${g.vis}</div><div class="s1">${g.t}</div><div class="s2">${g.b}</div>
-   <div class="obind">${GUIDE.map((_,i)=>`<i class="${i===OB.slide?'on':''}" onclick="OB.slide=${i};renderOB()"></i>`).join('')}</div></div>
-   <button class="obcta" onclick="${last?"obGo('o9')":'OB.slide++;renderOB()'}">${last?'시작할게요':'다음'}</button></div>`;
- }
  else if(OB.step==='o9') h=`<div class="obcard center">${obBackHTML()}
    <div style="font-size:44px;margin:4px 0 10px;">🔔</div>
    <div class="obt" style="font-size:24px;">알림을 켜 두면, 기록을 놓치지 않아요</div>
@@ -2177,21 +2170,30 @@ function obFinish(skip){
 /* ---- 코치마크 4단계 ---- */
 let cmStep=0;
 function cmRect(el){ const t=$('tablet').getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-t.left,y:r.top-t.top,w:r.width,h:r.height}; }
-function cmStart(){ cmStep=1; cmRender(); }
-function cmNext(){ cmStep++; if(cmStep>4){ $('cmov').hidden=true; cmStep=0; toast('준비 끝 — 오늘 칸부터 기록해 보세요'); return; } cmRender(); }
+function cmStart(){ cmStep=0; cmRender(); }
+function cmNext(){ cmStep++; if(cmStep>5){ $('cmov').hidden=true; cmStep=0; toast('준비 끝 — 오늘 칸부터 기록해 보세요'); return; } cmRender(); }
 function cmRender(){
  function pad(q){ return {x:q.x-6,y:q.y-6,w:q.w+12,h:q.h+12}; }
  const ov=$('cmov'); ov.hidden=false;
- const axes=['','기록','기록','기록','열람'];
- const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요'];
+ if(cmStep===0){
+  ov.innerHTML=`<div style="position:absolute;inset:0;background:rgba(20,30,42,.55);"></div>
+   <div class="cmtipbox" style="left:50%;top:44%;transform:translate(-50%,-50%);max-width:440px;text-align:center;padding:28px 32px;">
+     <div style="font-size:21px;font-weight:700;color:#374151;letter-spacing:-0.3px;">종이에 적던 하루가, 화면 속으로</div>
+     <div style="font-size:15px;font-weight:500;color:#6B7280;margin-top:11px;line-height:1.7;">병원에서 쓰던 기록판 그대로예요 — 늘 하던 대로, 칸을 짚듯 터치하면 돼요.<br>다 채우지 못한 날도 괜찮아요. 점수도, 평가도 없어요.</div>
+     <span class="cmbtn" style="margin-top:16px;padding:8px 26px;">다음</span></div>`;
+  return;
+ }
+ const axes=['','기록','기록','기록','열람','환아 모드'];
+ const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요','여기를 누르면 아이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
  let r, tipStyle='';
  if(cmStep===1){ const hd=$('sheet').children[1+TIDX], sr=cmRect($('sheet')), hr=cmRect(hd);
    r={x:hr.x-3,y:hr.y-3,w:hr.w+6,h:Math.min(sr.y+sr.h,780)-hr.y+6}; tipStyle=`left:${Math.max(24,r.x-330)}px;top:${r.y+70}px;`; }
  else if(cmStep===2){ const el=[...document.querySelectorAll('#sheet .rl')].find(e=>e.textContent.replace('⋯','').trim().startsWith('체중')); r=pad(cmRect(el)); tipStyle=`left:${r.x+r.w+18}px;top:${Math.max(70,r.y-8)}px;`; }
  else if(cmStep===3){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('＋ 항목')); r=pad(cmRect(el)); tipStyle=`left:${r.x-160}px;top:${r.y+r.h+16}px;`; }
- else { const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('의료진 열람')); r=pad(cmRect(el)); tipStyle=`right:28px;top:${r.y+r.h+16}px;`; }
+ else if(cmStep===4){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('의료진 열람')); r=pad(cmRect(el)); tipStyle=`right:28px;top:${r.y+r.h+16}px;`; }
+ else { const el=document.querySelector('.tt1 .swap'); r=pad(cmRect(el)); tipStyle=`right:24px;top:${r.y+r.h+18}px;`; }
  ov.innerHTML=`<div class="cmhole" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;"></div>
-  <div class="cmtipbox" style="${tipStyle}"><b class="step">${cmStep} / 4 · ${axes[cmStep]}</b><br>${copy[cmStep]}<br><span class="cmbtn">${cmStep===4?'확인':'다음'}</span></div>`;
+  <div class="cmtipbox" style="${tipStyle}"><b class="step">${cmStep} / 5 · ${axes[cmStep]}</b><br>${copy[cmStep]}<br><span class="cmbtn">${cmStep===5?'확인':'다음'}</span></div>`;
 }
 /* ---- 기능별 첫 사용 툴팁 ---- */
 const FTIP={emg:false,memo:false,sym:false,p1:false};
@@ -2225,7 +2227,7 @@ function openP1(){
   <div class="p1row"><span class="pk">항암제</span><span class="pv">${(d.drugs.length?d.drugs:['메토트렉세이트','빈크리스틴']).join(' · ')}</span><span class="pe" onclick="p1Drugs()">수정</span></div>
   <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:(d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:'')}</div>
   <div class="p1row"><span class="pk">보호자 정보</span><span class="pv">${d.age||`<span style='color:#9CA3AF;'>연령대 미입력</span>`}<small>선택</small></span><span class="pe" onclick="p1Age()">입력</span></div>
-  <div class="p1row"><span class="pk">사용 안내</span><span class="pv">4슬라이드</span><span class="pe" onclick="OB.gslide=0;guideR()">보기</span></div>
+  <div class="p1row"><span class="pk">튜토리얼</span><span class="pv">화면 안내 6장</span><span class="pe" onclick="closePop();cmStart()">다시 보기</span></div>
   <div class="p1row"><span class="pk">약관</span><span class="pv">동의 5건 · 2026. 8. 26</span><span class="pe" onclick="p1Terms()">보기</span></div>
   </div>`);
 }
@@ -2245,11 +2247,6 @@ function p1Cvc(){ const t=OBD._ct||null;
 function p1Age(){ openPop(`<div class="pt"><span class="t">보호자 정보 — 연령대 (선택)</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
  <div class="hv">사용성 분석 참고용이에요 — 성별 · 지역은 받지 않아요.</div>
  <div class="hact" style="flex-wrap:wrap;">${['20대','30대','40대','50대','60대 이상'].map(x=>`<span class="chip ${OBD.age===x?'on':''}" onclick="OBD.age=OBD.age==='${x}'?null:'${x}';openP1()">${x}</span>`).join('')}</div>`); }
-function guideR(){ const g=GUIDE[OB.gslide];
- openPop(`<div class="pt"><span class="t">사용 안내</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
- <div class="obslide" style="padding:12px 0 2px;"><span class="axis">${g.ax}</span><div class="vis2">${g.vis}</div><div class="s1">${g.t}</div><div class="s2">${g.b}</div>
- <div class="obind">${GUIDE.map((_,i)=>`<i class="${i===OB.gslide?'on':''}" onclick="OB.gslide=${i};guideR()"></i>`).join('')}</div>
- <div class="hact" style="justify-content:center;margin-top:16px;"><button class="btn" onclick="OB.gslide=Math.max(0,OB.gslide-1);guideR()">‹ 이전</button><button class="btn pri" onclick="OB.gslide=Math.min(3,OB.gslide+1);guideR()">다음 ›</button></div></div>`); }
 function p1Terms(){ openPop(`<div class="pt"><span class="t">약관</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
  <div style="margin-top:4px;">${TERMS5.map(t=>`<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 — 추후 확정 (열람 전용)')"><span class="pv">${t}</span><span class="pe" style="color:#9CA3AF;">2026. 8. 26 동의</span></div>`).join('')}</div>`); }
 
