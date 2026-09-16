@@ -370,7 +370,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .obskip{margin-top:14px;font-size:13.5px;color:#9CA3AF;cursor:pointer;text-decoration:underline;}
 .cmov{position:absolute;inset:0;z-index:26;overflow:hidden;}
 .cmov[hidden]{display:none;}
-.cmhole{position:absolute;border:3px solid #FBBF24;border-radius:12px;box-shadow:0 0 0 3000px rgba(20,30,42,.55);}
+.cmhole{position:absolute;box-sizing:border-box;border:3px solid #FBBF24;border-radius:12px;box-shadow:0 0 0 3000px rgba(20,30,42,.55);}
 .cmtipbox{position:absolute;background:#fff;border-radius:14px;padding:14px 18px;font-size:16px;font-weight:500;color:#374151;box-shadow:0 8px 26px rgba(20,30,42,.3);max-width:290px;line-height:1.55;}
 .cmtipbox b.step{color:var(--blue);font-size:13px;font-weight:700;}
 .cmtipbox .cmbtn,.ftipbx .cmbtn{display:inline-block;margin-top:10px;background:var(--blue);color:#fff;border-radius:99px;padding:7px 20px;font-size:14.5px;font-weight:600;cursor:pointer;}
@@ -732,6 +732,7 @@ function render(){
       else sub='<span class="hplus">＋</span>';
     }
     else if(d.type==='future'&&_nx&&offOfYMD(_nx.y,_nx.m,_nx.d)===d.off) sub='<span class="vsub" style="color:#2563EB;font-weight:700;">항암 예정</span>';
+    if(d.type==='today'&&_nx&&offOfYMD(_nx.y,_nx.m,_nx.d)===0) sub=sub+'<span class="vsub" style="color:#2563EB;font-weight:700;">항암 예정</span>';
     const tapH=d.type==='today'&&!S.present;
     const tapN=d.type==='future'&&sub&&!S.present;
     if(tapH) c.push('tapH');
@@ -905,7 +906,7 @@ function keypadPop(opt){
     const num=parseFloat(v);
     const complete=v&&!String(v).endsWith('.')&&(opt.flex?true:digits.replace('.','').length>=opt.intLen);
     const inRange=complete&&num>=opt.min&&num<=opt.max;
-    $('kp-warn').textContent=(complete&&!inRange)?'입력 범위를 넘어섰어요':'';
+    $('kp-warn').textContent=(complete&&num>opt.max)?'입력 범위를 넘어섰어요':'';
     $('kp-save').disabled=!inRange;
     $('kp-save').onclick=()=>opt.onSave(num.toFixed(opt.dec));
   };
@@ -1044,7 +1045,10 @@ function tVisitQ(){
       </div>`);
     return;
   }
+  const _nq=parseNext(); const _nqT=_nq&&offOfYMD(_nq.y,_nq.m,_nq.d)===0;
   openPop(`<div class="pt"><span class="t">오늘 진료가 있나요?</span><span class="r">${seqHead()}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+    ${_nqT?`<div class="hv" style="color:#2563EB;">오늘은 다음 항암 예정일이에요.</div>
+    <div class="hact"><button class="btn pri" onclick="S.d1off=0;OBD.d1o=ymdOf(0);OBD.d1NA=false;OBD.next=null;OBD.nextNA=false;closePop();render();toast('새 차수 시작 — 오늘이 D1이 됐어요 (가안 · SMC 확정 전)')">오늘부터 D1로 새로 세기</button></div>`:''}
     <div class="hact" style="margin-top:14px;">
       <button class="btn pri" style="flex:1;" onclick="S.visitAsk='clinic';toast('오늘을 외래 진료일로 기록했어요 — 수치주사 · 수혈 · CBC · 키 기록이 열렸어요',()=>{S.visitAsk=null;});afterSave()">외래 진료</button>
       <button class="btn" style="flex:1;" onclick="S.visitAsk='inpat';toast('입원으로 기록했어요 — 퇴원까지 유지 · 알림은 쉬어요',()=>{S.visitAsk=null;});afterSave()">입원했어요</button>
@@ -1989,7 +1993,7 @@ function parseNext(){ if(typeof OBD==='undefined'||!OBD||!OBD.next)return null; 
 function renderNextCal(){
  const {y,m}=OB.c2;
  openPop(`<div class="pt"><span class="t">다음 항암 예정일</span><span class="r"><button class="btn sm" onclick="${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?'closePop()':'closePop();renderOB()')}">${OB._nextFrom==='p1'?'← 가입 정보':'닫기'}</button></span></div>
-  <div class="hv">병원에서 잡아 준 다음 일정을 골라 주세요${OBD.d1o?` — 첫 항암일(${OBD.d1o.m}/${OBD.d1o.d}) 뒤부터 선택할 수 있어요`:''}.</div>
+  <div class="hv">다음 항암 일정이 있다면 선택해 주세요${OBD.d1o?` — 첫 항암일(${OBD.d1o.m}/${OBD.d1o.d}) 뒤부터 선택할 수 있어요`:''}.</div>
   <div class="obcal" style="margin-top:8px;"><div class="cm2"><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(-1)">‹</span><span>${y}년 ${m}월</span><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(1)">›</span></div><div class="gr2">${calGridHTML(y,m,parseNext(),'next')}</div></div>
   <div class="hact" style="justify-content:flex-end;margin-top:10px;"><button class="btn sm" onclick="OBD.next=null;OBD.nextNA=true;${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?`closePop();render();toast('다음 항암 예정일을 지웠어요')`:'closePop();renderOB()')}">${OB._nextFrom==='sheet'?'예정일 지우기':'아직 몰라요'}</button></div>`);
 }
@@ -2101,7 +2105,7 @@ function renderOB(){
        <div class="obin ${d.next?'':'ph'}" style="flex:1;" onclick="obNextCal('ob')">${d.next||'달력에서 선택'}<i>📅</i></div>
        <span class="chip ${d.nextNA?'on':''}" style="flex:none;" onclick="OBD.nextNA=!OBD.nextNA;if(OBD.nextNA)OBD.next=null;renderOB()">아직 몰라요</span>
      </div>
-     <div class="obs" style="font-size:13px;margin-top:6px;">병원에서 잡아 준 다음 일정이 있다면 골라 주세요 — 다가오면 알려드려요.</div></div>
+     <div class="obs" style="font-size:13px;margin-top:6px;">다음 항암 일정이 있다면 달력에서 선택해 주세요.</div></div>
    <button class="obcta ${obValid()?'':'off'}" id="obcta" style="margin-top:12px;padding:12px 0;" onclick="obTryNext()">다음</button></div>`;
  }
  else if(OB.step==='o6'){
@@ -2147,7 +2151,10 @@ function renderOB(){
  }
  el.innerHTML=h;
  if(OB.step==='o6'){ dgSug(); dgChips(); }
- if(OB.step==='o1'){ obOtpCur(); }
+ if(OB.step==='o1'){ obOtpCur();
+  const _p=$('ob-ph');
+  if(_p&&OB.otp.length===0&&OB.phone.length<11){ _p.focus(); const _L=_p.value.length; try{_p.setSelectionRange(_L,_L);}catch(e){} }
+ }
 }
 function obTerm(i){ openPop(`<div class="pt"><span class="t">${TERMS5[i]}</span></div>
  <div class="hv">약관 전문 — 추후 확정 (플레이스홀더)</div>
@@ -2171,11 +2178,11 @@ function obFinish(skip){
 }
 /* ---- 코치마크 4단계 ---- */
 let cmStep=0;
-function cmRect(el){ const t=$('tablet').getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-t.left,y:r.top-t.top,w:r.width,h:r.height}; }
+function cmRect(el){ const tb=$('tablet'); const t=tb.getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-t.left-tb.clientLeft,y:r.top-t.top-tb.clientTop,w:r.width,h:r.height}; }
 function cmStart(){ cmStep=0; cmRender(); }
 function cmNext(){ cmStep++; if(cmStep>5){ $('cmov').hidden=true; cmStep=0; toast('준비 끝 — 오늘 칸부터 기록해 보세요'); return; } cmRender(); }
 function cmRender(){
- function pad(q){ return {x:q.x-6,y:q.y-6,w:q.w+12,h:q.h+12}; }
+ function pad(q){ return {x:q.x-5,y:q.y-5,w:q.w+10,h:q.h+10}; }
  const ov=$('cmov'); ov.hidden=false;
  if(cmStep===0){
   ov.innerHTML=`<div style="position:absolute;inset:0;background:rgba(20,30,42,.55);"></div>
@@ -2188,8 +2195,9 @@ function cmRender(){
  const axes=['','기록','기록','기록','열람','환아 모드'];
  const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요','여기를 누르면 아이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
  let r, tipStyle='';
- if(cmStep===1){ const hd=$('sheet').children[1+TIDX], sr=cmRect($('sheet')), hr=cmRect(hd);
-   r={x:hr.x-3,y:hr.y-3,w:hr.w+6,h:Math.min(sr.y+sr.h,780)-hr.y+6}; tipStyle=`left:${Math.max(24,r.x-330)}px;top:${r.y+70}px;`; }
+ if(cmStep===1){ const hd=$('sheet').children[1+TIDX], hr=cmRect(hd), sr=cmRect($('sheet')), ww=cmRect($('sheetwrap'));
+   const bot=Math.min(sr.y+sr.h, ww.y+ww.h);
+   r={x:hr.x-4,y:hr.y-4,w:hr.w+8,h:bot-hr.y+4}; tipStyle=`left:${Math.max(24,r.x-330)}px;top:${r.y+70}px;`; }
  else if(cmStep===2){ const el=[...document.querySelectorAll('#sheet .rl')].find(e=>e.textContent.replace('⋯','').trim().startsWith('체중')); r=pad(cmRect(el)); tipStyle=`left:${r.x+r.w+18}px;top:${Math.max(70,r.y-8)}px;`; }
  else if(cmStep===3){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('＋ 항목')); r=pad(cmRect(el)); tipStyle=`left:${r.x-160}px;top:${r.y+r.h+16}px;`; }
  else if(cmStep===4){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('의료진 열람')); r=pad(cmRect(el)); tipStyle=`right:28px;top:${r.y+r.h+16}px;`; }
