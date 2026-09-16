@@ -1916,7 +1916,7 @@ const CH={
 render();
 
 /* ========== v1.2 — 회원가입·온보딩 오버레이 · 코치마크 · 첫 사용 툴팁 · 가입 정보(P-1) ========== */
-var OBD={ht:null,wt:null,dx:null,dxEtc:null,ym:null,doc:null,d1o:null,d1NA:false,next:null,nextNA:false,drugs:[],cvc:null,cvcType:null,noti:null,age:null};
+var OBD={ht:null,wt:null,dx:null,dxEtc:null,ym:null,doc:null,d1o:null,d1NA:false,drugsNA:false,next:null,nextNA:false,drugs:[],cvc:null,cvcType:null,noti:null,age:null};
 const OB={step:'o0',slide:0,gslide:0,agree:[false,false,false,false,false],phone:'010',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
 const OB_TODAY=ymdOf(0);
 const DXLIST=['급성 림프모구 백혈병(ALL)','급성 골수성 백혈병(AML)','만성 골수성 백혈병(CML)','호지킨림프종','비호지킨림프종','수모세포종','별아교세포종','교모세포종','뇌실막세포종','두개인두종','생식세포종양(뇌)','신경모세포종','윌름스종양(신모세포종)','간모세포종','골육종','유잉육종','횡문근육종','망막모세포종','생식세포종양(고환/난소)','갑상선암','랑게르한스세포조직구증','기타 (직접 입력)'];
@@ -1937,14 +1937,14 @@ function obValid(){
   case 'o3': return !!(d.ht&&d.wt);
   case 'o4': return !!(d.dx&&d.ym&&(d.dx!=='기타 (직접 입력)'||d.dxEtc));
   case 'o5': return !!d.d1o||d.d1NA;
-  case 'o6': return d.drugs.length>0;
+  case 'o6': return d.drugs.length>0||d.drugsNA;
   case 'o7': return d.cvc==='none'||(d.cvc==='yes'&&!!d.cvcType);
  } return true;
 }
 function obCtaSync(){ const b=document.getElementById('obcta'); if(b) b.classList.toggle('off',!obValid()); }
 function obTryNext(){
  if(!obValid()){
-  const hint={o1:'휴대폰 번호 11자리와 승인번호 6자리를 입력해 주세요',o2:'약관 5개에 모두 동의해 주세요',o3:'키와 체중을 입력해 주세요',o4:'진단명과 진단 시기를 선택해 주세요',o5:'첫 항암일을 달력에서 골라 주세요',o6:'항암제를 1개 이상 추가해 주세요',o7:'삽입 여부를 골라 주세요 — [있어요]는 종류까지'}[OB.step];
+  const hint={o1:'휴대폰 번호 11자리와 승인번호 6자리를 입력해 주세요',o2:'약관 5개에 모두 동의해 주세요',o3:'키와 체중을 입력해 주세요',o4:'진단명과 진단 시기를 선택해 주세요',o5:'첫 항암일을 달력에서 골라 주세요',o6:'항암제를 추가하거나 [나중에 기록할게요]를 눌러 주세요',o7:'삽입 여부를 골라 주세요 — [있어요]는 종류까지'}[OB.step];
   toast(hint||'입력을 확인해 주세요'); return;
  }
  obGo({o1:'o2',o2:'o3',o3:'o4',o4:'o5',o5:'o6',o6:'o7',o7:'o9'}[OB.step]);
@@ -2032,8 +2032,8 @@ function dgChips(){ const el=$('dgc'); if(!el)return;
  el.innerHTML=OBD.drugs.map((x,i)=>`<span class="chip on" onclick="OBD.drugs.splice(${i},1);dgChips();dgSug()">${x} ×</span>`).join('');
  obCtaSync();
 }
-function dgPick(x){ if(!OBD.drugs.includes(x))OBD.drugs.push(x); if($('dgi'))$('dgi').value=''; dgSug(); dgChips(); }
-function dgAdd(){ const v=($('dgi')?.value||'').trim(); if(!v){toast('약제 이름을 입력해 주세요');return;} if(!OBD.drugs.includes(v))OBD.drugs.push(v); $('dgi').value=''; dgSug(); dgChips(); }
+function dgPick(x){ OBD.drugsNA=false; if(!OBD.drugs.includes(x))OBD.drugs.push(x); if($('dgi'))$('dgi').value=''; dgSug(); dgChips(); }
+function dgAdd(){ const v=($('dgi')?.value||'').trim(); if(!v){toast('약제 이름을 입력해 주세요');return;} OBD.drugsNA=false; if(!OBD.drugs.includes(v))OBD.drugs.push(v); $('dgi').value=''; dgSug(); dgChips(); }
 /* --- 온보딩 렌더 --- */
 function renderOB(){
  const el=$('ob'); el.hidden=false;
@@ -2109,7 +2109,8 @@ function renderOB(){
    <div class="obt">항암제를 알려주세요</div>
    <div class="obs">치료 계획의 항암제를 입력해 주세요. 항암제가 여러 개면 하나씩 추가하세요.</div>
    ${drugEditorHTML()}
-   ${obCtaHTML()}</div>`;
+   ${obCtaHTML()}
+   <button class="obcta ghost" onclick="OBD.drugsNA=true;obGo('o7')">나중에 기록할게요</button></div>`;
  }
  else if(OB.step==='o7'){
   h=`<div class="obcard">${obBackHTML()}${obSteps(5)}
@@ -2138,7 +2139,7 @@ function renderOB(){
      ${d.doc?`<div class="r"><span class="k">주치의</span><span class="v">${d.doc}</span></div>`:''}
      <div class="r"><span class="k">첫 항암일</span><span class="v">${d.d1o?d1Disp()+' (D1)':'아직 몰라요'}</span></div>
      <div class="r"><span class="k">다음 항암 예정일</span><span class="v">${d.next||'아직 몰라요'}</span></div>
-     <div class="r"><span class="k">항암제</span><span class="v">${d.drugs.join(' · ')}</span></div>
+     <div class="r"><span class="k">항암제</span><span class="v">${d.drugs.length?d.drugs.join(' · '):'나중에 기록 — [가입 정보]에서 추가'}</span></div>
      <div class="r"><span class="k">중심정맥관</span><span class="v">${d.cvc==='none'?'아직 없어요 — 삽입하면 등록':(d.cvcType==='잘 모르겠어요'?'삽입됨 · 종류 확인 중':d.cvcType)}</span></div>
    </div>
    <div class="obs" style="font-size:14.5px;">입력한 정보는 [가입 정보]에서 언제든 확인할 수 있어요.</div>
@@ -2225,7 +2226,7 @@ function openP1(){
   <div class="p1row"><span class="pk">주치의</span><span class="pv">${d.doc||`<span style='color:#9CA3AF;'>미입력</span>`}</span></div>
   <div class="p1row"><span class="pk">첫 항암일</span><span class="pv">${d1Full()?d1Full()+" (D1)":"<span style='color:#9CA3AF;'>아직 몰라요</span>"}<small>${d1Full()?'변경':'등록'}은 시트 '날짜 · D'에서</small></span></div>
   <div class="p1row"><span class="pk">다음 항암 예정일</span><span class="pv">${d.next||'아직 몰라요'}</span><span class="pe" onclick="obNextCal('p1')">수정</span></div>
-  <div class="p1row"><span class="pk">항암제</span><span class="pv">${(d.drugs.length?d.drugs:['메토트렉세이트','빈크리스틴']).join(' · ')}</span><span class="pe" onclick="p1Drugs()">수정</span></div>
+  <div class="p1row"><span class="pk">항암제</span><span class="pv">${d.drugs.length?d.drugs.join(' · '):`<span style='color:#9CA3AF;'>미입력</span>`}</span><span class="pe" onclick="p1Drugs()">${d.drugs.length?'수정':'입력'}</span></div>
   <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:(d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:'')}</div>
   <div class="p1row"><span class="pk">보호자 정보</span><span class="pv">${d.age||`<span style='color:#9CA3AF;'>연령대 미입력</span>`}<small>선택</small></span><span class="pe" onclick="p1Age()">입력</span></div>
   <div class="p1row"><span class="pk">튜토리얼</span><span class="pv">화면 안내 6장</span><span class="pe" onclick="closePop();cmStart()">다시 보기</span></div>
@@ -2233,7 +2234,6 @@ function openP1(){
   </div>`);
 }
 function p1Drugs(){
- if(OBD.drugs.length===0) OBD.drugs=['메토트렉세이트','빈크리스틴'];
  openPop(`<div class="pt"><span class="t">항암제</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
   ${drugEditorHTML()}`);
  dgSug(); dgChips();
