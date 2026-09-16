@@ -2209,7 +2209,7 @@ function cmRender(){
   return;
  }
  const axes=['','기록','기록','기록','열람','환아 모드'];
- const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요','여기를 누르면 아이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
+ const copy=['','오늘 칸을 터치하면,<br>기록이 시작돼요','기록을 원하지 않는 항목은<br>끌 수 있어요','기록을 멈춘 항목은<br>다시 켜서 기록할 수 있어요','진료 시 주치의에게<br>그대로 보여 주세요','여기를 밀거나 누르면 아이의 화면으로 바뀌어요 —<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요'];
  let r, tipStyle='';
  if(cmStep===1){ const hd=$('sheet').children[1+TIDX], hr=cmRect(hd), sr=cmRect($('sheet')), ww=cmRect($('sheetwrap'));
    const bot=Math.min(sr.y+sr.h, ww.y+ww.h);
