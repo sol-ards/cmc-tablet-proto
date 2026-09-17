@@ -1200,7 +1200,7 @@ function tMed(kind){
   const M=MEDS[kind], cur=S[kind];
   const custom=medPick==='__custom';
   const canSave=custom?!!medCustom.trim():!!medPick;
-  openPop(`<div class="pt"><span class="t">${M.name}</span><span class="r">${seqHead()}<button class="btn pri sm" ${canSave?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button></span></div>
+  openPop(`<div class="pt"><span class="t">${M.name}</span><span class="r">${seqHead()}<button class="btn pri sm" ${canSave?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     ${cur?`<div class="hv">오늘 기록 : <b>${cur}</b> — 다시 고르면 덮어써요</div>`:''}
     <div class="hact" id="medchips">${M.drugs.map(d=>`<span class="chip ${d==='직접 입력'?(custom?'on':''):(medPick===d?'on':'')}" onclick="pickMed('${kind}','${d}')">${d}</span>`).join('')}</div>
     ${custom?`<div class="hact"><input class="obinp" id="med-custom" placeholder="약제명을 입력해 주세요" style="flex:1;padding:9px 12px;font-size:15px;" value="${medCustom.replace(/"/g,'&quot;')}" oninput="medCustom=this.value;$('med-save').disabled=!this.value.trim()"></div>`:''}
@@ -1295,7 +1295,7 @@ function cbcDraw(){
     <div class="psub">${psub}</div>
     <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto 0;">${KEYS.map(x=>`<button class="btn" style="padding:10px 0;font-size:18px;${x==='.'&&!decOK?'opacity:.3;pointer-events:none;':''}" onclick="cbKey('${x}')">${x==='back'?'⌫':x}</button>`).join('')}</div>
-    <div class="hact" style="justify-content:center;margin-top:8px;"><button class="btn sm" onclick="cbKey('next')">다음 필드 →</button></div>
+    <div class="hact" style="justify-content:center;margin-top:8px;"><button class="btn sm" onclick="cbKey('next')">다음 칸 →</button></div>
     <div class="hact" style="margin-top:10px;"><span class="chip ${_cbDate===0?'on':''}" id="cbcd-0" onclick="cbcSetDate(0)">오늘 ${mdOf(0)}${_cbMode==='ocr'?' (촬영일)':''}</span><span class="chip ${_cbDate===-1?'on':''}" id="cbcd-1" onclick="cbcSetDate(-1)">어제 ${mdOf(-1)}</span></div>`);
 }
 function cbcConfirm(mode){
@@ -2125,7 +2125,7 @@ function obOtpPaste(e){ e.preventDefault(); const d=(e.clipboardData.getData('te
  [...Array(6)].forEach((_,j)=>{ if($('ob-otp'+j)) $('ob-otp'+j).value=d[j]||''; }); if(d.length<6)$('ob-otp'+d.length)?.focus(); obOtpCollect(); }
 /* --- 항암제 입력(직접 입력 + 자동완성) — 온보딩 · P-1 공용 --- */
 function drugEditorHTML(){ return `
- <div class="obfld" style="margin-top:14px;"><label>항암제 이름</label>
+ <div class="obfld" style="margin-top:14px;">
   <div style="display:flex;gap:8px;">
    <input class="obinp" id="dgi" placeholder="메토트렉세이트" oninput="dgSug()" onkeydown="if(event.key==='Enter'){event.preventDefault();dgAdd();}">
    <button class="btn pri" style="flex:none;" onclick="dgAdd()">추가</button>
@@ -2218,7 +2218,7 @@ function renderOB(){
  else if(OB.step==='o6'){
   h=`<div class="obcard">${obBackHTML()}${obSteps(4)}
    <div class="obt">항암제를 알려주세요</div>
-   <div class="obs">치료 계획의 항암제를 입력해 주세요. 항암제가 여러 개면 하나씩 추가하세요.</div>
+   <div class="obs">항암제가 여러 개면 하나씩 추가하세요.</div>
    ${drugEditorHTML()}
    ${obCtaHTML()}
    <button class="obcta ghost" onclick="OBD.drugsNA=true;obGo('o7')">나중에 기록할게요</button></div>`;
