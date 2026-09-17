@@ -73,7 +73,8 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .hd.today.tapH{cursor:pointer;}
 .hd.future{color:#b9c1cb;}
 .hd .hplus{display:inline-flex;width:22px;height:22px;border-radius:7px;background:#A9B2BE;color:#fff;font-size:14px;font-weight:800;align-items:center;justify-content:center;margin-top:2px;vertical-align:middle;}
-.present .hd .hplus{display:none;}
+.present .hd .hplus,.present .hd .hvq{display:none;}
+.hd .hvq{display:inline-flex;align-items:center;background:#A9B2BE;color:#fff;font-size:12.5px;font-weight:700;border-radius:99px;padding:3px 11px;margin-top:3px;letter-spacing:-0.2px;}
 .cel{background:#fff;min-height:44px;display:flex;align-items:center;justify-content:center;font-weight:500;color:#4B5563;text-align:center;padding:1px 4px;line-height:1.35;flex-wrap:wrap;gap:1px;font-size:16px;border-right:1px solid var(--cellb);border-bottom:1px solid var(--cellb);}
 .cel.tap{cursor:pointer;}
 .cel .mdot{color:#c4ccd6;font-weight:800;}
@@ -509,7 +510,7 @@ function toast(msg,undo){
 }
 function doUndo(){ if(undoFn){undoFn(); undoFn=null;} $('toast').classList.remove('on'); render(); }
 function openPop(html,cls){ const p=$('centerpop'); p.className='pop'+(cls?' '+cls:''); p.innerHTML=html; $('centerov').classList.add('on'); }
-function closePop(byOutside){ $('centerov').classList.remove('on'); if(byOutside) seq=false; }
+function closePop(byOutside){ $('centerov').classList.remove('on'); if(byOutside){ seq=false; if(window.OB&&OB.done){ render(); } else if(window.OB&&typeof renderOB==='function'){ renderOB(); } } }
 function seqHead(){
   return seq?`<button class="btn sm" onclick="seqSkip()">건너뛰기</button><button class="btn sm" onclick="seq=false;closePop();toast('저장된 기록은 남아 있어요')">오늘은 여기까지</button>`:'';
 }
@@ -549,7 +550,7 @@ function proMock(list,src){
 }
 function renderPro(){
   if(!proState.sym){
-    openPop(`<div class="pt"><span class="t">증상 기록</span><span class="r"><button class="btn pri" ${proState.sel.length?'':'disabled'} onclick="proStart()">문진 시작${proState.sel.length?` (${proState.sel.length})`:''}</button><button class="btn sm" onclick="closePop(true)">닫기</button></span></div>
+    openPop(`<div class="pt"><span class="t">증상 기록</span><span class="r"><button class="btn pri" ${proState.sel.length?'':'disabled'} onclick="proStart()">문진 시작${proState.sel.length?` (${proState.sel.length})`:''}</button></span></div>
       <div class="psub">관련 증상을 모두 골라 주세요 (복수 선택)</div>
       <div class="hact">${proState.list.map(s=>{
         const r=S.proDone.find(x=>x.src===proState.src&&x.sym===s);
@@ -559,7 +560,7 @@ function renderPro(){
     return;
   }
   const q=PRO_QS[proState.idx];
-  openPop(`<div class="pt"><span class="t">증상 기록 — ${proState.sym}</span><span class="r"><span class="psub" style="margin:0;">질문 ${proState.idx+1}/${PRO_QS.length}${proState.queue.length?` · 남은 증상 ${proState.queue.length}`:''}</span><button class="btn sm" onclick="closePop(true)">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">증상 기록 — ${proState.sym}</span><span class="r"><span class="psub" style="margin:0;">질문 ${proState.idx+1}/${PRO_QS.length}${proState.queue.length?` · 남은 증상 ${proState.queue.length}`:''}</span></span></div>
     <div class="qcard"><div class="qt">${q.q}</div>
       <div class="opts">${q.a.map((a,i)=>`<button class="o" onclick="proAns(${i})">${a}</button>`).join('')}</div></div>`);
 }
@@ -730,7 +731,7 @@ function render(){
       if(S.visitAsk==='clinic') sub='<span class="vsub">오늘 · 외래 진료</span>';
       else if(S.visitAsk==='inpat') sub='<span class="vsub">오늘 · 입원 중</span>';
       else if(S.visitAsk===false) sub='<span class="vsub">오늘 · 진료 없음</span>';
-      else sub='<span class="hplus">＋</span>';
+      else sub='<span class="hvq">＋ 진료 확인</span>';
     }
     else if(d.type==='future'&&_nx&&offOfYMD(_nx.y,_nx.m,_nx.d)===d.off) sub='<span class="vsub" style="color:#2563EB;font-weight:700;">항암 예정</span>';
     if(d.type==='today'&&_nx&&offOfYMD(_nx.y,_nx.m,_nx.d)===0) sub=sub+'<span class="vsub" style="color:#2563EB;font-weight:700;">항암 예정</span>';
@@ -835,7 +836,7 @@ function cellTap(key,i){
   seq=false;
   if(key==='shot'||key==='trans'||key==='cbc'||key==='ht'){
     if(!(S.visitAsk==='clinic'||S.visitAsk==='inpat')){
-      if(S.visitAsk===null){ toast('오늘 진료(외래 · 입원) 확인은 날짜 헤더에서 해요'); return; }
+      if(S.visitAsk===null) return;
       toast('외래 · 입원일에만 기록해요 — 날짜 헤더에서 변경'); return;
     }
   }
@@ -851,7 +852,7 @@ function openPast(key,i){
     shot:hh.shot||'기록 없음',trans:hh.trans||'기록 없음',cbc:hh.cbc||'기록 없음'}[key]||'—';
   openPop(`<div class="pt"><span class="t">${d.d} (${d.w})${dLab(DAYS[i].off)?' · '+dLab(DAYS[i].off):''}</span><span class="psub" style="margin:0;">지난 날짜</span></div>
     <div class="hv">${val}</div>
-    <div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="toast('지난 날짜 수정 — 데모 범위 외')">수정</button><button class="btn sm" onclick="closePop()">닫기</button></div>`);
+    <div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="toast('지난 날짜 수정 — 데모 범위 외')">수정</button></div>`);
 }
 function openLab(i){
   const today=i==='today';
@@ -860,7 +861,7 @@ function openLab(i){
   const dd=today?mdOf(0):DAYS[i].d;
   const lab=today?dLab(0):dLab(DAYS[i].off);
   const src=today?(S.visit.cbcSrc==='manual'?`검사일 ${dd} · 직접 입력`:`검사일 ${dd} (촬영일)`):`검사일 ${dd}`;
-  openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${today&&!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="S.visit.cbc=false;closePop();render();toast('삭제했어요 · CBC 기록')">삭제</button>`:''}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${today&&!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="S.visit.cbc=false;closePop();render();toast('삭제했어요 · CBC 기록')">삭제</button>`:''}</span></div>
     <div class="hv">WBC <b>${v.wbc}</b> · Hb <b>${v.hb}</b> · Plt <b>${v.plt}</b> · Reti ${v.reti} · ANC <b>${v.anc}</b><br>${src}</div>`);
 }
 
@@ -885,7 +886,7 @@ function keypadPop(opt){
     if(digits.includes('.')) return digits;
     if(digits.length<=opt.intLen) return digits;
     return digits.slice(0,-opt.dec)+'.'+digits.slice(-opt.dec); };
-  openPop(`<div class="pt"><span class="t">${opt.title}</span><span class="r">${seqHead()}${opt.noClose?'':'<button class="btn sm" onclick="closePop();render()">닫기</button>'}<button class="btn ${opt.warnSave?'warn':'pri'} sm" id="kp-save" disabled>저장</button></span></div>
+  openPop(`<div class="pt"><span class="t">${opt.title}</span><span class="r">${seqHead()}<button class="btn ${opt.warnSave?'warn':'pri'} sm" id="kp-save" disabled>저장</button></span></div>
     ${opt.extra?`<div class="hact" style="margin-top:8px;">${opt.extra}</div>`:''}
     <div class="kwrap">
       <div class="kleft">
@@ -958,7 +959,7 @@ function tTemp(keepWhen){
         openPop(`<div class="pt"><span class="t" style="color:#B03A2E;">${v}℃ — 기준을 넘었어요</span></div>
         <div class="hv">병원 연락 기준(37.5℃ 이상)을 확인해 주세요. 1시간 뒤 재측정 알림을 예약했어요. 그래프의 기준 초과 점은 진한 빨강으로 표시돼요.</div>
         <div class="prolink" onclick="proMock(PRO_LISTS.temp,'temp')">몸이 춥고 떨리거나 처지면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>
-        <div class="hact" style="justify-content:flex-end;"><button class="btn warn sm" onclick="openEmergency()">응급 신호 안내 보기</button><button class="btn sm" onclick="afterSave()">닫기</button></div>`);
+        <div class="hact" style="justify-content:flex-end;"><button class="btn warn sm" onclick="openEmergency()">응급 신호 안내 보기</button><button class="btn sm" onclick="afterSave()">확인</button></div>`);
       } else { toast(`기록했어요 · ${v}℃ · ${when}${tempWhen?' (수기 이관)':''}`, ()=>{S.temp.readings.pop();}); afterSave(); }
     }
   });
@@ -974,7 +975,7 @@ function tCare(key){
   const st=S[key], name=key==='gargle'?'가글':'좌욕';
   const ment=key==='gargle'?'입안 통증, 출혈 등이 있다면':'항문·성기 주위 발적, 벗겨짐, 가려움 등이 있다면';
   const recs=proBySrc(key);
-  openPop(`<div class="pt"><span class="t">${name}</span><span class="r">${seqHead()}<button class="btn sm" onclick="closePop();render()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${name}</span><span class="r">${seqHead()}</span></div>
     ${st.times.length?`<div class="hact" style="margin-top:10px;">${st.times.map((t,i)=>`<span class="tchip" onclick="delTime('${key}',${i})">${t} <b style="color:#9CA3AF;">×</b></span>`).join('')}</div>`:''}
     <div class="hact" style="margin-top:12px;">
       <button class="btn pri" style="flex:1;" onclick="careDo('${key}')">했어요</button>
@@ -1049,12 +1050,12 @@ function tVisitQ(){
       <div class="hact">
         ${S.visitAsk==='inpat'?`<button class="btn pri" onclick="S.visitAsk=false;closePop();render();toast('퇴원으로 기록했어요 — 집 기록을 다시 시작해요',()=>{S.visitAsk='inpat';})">퇴원했어요</button>`:''}
         <button class="btn act" onclick="${(S.visitAsk==='clinic'&&has)?`toast('진료 기록이 있어요 — 기록을 먼저 삭제해 주세요')`:`S.visitAsk=null;closePop();render();tVisitQ()`}">변경</button>
-        <button class="btn sm" onclick="closePop()">닫기</button>
+        
       </div>`);
     return;
   }
   const _nq=parseNext(); const _nqT=_nq&&offOfYMD(_nq.y,_nq.m,_nq.d)===0;
-  openPop(`<div class="pt"><span class="t">오늘 진료가 있나요?</span><span class="r">${seqHead()}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">오늘 진료가 있나요?</span><span class="r">${seqHead()}</span></div>
     ${_nqT?`<div class="hv" style="color:#2563EB;">오늘은 다음 항암 예정일이에요.</div>
     <div class="hact"><button class="btn pri" onclick="S.d1off=0;OBD.d1o=ymdOf(0);OBD.d1NA=false;OBD.next=null;OBD.nextNA=false;closePop();render();toast('새 차수 시작 — 오늘이 D1이 됐어요 (가안 · SMC 확정 전)')">오늘부터 D1로 새로 세기</button></div>`:''}
     <div class="hact" style="margin-top:14px;">
@@ -1100,7 +1101,7 @@ function tWater(){
       <button class="btn act" onclick="waterPlus(200)">+200</button>
       <button class="btn act" onclick="waterPlus(250)">컵 250</button>
     </div>
-    ${seq?'':`<div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="closePop();render()">닫기</button></div>`}`);
+    `);
 }
 function waterPlus(n){
   S.water+=n;
@@ -1173,7 +1174,7 @@ function buildSymGrid(fromNote){
 }
 function tSym(){
   const wd=symDays();
-  openPop(`<div class="pt"><span class="t">증상 노트</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">증상 노트</span><span class="r"></span></div>
     <div class="hact"><span class="wnav"><button class="ar" onclick="if(symWeek<=-1){toast('더 이전 주 — 데모 범위 외');}else{symWeek--;tSym();}">‹</button><span>${wd[0].d}(${wd[0].w}) ~ ${wd[6].d}(${wd[6].w})</span><button class="ar" onclick="if(symWeek>=1){toast('더 다음 주 — 데모 범위 외');}else{symWeek++;tSym();}">›</button></span></div>
     <div class="sn-grid snpop">${buildSymGrid(true)}</div>`,'wide');
 }
@@ -1188,7 +1189,7 @@ function guideFor(sym){
 function openSymGuide(sym,g,day,fromNote){
   const gd=guideFor(sym)||{};
   const tip=gd['G'+g]||gd['G1']||gd['G2']||'이 증상은 등록된 자가 관리 지침이 없어요.';
-  openPop(`<div class="pt"><span class="t">${sym} — 자가 관리 지침</span><span class="r">${fromNote?'<button class="btn sm" onclick="tSym()">← 결과로</button>':''}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${sym} — 자가 관리 지침</span><span class="r">${fromNote?'<button class="btn sm" onclick="tSym()">← 결과로</button>':''}</span></div>
     <div class="hact" style="margin-top:8px;"><span class="gbadge g${g}" style="font-size:12.5px;padding:4px 11px;">${day} 기록 · G${g}</span></div>
     <div class="hv" style="white-space:pre-line;max-height:360px;overflow-y:auto;">${tip}</div>`);
 }
@@ -1200,7 +1201,7 @@ function tMed(kind){
   const M=MEDS[kind], cur=S[kind];
   const custom=medPick==='__custom';
   const canSave=custom?!!medCustom.trim():!!medPick;
-  openPop(`<div class="pt"><span class="t">${M.name}</span><span class="r">${seqHead()}<button class="btn pri sm" ${canSave?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${M.name}</span><span class="r">${seqHead()}<button class="btn pri sm" ${canSave?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button></span></div>
     ${cur?`<div class="hv">오늘 기록 : <b>${cur}</b> — 다시 고르면 덮어써요</div>`:''}
     <div class="hact" id="medchips">${M.drugs.map(d=>`<span class="chip ${d==='직접 입력'?(custom?'on':''):(medPick===d?'on':'')}" onclick="pickMed('${kind}','${d}')">${d}</span>`).join('')}</div>
     ${custom?`<div class="hact"><input class="obinp" id="med-custom" placeholder="약제명을 입력해 주세요" style="flex:1;padding:9px 12px;font-size:15px;" value="${medCustom.replace(/"/g,'&quot;')}" oninput="medCustom=this.value;$('med-save').disabled=!this.value.trim()"></div>`:''}
@@ -1222,7 +1223,7 @@ function saveMed(kind){
 
 /* 진료 기록 */
 function tShot(){
-  if(S.visit.shot){ openPop(`<div class="pt"><span class="t">수치주사</span></div><div class="hv">오늘 기록 완료 · ${S.visit.shotDrug}</div><div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="S.visit.shot=false;S.visit.shotDrug=null;closePop();render();toast('삭제했어요 · 수치주사 기록')">삭제</button><button class="btn sm" onclick="closePop()">닫기</button></div>`); return; }
+  if(S.visit.shot){ openPop(`<div class="pt"><span class="t">수치주사</span></div><div class="hv">오늘 기록 완료 · ${S.visit.shotDrug}</div><div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="S.visit.shot=false;S.visit.shotDrug=null;closePop();render();toast('삭제했어요 · 수치주사 기록')">삭제</button></div>`); return; }
   openPop(`<div class="pt"><span class="t">수치주사</span><span class="psub" style="margin:0;">외래 진료 시</span></div>
     <div class="psub">약제를 골라 주세요</div>
     <div class="hact" id="drugchips">
@@ -1236,11 +1237,11 @@ function saveShot(){
   toast(`기록했어요 · 수치주사 (${S.visit.shotDrug})`);
   openPop(`<div class="pt"><span class="t">수치주사 저장</span></div>
     <div class="prolink" onclick="proMock(PRO_LISTS.shot,'shot')">주사 후 팔다리나 뼈를 아파하면 <b>통증 증상</b>을 기록해 주세요 <span class="ar">→</span></div>
-    <div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="closePop()">닫기</button></div>`);
+    `);
 }
 let transPick=null;
 function tTrans(){
-  if(S.visit.trans){ openPop(`<div class="pt"><span class="t">수혈</span></div><div class="hv">오늘 기록 완료 · ${S.visit.trans}</div><div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="S.visit.trans=null;closePop();render();toast('삭제했어요 · 수혈 기록')">삭제</button><button class="btn sm" onclick="closePop()">닫기</button></div>`); return; }
+  if(S.visit.trans){ openPop(`<div class="pt"><span class="t">수혈</span></div><div class="hv">오늘 기록 완료 · ${S.visit.trans}</div><div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="S.visit.trans=null;closePop();render();toast('삭제했어요 · 수혈 기록')">삭제</button></div>`); return; }
   transPick=null;
   openPop(`<div class="pt"><span class="t">수혈 기록</span><span class="r"><button class="btn pri sm" id="tr-save" disabled onclick="saveTrans()">저장</button></span></div>
     <div class="hact" id="trchips">
@@ -1254,7 +1255,7 @@ function saveTrans(){
   toast('기록했어요 · 수혈 '+transPick);
   openPop(`<div class="pt"><span class="t">수혈 저장</span></div>
     <div class="prolink" onclick="proMock(PRO_LISTS.trans,'trans')">발열, 오한, 호흡곤란, 두드러기가 있다면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>
-    <div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="closePop()">닫기</button></div>`);
+    `);
 }
 function tCbc(){
   if(S.visit.cbc){ openLab('today'); return; }
@@ -1295,7 +1296,7 @@ function cbcDraw(){
     <div class="psub">${psub}</div>
     <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto 0;">${KEYS.map(x=>`<button class="btn" style="padding:10px 0;font-size:18px;${x==='.'&&!decOK?'opacity:.3;pointer-events:none;':''}" onclick="cbKey('${x}')">${x==='back'?'⌫':x}</button>`).join('')}</div>
-    <div class="hact" style="justify-content:center;margin-top:8px;"><button class="btn sm" onclick="cbKey('next')">다음 칸 →</button></div>
+    <div class="hact" style="justify-content:center;margin-top:8px;"><button class="btn sm" onclick="cbKey('next')">다음</button></div>
     <div class="hact" style="margin-top:10px;"><span class="chip ${_cbDate===0?'on':''}" id="cbcd-0" onclick="cbcSetDate(0)">오늘 ${mdOf(0)}${_cbMode==='ocr'?' (촬영일)':''}</span><span class="chip ${_cbDate===-1?'on':''}" id="cbcd-1" onclick="cbcSetDate(-1)">어제 ${mdOf(-1)}</span></div>`);
 }
 function cbcConfirm(mode){
@@ -1333,7 +1334,7 @@ function openDday(){
 }
 function ddayNav(dir){ const cur=_RT.getFullYear()*12+_RT.getMonth()+1; let mi=_c3.y*12+_c3.m+dir; mi=Math.max(cur-6,Math.min(cur+3,mi)); _c3={y:Math.floor((mi-1)/12),m:((mi-1)%12)+1}; renderDday(); }
 function renderDday(){ const {y,m}=_c3; const sel=S.d1off===null?null:ymdOf(S.d1off);
-  openPop(`<div class="pt"><span class="t">D 기준일 — 첫 항암일</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">D 기준일 — 첫 항암일</span><span class="r"></span></div>
   <div class="hv">${S.d1off===null?'아직 등록 전 — D는 표시되지 않아요. 첫 항암일을 고르면 모든 날짜의 D가 계산돼요.':`현재 기준일 : <b>${d1Full()}</b> (D1) — 잘못 등록한 날의 정정과 예정일 변경 겸용 · 전체 D 재계산`}</div>
   <div class="obcal" style="margin-top:8px;"><div class="cm2"><span style="cursor:pointer;color:#9CA3AF;padding:0 8px;" onclick="ddayNav(-1)">‹</span><span>${y}년 ${m}월</span><span style="cursor:pointer;color:#9CA3AF;padding:0 8px;" onclick="ddayNav(1)">›</span></div><div class="gr2">${calGridHTML(y,m,sel,'dday')}</div></div>`);
 }
@@ -1347,7 +1348,7 @@ function qActive(m){
 function openQuestions(){
   const act=S.memos.filter(m=>m.q&&qActive(m));
   const old=S.memos.filter(m=>m.q&&!qActive(m));
-  openPop(`<div class="pt"><span class="t">🙋 진료 시 질문 ${act.length}</span><span class="r">${S.present?'':`<button class="btn sm" onclick="memoWeek=0;memoEditIdx=null;openMemo()">메모 목록</button>`}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">🙋 진료 시 질문 ${act.length}</span><span class="r">${S.present?'':`<button class="btn sm" onclick="memoWeek=0;memoEditIdx=null;openMemo()">메모 목록</button>`}</span></div>
     ${act.map(m=>`<div class="hv">· "${m.text}" <small style="color:var(--mut);">${m.d}</small></div>`).join('')||'<div class="psub">다음 진료 때 물어볼 질문이 없어요</div>'}
     ${old.length?`<div class="psub" style="margin-top:10px;font-weight:800;">지난 질문 ${old.length}</div>${old.map(m=>`<div class="hv" style="color:#98a2ad;">· "${m.text}" <small>${m.d}</small></div>`).join('')}`:''}`);
 }
@@ -1375,7 +1376,7 @@ function openMemo(){
     <button class="ar" onclick="if(memoWeek>=1){toast('더 다음 주 — 데모 범위 외');}else{memoWeek++;openMemo();}">›</button></span></div>`;
   const items=S.memos.map((m,i)=>({m:m,i:i})).filter(x=>x.m.d===memoSel);
   const list=items.map(x=>`<div class="mcard"><span class="ml">${x.m.q?'진료 시 질문':'개인 메모'}</span><span class="ma"><span onclick="memoEditIdx=${x.i};openMemo()">수정</span><span onclick="memoDel(${x.i})">삭제</span></span><div class="mt2">${x.m.text}</div></div>`).join('');
-  openPop(`<div class="pt"><span class="t">메모</span><span class="r"><button class="btn pri sm" onclick="memoEditIdx=null;openMemo()">＋ 새 메모</button><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">메모</span><span class="r"><button class="btn pri sm" onclick="memoEditIdx=null;openMemo()">＋ 새 메모</button></span></div>
     ${wnav}
     <div class="mstrip">${strip}</div>
     <div class="hact" style="margin-top:12px;align-items:center;">
@@ -1412,7 +1413,7 @@ function openItemsPop(){
       <span class="n">${name}</span>
       <span class="tog" onclick="toggleItem('${key}')"><span class="sw ${S.items[key]?'on':''}"></span>${S.items[key]?'켜짐':'꺼짐'}</span>
     </div>`;
-  openPop(`<div class="pt"><span class="t">기록 항목</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">기록 항목</span><span class="r"></span></div>
     ${row2('weight','체중')}
     ${row2('height','키')}
     ${row2('water','수분 섭취량')}
@@ -1438,7 +1439,7 @@ const EM_SIGNALS=[
   ['💤 항암 직후 소변이 줄고 축 처져요','소변량 감소 · 근육 경련 · 심한 무기력']
 ];
 function openEmergency(){
-  openPop(`<div class="pt"><span class="t">미리 준비하는 응급 신호</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">미리 준비하는 응급 신호</span><span class="r"></span></div>
     <div class="hv">아래 신호가 보이면 <b style="color:#B03A2E;">바로</b> 병원 진료를 받으세요. 의식이 흐리거나 숨쉬기 힘들어하면 <b style="color:#B03A2E;">119</b>입니다.</div>
     <div class="hact"><button class="btn" style="background:#22303a;color:#fff;" onclick="toast('전화 연결(tel:) — 병원명·번호는 운영 설정값')">📞 병원에 바로 문의하기 — {병원명} 소아혈액종양 병동</button></div>
     <div class="em-fever">
@@ -2099,7 +2100,7 @@ function obC2Nav(dir){ const base=OBD.d1o?dOff(offOfYMD(OBD.d1o.y,OBD.d1o.m,OBD.
 function parseNext(){ if(typeof OBD==='undefined'||!OBD||!OBD.next)return null; const a=OBD.next.split('.').map(x=>parseInt(x,10)); return {y:a[0],m:a[1],d:a[2]}; }
 function renderNextCal(){
  const {y,m}=OB.c2;
- openPop(`<div class="pt"><span class="t">다음 항암 예정일</span><span class="r"><button class="btn sm" onclick="${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?'closePop()':'closePop();renderOB()')}">${OB._nextFrom==='p1'?'← 가입 정보':'닫기'}</button></span></div>
+ openPop(`<div class="pt"><span class="t">다음 항암 예정일</span><span class="r">${OB._nextFrom==='p1'?'<button class="btn sm" onclick="openP1()">← 가입 정보</button>':''}</span></div>
   <div class="hv">다음 항암 일정이 있다면 선택해 주세요${OBD.d1o?` — 첫 항암일(${OBD.d1o.m}/${OBD.d1o.d}) 뒤부터 선택할 수 있어요`:''}.</div>
   <div class="obcal" style="margin-top:8px;"><div class="cm2"><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(-1)">‹</span><span>${y}년 ${m}월</span><span style="cursor:pointer;color:#9CA3AF;" onclick="obC2Nav(1)">›</span></div><div class="gr2">${calGridHTML(y,m,parseNext(),'next')}</div></div>
   <div class="hact" style="justify-content:flex-end;margin-top:10px;"><button class="btn sm" onclick="OBD.next=null;OBD.nextNA=true;${OB._nextFrom==='p1'?'openP1()':(OB._nextFrom==='sheet'?`closePop();render();toast('다음 항암 예정일을 지웠어요')`:'closePop();renderOB()')}">${OB._nextFrom==='sheet'?'예정일 지우기':'아직 몰라요'}</button></div>`);
@@ -2271,7 +2272,7 @@ function obDx(){ openPop(`<div class="pt"><span class="t">진단명 — 소아�
  <div class="hact" style="flex-wrap:wrap;max-height:380px;overflow-y:auto;">${DXLIST.map(x=>`<span class="chip ${OBD.dx===x?'on':''}" onclick="OBD.dx='${x}';closePop();renderOB()">${x}</span>`).join('')}</div>`); }
 function obYm(){ renderYm(); }
 function renderYm(){ const y=OB.ymY;
- openPop(`<div class="pt"><span class="t">진단 시기 — 연 · 월</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+ openPop(`<div class="pt"><span class="t">진단 시기 — 연 · 월</span><span class="r"></span></div>
  <div class="hact" style="justify-content:center;gap:20px;margin-top:8px;align-items:center;">
    <button class="btn sm" onclick="OB.ymY=Math.max(2018,OB.ymY-1);renderYm()">‹</button><b style="font-size:20px;color:#374151;">${y}년</b><button class="btn sm" ${y>=_RT.getFullYear()?'disabled style="opacity:.4;"':''} onclick="OB.ymY=Math.min(_RT.getFullYear(),OB.ymY+1);renderYm()">›</button></div>
  <div class="hact" style="flex-wrap:wrap;margin-top:12px;justify-content:center;">${[...Array(12)].map((_,i)=>{const m=i+1;const dis=y===_RT.getFullYear()&&m>_RT.getMonth()+1;const on=OBD.ym===y+'. '+m;
@@ -2287,7 +2288,7 @@ function obFinish(skip){
 let cmStep=0;
 function cmRect(el){ const tb=$('tablet'); const t=tb.getBoundingClientRect(), r=el.getBoundingClientRect(); return {x:r.left-t.left-tb.clientLeft,y:r.top-t.top-tb.clientTop,w:r.width,h:r.height}; }
 function cmStart(){ cmStep=0; cmRender(); }
-function cmNext(){ cmStep++; if(cmStep>5){ $('cmov').hidden=true; cmStep=0; toast('준비 끝 — 오늘 칸부터 기록해 보세요'); return; } cmRender(); }
+function cmNext(){ cmStep++; if(cmStep>6){ $('cmov').hidden=true; cmStep=0; toast('준비 끝 — 오늘 칸부터 기록해 보세요'); return; } cmRender(); }
 function cmRender(){
  function pad(q){ return {x:q.x-5,y:q.y-5,w:q.w+10,h:q.h+10}; }
  const ov=$('cmov'); ov.hidden=false;
@@ -2299,18 +2300,19 @@ function cmRender(){
      <span class="cmbtn" style="margin-top:16px;padding:8px 26px;">다음</span></div>`;
   return;
  }
- const axes=['','기록','기록','기록','열람','환아 모드'];
- const copy=['','오늘, 터치 한 번이면<br>기록이 시작돼요.','필요 없는 항목은 꺼도 괜찮아요.<br>서준이에게 맞는 기록만 남겨요.','껐던 항목도 언제든<br>다시 켜서 기록할 수 있어요.','매일 쌓아온 기록이 한 화면에 모여요.<br>진료실 대화가 더 정확해져요.','서준이의 화면으로 전환돼요.<br>귀여운 캐릭터와 함께 부작용을 기록해요.'];
+ const axes=['','기록','기록','기록','기록','열람','환아 모드'];
+ const copy=['','오늘, 터치 한 번이면<br>기록이 시작돼요.','진료가 있는 날엔 날짜 아래<br>[＋ 진료 확인]을 눌러요 — 키·CBC 같은 진료 항목이 열려요.','필요 없는 항목은 꺼도 괜찮아요.<br>서준이에게 맞는 기록만 남겨요.','껐던 항목도 언제든<br>다시 켜서 기록할 수 있어요.','매일 쌓아온 기록이 한 화면에 모여요.<br>진료실 대화가 더 정확해져요.','서준이의 화면으로 전환돼요.<br>귀여운 캐릭터와 함께 부작용을 기록해요.'];
  let r, tipStyle='';
  if(cmStep===1){ const hd=$('sheet').children[1+TIDX], hr=cmRect(hd), sr=cmRect($('sheet')), ww=cmRect($('sheetwrap'));
    const bot=Math.min(sr.y+sr.h, ww.y+ww.h);
    r={x:hr.x-4,y:hr.y-4,w:hr.w+8,h:bot-hr.y+4}; tipStyle=`left:${Math.max(24,r.x-330)}px;top:${r.y+70}px;`; }
- else if(cmStep===2){ const el=[...document.querySelectorAll('#sheet .rl')].find(e=>e.textContent.replace('⋯','').trim().startsWith('체중')); r=pad(cmRect(el)); tipStyle=`left:${r.x+r.w+18}px;top:${Math.max(70,r.y-8)}px;`; }
- else if(cmStep===3){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('＋ 항목')); r=pad(cmRect(el)); tipStyle=`left:${r.x-160}px;top:${r.y+r.h+16}px;`; }
- else if(cmStep===4){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('의료진 열람')); r=pad(cmRect(el)); tipStyle=`right:28px;top:${r.y+r.h+16}px;`; }
+ else if(cmStep===2){ const hd=$('sheet').children[1+TIDX]; r=pad(cmRect(hd)); tipStyle=`left:${Math.max(24,r.x-330)}px;top:${r.y+r.h+14}px;`; }
+ else if(cmStep===3){ const el=[...document.querySelectorAll('#sheet .rl')].find(e=>e.textContent.replace('⋯','').trim().startsWith('체중')); r=pad(cmRect(el)); tipStyle=`left:${r.x+r.w+18}px;top:${Math.max(70,r.y-8)}px;`; }
+ else if(cmStep===4){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('＋ 항목')); r=pad(cmRect(el)); tipStyle=`left:${r.x-160}px;top:${r.y+r.h+16}px;`; }
+ else if(cmStep===5){ const el=[...document.querySelectorAll('.tt2 .pill')].find(e=>e.textContent.includes('의료진 열람')); r=pad(cmRect(el)); tipStyle=`right:28px;top:${r.y+r.h+16}px;`; }
  else { const el=document.querySelector('.tt1 .swap'); r=pad(cmRect(el)); tipStyle=`right:24px;top:${r.y+r.h+18}px;`; }
  ov.innerHTML=`<div class="cmhole" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;"></div>
-  <div class="cmtipbox" style="${tipStyle}"><b class="step">${cmStep} / 5 · ${axes[cmStep]}</b><br>${copy[cmStep]}<br><span class="cmbtn">${cmStep===5?'확인':'다음'}</span></div>`;
+  <div class="cmtipbox" style="${tipStyle}"><b class="step">${cmStep} / 6 · ${axes[cmStep]}</b><br>${copy[cmStep]}<br><span class="cmbtn">${cmStep===6?'확인':'다음'}</span></div>`;
 }
 /* ---- 기능별 첫 사용 툴팁 ---- */
 const FTIP={emg:false,memo:false,sym:false,p1:false};
@@ -2333,7 +2335,7 @@ function ftipClose(){ $('ftipov').hidden=true; const k=ftipKey; ftipKey=null; if
 function openP1(){
  const d=OBD;
  const cvcVal=d.cvc==='none'?`<span style='color:#92400E;'>아직 없어요</span>`:(d.cvcType==='잘 모르겠어요'?'삽입됨 · 종류 확인 중':(d.cvcType||'히크만'));
- openPop(`<div class="pt"><span class="t">가입 정보</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+ openPop(`<div class="pt"><span class="t">가입 정보</span><span class="r"></span></div>
   <div style="margin-top:6px;">
   <div class="p1row"><span class="pk">이름</span><span class="pv">이서준 (2018. 05. 30)<small>병원 등록 정보</small></span></div>
   <div class="p1row"><span class="pk">키 · 체중</span><span class="pv">${d.ht||'118.2'}cm · ${d.wt||'21.4'}kg</span></div>
