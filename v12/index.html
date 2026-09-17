@@ -1743,8 +1743,7 @@ const CH={
       :`<span style="position:absolute;top:7px;right:7px;width:24px;height:24px;border-radius:50%;background:${sel?T:'rgba(255,255,255,.8)'};color:${sel?'#fff':'#bbb'};font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;">✓</span>`}
     </div>`;
    }).join('');
-   return `<div style="font-size:15px;font-weight:800;color:#66707b;display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;border-radius:50%;flex:none;background:url('${cimg({Day:'day1',Sunset:'sunset1',Night:'night1'}[sec]+'.png')}') center/cover;"></span>${sec}</div>
-   <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">${cells}</div>`;
+   return `<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;">${cells}</div>`;
   }).join('');
   return `<div style="position:absolute;inset:64px 0 0 0;display:flex;">
    <div style="width:330px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 30px 30px;gap:12px;">
