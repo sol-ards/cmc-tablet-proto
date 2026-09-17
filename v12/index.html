@@ -226,6 +226,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .chip.mt.on{background:#fff;border-color:var(--blue);color:var(--blue);font-weight:700;}
 .tchip{display:inline-flex;align-items:center;gap:8px;background:#F9FAFB;color:#4B5563;font-size:16px;font-weight:400;border-radius:4px;padding:4px 8px;cursor:pointer;}
 .btn{display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;border-radius:99px;padding:8px 16px;min-height:44px;border:0;cursor:pointer;white-space:nowrap;background:#F3F4F6;color:#4B5563;font-family:inherit;}
+.btn:disabled{opacity:.45;cursor:default;}
 .btn.pri{background:var(--blue);color:#fff;}
 .btn.warn{background:var(--red);color:#fff;}
 .btn.done{background:var(--greenbg);color:var(--green);}
@@ -858,10 +859,8 @@ function openLab(i){
   if(!v){ toast('CBC 기록이 없어요'); return; }
   const dd=today?mdOf(0):DAYS[i].d;
   const lab=today?dLab(0):dLab(DAYS[i].off);
-  const ctx=today?(S.visitAsk==='inpat'?'오늘 · 입원':'오늘 · 외래'):(DAYS[i].inpat?'입원':'외래');
   const src=today?(S.visit.cbcSrc==='manual'?`검사일 ${dd} · 직접 입력`:`검사일 ${dd} (촬영일)`):`검사일 ${dd}`;
   openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${today&&!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="S.visit.cbc=false;closePop();render();toast('삭제했어요 · CBC 기록')">삭제</button>`:''}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
-    <div class="psub" style="margin:0;">${ctx} · 셀 = ANC 대표값</div>
     <div class="hv">WBC <b>${v.wbc}</b> · Hb <b>${v.hb}</b> · Plt <b>${v.plt}</b> · Reti ${v.reti} · ANC <b>${v.anc}</b><br>${src}</div>`);
 }
 
@@ -1195,23 +1194,29 @@ function openSymGuide(sym,g,day,fromNote){
 }
 
 /* 항암제 · 항생제 — 전사 기록 */
-let medPick=null;
+let medPick=null, medCustom='';
 function tMed(kind){
   curKey=kind;
   const M=MEDS[kind], cur=S[kind];
-  openPop(`<div class="pt"><span class="t">${M.name} — 옮겨 적기</span><span class="r">${seqHead()}<button class="btn pri sm" ${medPick?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button></span></div>
+  const custom=medPick==='__custom';
+  const canSave=custom?!!medCustom.trim():!!medPick;
+  openPop(`<div class="pt"><span class="t">${M.name}</span><span class="r">${seqHead()}<button class="btn pri sm" ${canSave?'':'disabled'} id="med-save" onclick="saveMed('${kind}')">저장</button></span></div>
     ${cur?`<div class="hv">오늘 기록 : <b>${cur}</b> — 다시 고르면 덮어써요</div>`:''}
-    <div class="hact" id="medchips">${M.drugs.map(d=>`<span class="chip ${medPick===d?'on':''}" onclick="pickMed('${kind}','${d}')">${d}</span>`).join('')}</div>
+    <div class="hact" id="medchips">${M.drugs.map(d=>`<span class="chip ${d==='직접 입력'?(custom?'on':''):(medPick===d?'on':'')}" onclick="pickMed('${kind}','${d}')">${d}</span>`).join('')}</div>
+    ${custom?`<div class="hact"><input class="obinp" id="med-custom" placeholder="약제명을 입력해 주세요" style="flex:1;padding:9px 12px;font-size:15px;" value="${medCustom.replace(/"/g,'&quot;')}" oninput="medCustom=this.value;$('med-save').disabled=!this.value.trim()"></div>`:''}
     ${cur?`<div class="hact" style="justify-content:flex-end;"><button class="btn sm" onclick="S['${kind}']=null;closePop();render();toast('삭제했어요 · ${M.name} 기록')">삭제</button></div>`:''}`);
+  if(custom){ const el=$('med-custom'); el.focus(); el.setSelectionRange(el.value.length,el.value.length); }
 }
 function pickMed(kind,d){
-  if(d==='직접 입력'){ toast('약제명 직접 입력 — 데모 범위 외'); return; }
-  medPick=d; tMed(kind);
+  if(d==='직접 입력'){ medPick='__custom'; } else { medPick=d; medCustom=''; }
+  tMed(kind);
 }
 function saveMed(kind){
-  S[kind]=medPick;
+  const name=medPick==='__custom'?medCustom.trim():medPick;
+  if(!name) return;
+  S[kind]=name;
   toast(`기록했어요 · ${MEDS[kind].name} ${S[kind]}`, ()=>{S[kind]=null;});
-  medPick=null;
+  medPick=null; medCustom='';
   closePop(); render();
 }
 
@@ -1223,7 +1228,7 @@ function tShot(){
     <div class="hact" id="drugchips">
       ${['그라신','뉴라스타','류코스팀','직접 입력'].map(d=>`<span class="chip" onclick="pickDrug(this,'${d}')">${d}</span>`).join('')}
     </div>
-    <div class="hact" style="margin-top:14px;"><button class="btn pri" id="shot-save" disabled onclick="saveShot()">맞았어요</button><button class="btn" onclick="closePop()">안 맞았어요</button></div>`);
+    <div class="hact" style="margin-top:14px;"><button class="btn pri" id="shot-save" disabled onclick="saveShot()">맞았어요</button><button class="btn" onclick="closePop();toast('수치주사 — 안 맞은 걸로 확인했어요 (기록 없음)')">안 맞았어요</button></div>`);
 }
 function pickDrug(el,d){ S.visit.shotDrug=d; document.querySelectorAll('#drugchips .chip').forEach(c=>c.classList.remove('on')); el.classList.add('on'); $('shot-save').disabled=false; }
 function saveShot(){
@@ -1262,24 +1267,49 @@ function cbcScan(){
     <div style="font-size:12.5px;font-weight:800;color:#33506e;background:#eef2f8;border-radius:12px;padding:14px;text-align:center;margin-top:12px;">🔍 인식 중 — 값을 읽고 있어요 …</div>`);
   setTimeout(()=>cbcConfirm('ocr'),1100);
 }
-let _cbMode='ocr', _cbDate=0;
+let _cbMode='ocr', _cbDate=0, _cbF='wbc', _cbV={}, _cbTouched={}, _cbWarned=false;
+const CB_FIELDS=[['wbc','WBC','/µL · %',{int:1,min:100,max:100000}],['hb','Hb','g/dL',{hb:1,min:3,max:25}],['plt','Plt','×10³/µL',{int:1,min:1,max:1000}],['reti','Reti','%',{dec:1,min:0,max:30}],['anc','ANC','/µL',{int:1,min:0,max:60000}]];
 function cbcSetDate(off){ _cbDate=off; $('cbcd-0').classList.toggle('on',off===0); $('cbcd-1').classList.toggle('on',off===-1); }
-function cbcConfirm(mode){
-  _cbMode=mode; _cbDate=0;
-  const F=[['wbc','WBC','/µL · %'],['hb','Hb','g/dL'],['plt','Plt','×10³/µL'],['reti','Reti','%'],['anc','ANC','/µL']];
-  const pre=(mode==='ocr'||mode==='edit');
-  const title=mode==='ocr'?'인식 결과 확인':(mode==='edit'?'CBC 수정':'CBC 직접 입력');
-  const psub=mode==='ocr'?'인식된 값을 확인하고, 다르면 칸을 눌러 고쳐 주세요.':(mode==='edit'?'값을 고치고 저장해 주세요.':'검사 결과지의 값을 입력해 주세요.');
+function cbSel(k){ _cbF=k; cbcDraw(); }
+function cbKey(key){
+  const spec=CB_FIELDS.find(f=>f[0]===_cbF)[3];
+  if(!_cbTouched[_cbF]){ _cbV[_cbF]=''; _cbTouched[_cbF]=true; }
+  let v=_cbV[_cbF];
+  if(key==='next'){ const i=CB_FIELDS.findIndex(f=>f[0]===_cbF); _cbF=CB_FIELDS[(i+1)%CB_FIELDS.length][0]; cbcDraw(); return; }
+  if(key==='back'){
+    if(spec.hb){ let d=v.replace('.',''); d=d.slice(0,-1); _cbV[_cbF]=d.length>1?d.slice(0,-1)+'.'+d.slice(-1):d; }
+    else _cbV[_cbF]=v.slice(0,-1);
+    cbcDraw(); return;
+  }
+  if(key==='.'){ if(spec.dec&&v&&!v.includes('.')) _cbV[_cbF]=v+'.'; cbcDraw(); return; }
+  if(spec.hb){ let d=v.replace('.','')+key; if(d.length>3)return; _cbV[_cbF]=d.length>1?d.slice(0,-1)+'.'+d.slice(-1):d; }
+  else { if(v.replace('.','').length>=6)return; _cbV[_cbF]=v+key; }
+  cbcDraw();
+}
+function cbcDraw(){
+  const title=_cbMode==='ocr'?'인식 결과 확인':(_cbMode==='edit'?'CBC 수정':'CBC 직접 입력');
+  const psub=_cbMode==='ocr'?'인식된 값을 확인하고, 다르면 칸을 눌러 고쳐 주세요.':(_cbMode==='edit'?'값을 고치고 저장해 주세요.':'검사 결과지의 값을 입력해 주세요. 없는 값은 비워 두면 돼요.');
+  const KEYS=['1','2','3','4','5','6','7','8','9','.','0','back'];
+  const decOK=CB_FIELDS.find(f=>f[0]===_cbF)[3].dec;
   openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" onclick="saveCbcV()">저장</button></span></div>
     <div class="psub">${psub}</div>
-    ${F.map(([k,n,u])=>`<div style="display:flex;align-items:center;gap:10px;margin-top:9px;"><span style="flex:none;width:64px;font-size:14px;font-weight:700;color:#33506e;">${n}</span><input class="obinp" id="cbcv-${k}" style="flex:1;padding:9px 12px;font-size:15px;" value="${pre?CBCV[k]:''}"><span style="flex:none;font-size:12px;color:#9CA3AF;width:66px;">${u}</span></div>`).join('')}
-    <div class="psub" style="margin-top:12px;">검사일 — 값이 채워질 날짜예요</div>
-    <div class="hact"><span class="chip on" id="cbcd-0" onclick="cbcSetDate(0)">오늘 ${mdOf(0)}${_cbMode==='ocr'?' (촬영일)':''}</span><span class="chip" id="cbcd-1" onclick="cbcSetDate(-1)">어제 ${mdOf(-1)}</span></div>`);
+    <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto 0;">${KEYS.map(x=>`<button class="btn" style="padding:10px 0;font-size:18px;${x==='.'&&!decOK?'opacity:.3;pointer-events:none;':''}" onclick="cbKey('${x}')">${x==='back'?'⌫':x}</button>`).join('')}</div>
+    <div class="hact" style="justify-content:center;margin-top:8px;"><button class="btn sm" onclick="cbKey('next')">다음 필드 →</button></div>
+    <div class="hact" style="margin-top:10px;"><span class="chip ${_cbDate===0?'on':''}" id="cbcd-0" onclick="cbcSetDate(0)">오늘 ${mdOf(0)}${_cbMode==='ocr'?' (촬영일)':''}</span><span class="chip ${_cbDate===-1?'on':''}" id="cbcd-1" onclick="cbcSetDate(-1)">어제 ${mdOf(-1)}</span></div>`);
+}
+function cbcConfirm(mode){
+  _cbMode=mode; _cbDate=0; _cbF='wbc'; _cbTouched={}; _cbWarned=false;
+  const pre=(mode==='ocr'||mode==='edit');
+  _cbV={}; ['wbc','hb','plt','reti','anc'].forEach(k=>{ _cbV[k]=pre?(CBCV[k]==='—'?'':CBCV[k]):''; if(pre&&_cbV[k]) _cbTouched[k]=false; });
+  cbcDraw();
 }
 function saveCbcV(){
   const vals={}; let any=false;
-  ['wbc','hb','plt','reti','anc'].forEach(k=>{const el=$('cbcv-'+k); const v=el?el.value.trim():''; vals[k]=v||'—'; if(v)any=true;});
+  ['wbc','hb','plt','reti','anc'].forEach(k=>{const v=(_cbV[k]||'').trim(); vals[k]=v||'—'; if(v)any=true;});
   if(!any){ toast('값을 입력해 주세요'); return; }
+  const off=CB_FIELDS.filter(([k,,,s])=>{ const v=vals[k]; if(v==='—')return false; const n=parseFloat(v.replace(/,/g,'')); return isFinite(n)&&(n<s.min||n>s.max); }).map(([,n])=>n);
+  if(off.length&&!_cbWarned){ _cbWarned=true; toast(`값을 한 번 더 확인해 주세요 · ${off.join(' · ')} — 자릿수 오류가 아닌지 확인 후 다시 저장`); return; }
   if(_cbDate===-1){
     const hi=DAYS.find(d=>d.off===-1).hidx;
     H[hi].cbcv=vals; H[hi].cbc='A)'+vals.anc;
@@ -2270,7 +2300,7 @@ function cmRender(){
   return;
  }
  const axes=['','기록','기록','기록','열람','환아 모드'];
- const copy=['','오늘, 터치 한 번이면<br>기록이 시작돼요.','필요 없는 항목은 꺼도 괜찮아요.<br>서준이에게 맞는 기록만 남겨요.','껐던 항목도 언제든<br>다시 켜서 기록할 수 있어요.','매일 쌓아온 기록이 한 화면에 모여요.<br>진료실 대화가 더 정확해져요.','서준이의 화면으로 전환돼요.<br>귀여운 캐릭터와 함께 부작용 증상을 기록해요.'];
+ const copy=['','오늘, 터치 한 번이면<br>기록이 시작돼요.','필요 없는 항목은 꺼도 괜찮아요.<br>서준이에게 맞는 기록만 남겨요.','껐던 항목도 언제든<br>다시 켜서 기록할 수 있어요.','매일 쌓아온 기록이 한 화면에 모여요.<br>진료실 대화가 더 정확해져요.','서준이의 화면으로 전환돼요.<br>귀여운 캐릭터와 함께 부작용을 기록해요.'];
  let r, tipStyle='';
  if(cmStep===1){ const hd=$('sheet').children[1+TIDX], hr=cmRect(hd), sr=cmRect($('sheet')), ww=cmRect($('sheetwrap'));
    const bot=Math.min(sr.y+sr.h, ww.y+ww.h);
