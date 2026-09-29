@@ -30,6 +30,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .tt1 .ttl{font-size:19px;font-weight:700;color:#1f2937;}
 .tt1 .sp,.tt2 .sp{flex:1;}
 .tbtn2{border:0;background:none;font-size:12.5px;font-weight:800;color:#33506e;cursor:pointer;padding:4px 3px;font-family:inherit;white-space:nowrap;}
+.tstep{width:34px;height:34px;border-radius:50%;border:1.4px solid #D8DEE6;background:#fff;color:#4B5563;font-size:15px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-family:inherit;}
 .tbtn2.warn{color:var(--red);}
 .tt2{display:flex;align-items:center;gap:8px;width:100%;}
 .wnav{display:inline-flex;align-items:center;gap:8px;background:#fff;border:0;border-radius:22px;padding:7px 12px;font-size:16px;font-weight:600;color:#374151;}
@@ -487,7 +488,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 <div class="topbar">
   <h1>캔모어차일드 보호자 모드 — 태블릿 신호등 기록 프로토타입 <span class="ver">v2.0 작업본 · sol 박지현 · 2026-09-28</span></h1>
 </div>
-<div class="hint"><b>연속 입력 UX 재설계 3차(260923 · v1.6 피드백 반영)</b> — ① <b>체온</b> : [측정 시간] = 별도 창 없이 같은 키패드 창에서 시간 칸 선택(버튼에 선택 시각 표시 · 재터치 해제) → 온도 입력 = 그 시각으로 기록 · 창 유지 · 다음 빈 칸 자동 이동, 버튼 = 평소 [기록] / 시간 칸 지정 중 [다음] · 기록 없는 지난 날짜 열 = 회색 [＋](터치 = 그 날짜 체온 창, 시간 칸 자동 선택) ② <b>오늘 진료 변경</b> = 남은 진료 기록 나열 + [기록 지우고 변경](되돌리기) · 키 기록에 [기록 지우기] 추가 ③ <b>수치주사</b> : [안 맞았어요]도 기록 — 셀 "안 맞음" · 재터치 = 변경 · 삭제(지난 날짜 공통) ④ <b>항생제</b> : [사용 안 함] 버튼 — 셀 "사용 안 함" · 약제 추가 시 자동 해제(지난 날짜 공통) ⑤ <b>중심정맥관</b> : [특이사항 없음]만 눌러도 셀 노출(오늘 · 지난 날짜 공통, 지난 날짜 팝오버에 관찰 추가) ⑥ <b>피드백 규칙 재기획</b> : 저장 = 가벼운 확인 토스트(되돌리기 없음 — 수정 · 삭제는 항상 셀 · 칩에서) / 삭제 = 되돌리기 버튼이 있는 강조 스낵바 5초(크기 · 대비 상향). 이 외 = v1.6과 동일(몰아 기록 폐지 · 지난 날짜 기록 · 수정 · 수분 v1.5 · 새로고침 온보딩 생략 · 측정 부위 구분 = SMC 확인). <b>체온 = 종이 신호등 방식(260928 · v2.0)</b> : 체온 셀 · [＋ 체온 기록] 터치 = 그 날 하루 그래프가 크게 펼쳐짐(0.5℃ 격자 · 37.5 빨간 기준선 · 시간축 오전1~오후11) → <b>누르면 손가락 위 십자선 + 시각 · 체온 라벨 → 끌어서 맞추고 떼면 기록</b>(30분 · 0.1℃ 스냅, 검지 가림 보정 · 발열 시 1시간 간격도 자유) → 점 옆 말풍선에서 ‹› 30분 · −＋ 0.1℃ 미세조정 · 삭제 · ✓ 닫기. 기존 점 근처를 누르면 그 점을 집어 이동. 같은 시간대 재터치 = 덮어씀 · 점 터치 = 수정 · 오늘은 지금 이후 회색(기록 불가 · "지금" 표시선) · 기준 초과 = 창 안 배너. 키패드 · 시간 칸 · 저장 버튼 폐지 — 그때그때 · 몰아 적기 · 과거 소급이 전부 "펼쳐서 찍기" 하나. 측정 부위 칩 = 우상단 · 음성 입력 = 하단 안내에서 진입. 저장류 버튼 = 값 입력 전 무채색 · 활성 시에만 색. <b>기록창 폴리시(260928)</b> : 과거 미기록 ＋ = 오늘 ＋와 같은 크기 · 대폭 낮춘 채도 · 과거 진료 확인도 같은 22px ＋ · 체온 · 체중 그래프 = 기록 없는 날짜 구간만 저채도 실선(기록일 안쪽 = 진한 실선 · 열 경계에서 분리) · 체중 그래프 과거 빈 날에도 ＋. <b>온보딩 수정(260928)</b> : 첫 항암일 = 필드 터치 → 팝업 달력(인라인 펼침 폐지 — 가입 화면 스크롤 제거, 예정일 팝업과 문법 통일) · 주치의 플레이스홀더 = "주치의 성함을 입력해 주세요"(주치의 리스트 선택 방식 = SMC 확인 후 검토) · 항암제 직접 등록 안내 = "목록에 없는 항암제는 입력하고 [추가]를 누르면 선택돼요".</div>
+<div class="hint"><b>연속 입력 UX 재설계 3차(260923 · v1.6 피드백 반영)</b> — ① <b>체온</b> : [측정 시간] = 별도 창 없이 같은 키패드 창에서 시간 칸 선택(버튼에 선택 시각 표시 · 재터치 해제) → 온도 입력 = 그 시각으로 기록 · 창 유지 · 다음 빈 칸 자동 이동, 버튼 = 평소 [기록] / 시간 칸 지정 중 [다음] · 기록 없는 지난 날짜 열 = 회색 [＋](터치 = 그 날짜 체온 창, 시간 칸 자동 선택) ② <b>오늘 진료 변경</b> = 남은 진료 기록 나열 + [기록 지우고 변경](되돌리기) · 키 기록에 [기록 지우기] 추가 ③ <b>수치주사</b> : [안 맞았어요]도 기록 — 셀 "안 맞음" · 재터치 = 변경 · 삭제(지난 날짜 공통) ④ <b>항생제</b> : [사용 안 함] 버튼 — 셀 "사용 안 함" · 약제 추가 시 자동 해제(지난 날짜 공통) ⑤ <b>중심정맥관</b> : [특이사항 없음]만 눌러도 셀 노출(오늘 · 지난 날짜 공통, 지난 날짜 팝오버에 관찰 추가) ⑥ <b>피드백 규칙 재기획</b> : 저장 = 가벼운 확인 토스트(되돌리기 없음 — 수정 · 삭제는 항상 셀 · 칩에서) / 삭제 = 되돌리기 버튼이 있는 강조 스낵바 5초(크기 · 대비 상향). 이 외 = v1.6과 동일(몰아 기록 폐지 · 지난 날짜 기록 · 수정 · 수분 v1.5 · 새로고침 온보딩 생략 · 측정 부위 구분 = SMC 확인). <b>체온 = 종이 신호등 방식(260928 · v2.0)</b> : 체온 셀 · [＋ 체온 기록] 터치 = 그 날 하루 그래프가 크게 펼쳐짐(0.5℃ 격자 · 37.5 빨간 기준선 · 시간축 오전1~오후11) → <b>누르면 손가락 위 십자선 + 시각 · 체온 라벨 → 끌어서 맞추고 떼면 기록</b>(30분 · 0.1℃ 스냅, 검지 가림 보정 · 발열 시 1시간 간격도 자유) → 점 옆 말풍선에서 ‹› 30분 · −＋ 0.1℃ 미세조정 · 삭제 · ✓ 닫기. 기존 점 근처를 누르면 그 점을 집어 이동. 같은 시간대 재터치 = 덮어씀 · 점 터치 = 수정 · 오늘은 지금 이후 회색(기록 불가 · "지금" 표시선) · 기준 초과 = 창 안 배너. 키패드 · 시간 칸 · 저장 버튼 폐지 — 그때그때 · 몰아 적기 · 과거 소급이 전부 "펼쳐서 찍기" 하나. 측정 부위 = 프로토 미표시(수집 여부 SMC 확인) · 음성 입력 폐지 · 기기 연동 = 우상단 아이콘(추후 기획) · 시간 표기 = 그래프 상단 · 도구 상자 = 그래프 아래 고정(도트 안 가림 · 신규 기록 시 미표시, 점 터치 시 표시 · [완료] 닫기) · 기준 초과 배너 = [응급 신호 안내] 열람 = 확인 간주(재표시 없음 · 닫기 = 체온 창 복귀) · "현재" 표시선. 저장류 버튼 = 값 입력 전 무채색 · 활성 시에만 색. <b>기록창 폴리시(260928)</b> : 과거 미기록 ＋ = 오늘 ＋와 같은 크기 · 대폭 낮춘 채도 · 과거 진료 확인도 같은 22px ＋ · 체온 · 체중 그래프 = 기록 없는 날짜 구간만 저채도 실선(기록일 안쪽 = 진한 실선 · 열 경계에서 분리) · 체중 그래프 과거 빈 날에도 ＋. <b>온보딩 수정(260928)</b> : 첫 항암일 = 필드 터치 → 팝업 달력(인라인 펼침 폐지 — 가입 화면 스크롤 제거, 예정일 팝업과 문법 통일) · 주치의 플레이스홀더 = "주치의 성함을 입력해 주세요"(주치의 리스트 선택 방식 = SMC 확인 후 검토) · 항암제 직접 등록 안내 = "목록에 없는 항암제는 입력하고 [추가]를 누르면 선택돼요".</div>
 
 <div class="stage">
   <div class="tablet" id="tablet">
@@ -1159,10 +1160,9 @@ function keypadPop(opt){
   window.kpReset=()=>{ digits=''; window.kpIn(''); };
   window.kpIn('');
 }
-const VOICE_DEMO={'체온':{v:'37.2',u:'℃',tool:'temp'},'체중':{v:'21.8',u:'kg',tool:'wk'},'키':{v:'118.5',u:'cm',tool:'ht'}};
-function voiceTemp(v){ TCTX=null; const now=new Date(); S.temp.readings.push({h:now.getHours()+now.getMinutes()/60,v:parseFloat(v)}); S.temp.readings.sort((a,b)=>a.h-b.h); S.temp.last=v; render(); tempCanvas(null); toast(`기록했어요 · ${v}℃ · ${nowHM()} (음성)`); }
+const VOICE_DEMO={'체중':{v:'21.8',u:'kg',tool:'wk'},'키':{v:'118.5',u:'cm',tool:'ht'}};
 function voicePop(what){
-  const d=VOICE_DEMO[what]||VOICE_DEMO['체온'];
+  const d=VOICE_DEMO[what]||VOICE_DEMO['체중'];
   openPop(`<div class="pt"><span class="t">${what} — 말씀해 주세요</span><span style="font-size:22px;">🎤</span></div>
   <div class="bigval" id="vc-val" style="color:#9aa6b0;font-size:30px;">듣는 중 …</div>
   <div class="hact" id="vc-act" style="justify-content:flex-end;"></div>
@@ -1170,12 +1170,12 @@ function voicePop(what){
   setTimeout(()=>{
     if(!$('vc-val'))return;
     $('vc-val').innerHTML=`${d.v}<small style="font-size:14px;color:#9aa6b0;">${d.u}</small>`; $('vc-val').style.color='';
-    $('vc-act').innerHTML=`<button class="btn sm" onclick="voicePop('${what}')">다시 말하기</button><button class="btn pri sm" onclick="${d.tool==='temp'?`voiceTemp('${d.v}')`:`openTool('${d.tool}');kpSetVoice('${d.v}')`}">확인</button>`;
+    $('vc-act').innerHTML=`<button class="btn sm" onclick="voicePop('${what}')">다시 말하기</button><button class="btn pri sm" onclick="openTool('${d.tool}');kpSetVoice('${d.v}')">확인</button>`;
   },1000);
 }
 
 /* 체온 — 종이 신호등 방식 : 하루 그래프를 크게 펼쳐 점을 찍어 기록 (찍기 = 기록 · 30분 스냅 · 말풍선 미세조정) */
-let tempSite=null, tempWarn=null, TCTX=null, TCB=null;
+let tempWarn=null, TWD=false, TCTX=null, TCB=null;
 const TSLOTS=[1,3,5,7,9,11,13,15,17,19,21,23];
 const TR={min:35.6,max:39.6};
 function tempSrc(){ return TCTX==null?S.temp.readings:H[TCTX].temp; }
@@ -1183,12 +1183,12 @@ function tTemp(){ tempCanvas(null); }
 function tcX(h){ return h/24*100; }
 function tcY(v){ return (TR.max-Math.min(TR.max,Math.max(TR.min,v)))/(TR.max-TR.min)*100; }
 function tempCanvas(hidx){
-  if(hidx!==undefined){ if(TCTX!==hidx){ TCB=null; tempWarn=null; } TCTX=hidx; }
+  if(hidx!==undefined){ TCB=null; tempWarn=null; TWD=false; TCTX=hidx; }
   const src=tempSrc();
   const today=TCTX==null;
   const now=new Date(); const nowH=now.getHours()+now.getMinutes()/60;
   const n=src.length, hi=n?Math.max(...src.map(r=>r.v)):null;
-  const warn=tempWarn?`<div class="hv" style="background:#FEF2F2;border-radius:10px;padding:9px 12px;margin:6px 0 0;color:#B03A2E;font-weight:700;">${tempWarn}℃ — 병원 연락 기준(37.5℃)을 넘었어요 <button class="btn warn sm" style="margin-left:6px;" onclick="openEmergency()">응급 신호 안내</button></div>`:'';
+  const warn=tempWarn?`<div class="hv" style="background:#FEF2F2;border-radius:10px;padding:9px 12px;margin:6px 0 0;color:#B03A2E;font-weight:700;">${tempWarn}℃ — 병원 연락 기준(37.5℃)을 넘었어요 <button class="btn warn sm" style="margin-left:6px;" onclick="tempWarn=null;TWD=true;window._emgFrom='temp';openEmergency()">응급 신호 안내</button></div>`:'';
   // 격자 : 0.5℃ 가로선(37.5 = 빨강) + 1시간 세로선(2시간 = 진하게)
   let grid='';
   for(let v=36.0; v<=39.5; v+=0.5){
@@ -1200,33 +1200,33 @@ function tempCanvas(hidx){
   for(let h2=1;h2<24;h2++){
     grid+=`<line x1="${tcX(h2)}%" y1="0" x2="${tcX(h2)}%" y2="100%" stroke="${h2%2?'#F1F4F8':'#E4E9EF'}" stroke-width="1"/>`;
   }
-  const axis=`<div style="display:flex;font-size:11px;color:#9CA3AF;margin-top:3px;"><span style="flex:1;text-align:left;">오전 ${[1,3,5,7,9,11].join(' · ')}</span><span style="flex:1;text-align:right;">오후 ${[1,3,5,7,9,11].join(' · ')}</span></div>`;
+  const axis=`<div style="position:relative;height:16px;font-size:11px;color:#9CA3AF;margin-top:8px;">${TSLOTS.map(h2=>`<span style="position:absolute;left:${tcX(h2)}%;transform:translateX(-50%);white-space:nowrap;">${h2<12?(h2===1?"오전 1":h2%12):(h2===13?"오후 1":h2%12)}</span>`).join('')}</div>`;
   const pts=src.slice().sort((a,b)=>a.h-b.h);
   const line=pts.length>1?`<polyline fill="none" stroke="var(--gred)" stroke-width="1.8" points="${pts.map(p=>`${(tcX(p.h)*6.4).toFixed(1)},${(tcY(p.v)*3.2).toFixed(1)}`).join(' ')}" vector-effect="non-scaling-stroke"/>`:'';
   const dots=pts.map((p)=>{const i=src.indexOf(p);return `<i class="tcdot${p.v>=37.5?' over':''}${TCB===i?' sel':''}" style="left:${tcX(p.h).toFixed(2)}%;top:${tcY(p.v).toFixed(2)}%;" ></i>`;}).join('');
-  const nowLine=today?`<div style="position:absolute;left:${tcX(nowH).toFixed(2)}%;top:0;bottom:0;border-left:1.4px dashed #93B4F0;pointer-events:none;"></div><div style="position:absolute;left:${tcX(nowH).toFixed(2)}%;top:3px;transform:translateX(-50%);font-size:10.5px;color:#3B82F6;font-weight:700;pointer-events:none;background:#fff;padding:0 3px;border-radius:4px;">지금</div>`:'';
+  const nowLine=today?`<div style="position:absolute;left:${tcX(nowH).toFixed(2)}%;top:0;bottom:0;border-left:1.4px dashed #93B4F0;pointer-events:none;"></div><div style="position:absolute;left:${tcX(nowH).toFixed(2)}%;top:3px;transform:translateX(-50%);font-size:10.5px;color:#3B82F6;font-weight:700;pointer-events:none;background:#fff;padding:0 3px;border-radius:4px;">현재</div>`:'';
   const futShade=today?`<div style="position:absolute;left:${tcX(nowH).toFixed(2)}%;right:0;top:0;bottom:0;background:rgba(250,251,253,.75);pointer-events:none;"></div>`:'';
   let bub='';
   if(TCB!==null&&src[TCB]){
     const r=src[TCB];
-    const bx=Math.min(78,Math.max(6,tcX(r.h)-11)), byTop=tcY(r.v)>50;
-    bub=`<div style="position:absolute;left:${bx}%;${byTop?`bottom:${(100-tcY(r.v)+7).toFixed(1)}%`:`top:${(tcY(r.v)+7).toFixed(1)}%`};background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 6px 18px rgba(20,30,42,.16);padding:7px 10px;display:flex;align-items:center;gap:7px;z-index:6;white-space:nowrap;" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
-      <button class="tbtn2" onclick="tcTime(-0.5)">‹</button><b style="font-size:13.5px;color:#374151;">${fmtTime(r.h)}</b><button class="tbtn2" onclick="tcTime(0.5)">›</button>
-      <span style="width:1px;height:16px;background:#E5E7EB;"></span>
-      <button class="tbtn2" onclick="tcVal(-0.1)">−</button><b style="font-size:15px;color:${r.v>=37.5?'#B03A2E':'var(--blue)'};">${r.v.toFixed(1)}℃</b><button class="tbtn2" onclick="tcVal(0.1)">＋</button>
-      <span style="width:1px;height:16px;background:#E5E7EB;"></span>
-      <button class="tbtn2 warn" onclick="tcDel()">삭제</button>
-      <button class="tbtn2" onclick="TCB=null;tempCanvas()">✓</button>
+    bub=`<div class="hact" style="margin-top:8px;justify-content:center;background:#F8FAFC;border:1px solid #EDF0F4;border-radius:12px;padding:8px 10px;" onclick="event.stopPropagation()" onpointerdown="event.stopPropagation()">
+      <button class="tstep" onclick="tcTime(-0.5)">‹</button><b style="font-size:14px;color:#374151;min-width:70px;text-align:center;">${fmtTime(r.h)}</b><button class="tstep" onclick="tcTime(0.5)">›</button>
+      <span style="width:1px;height:20px;background:#E5E7EB;margin:0 2px;"></span>
+      <button class="tstep" onclick="tcVal(-0.1)">▼</button><b style="font-size:16px;min-width:58px;text-align:center;color:${r.v>=37.5?'#B03A2E':'var(--blue)'};">${r.v.toFixed(1)}℃</b><button class="tstep" onclick="tcVal(0.1)">▲</button>
+      <span style="width:1px;height:20px;background:#E5E7EB;margin:0 2px;"></span>
+      <button class="btn warn sm" onclick="tcDel()">삭제</button>
+      <button class="btn pri sm" onclick="TCB=null;tempCanvas()">완료</button>
     </div>`;
   }
-  openPop(`<div class="pt"><span class="t">체온 — ${today?'오늘':pdLab(TCTX)}${n?` · ${n}회 · 최고 ${hi.toFixed(1)}℃`:''}</span><span class="r"><span class="chip site ${tempSite==='겨드랑이'?'on':''}" onclick="pickSite('겨드랑이')">겨드랑이</span><span class="chip site ${tempSite==='고막'?'on':''}" onclick="pickSite('고막')">고막</span></span></div>
+  openPop(`<div class="pt"><span class="t">체온 — ${today?'오늘':pdLab(TCTX)}${n?` · ${n}회 · 최고 ${hi.toFixed(1)}℃`:''}</span><span class="r"><span class="chip" onclick="toast('기기 연동(블루투스 체온계) — 추후 기획')">${SEGSVG.chart} 기기 연동</span></span></div>
     ${warn}
+    ${axis}
     <div id="tcanv" style="position:relative;height:300px;margin-top:10px;border:1px solid #EDF0F4;border-radius:12px;background:#FCFDFE;overflow:visible;cursor:crosshair;touch-action:none;" onpointerdown="tcDown(event)" onpointermove="tcMove(event)" onpointerup="tcUp(event)" onpointercancel="_tc=null;tcPrevClear()">
       <svg width="100%" height="100%" viewBox="0 0 640 320" preserveAspectRatio="none" style="position:absolute;inset:0;">${grid}${line}</svg>
-      ${nowLine}${futShade}${dots}${bub}
+      ${futShade}${nowLine}${dots}
     </div>
-    ${axis}
-    <div class="psub" style="margin-top:8px;">종이 신호등처럼 시간 · 체온 자리를 손끝으로 콕 — 누르면 손가락 위에 값이 보이고, 끌어서 맞춘 뒤 떼면 기록돼요(30분 단위). 점을 누르면 집어서 옮기거나 말풍선에서 고치고 지울 수 있어요${today?' · 지금 이후는 기록할 수 없어요':''}. <span style="color:#9CA3AF;">🎤 음성 · 기기 연동은 <u style="cursor:pointer;" onclick="voicePop('체온')">여기</u></span></div>`,'wide');
+    ${bub}
+    <div class="psub" style="margin-top:8px;">그래프를 눌러 기록하고 드래그하여 미세 조정(시간 30분 · 온도 0.1℃ 단위)하세요. 점을 누르면 수정 · 삭제할 수 있어요.</div>`,'wide');
 }
 let _tc=null;
 function tcPos(ev){ const rc=$('tcanv').getBoundingClientRect();
@@ -1240,10 +1240,11 @@ function tcNowH(){ const n=new Date(); return n.getHours()+n.getMinutes()/60; }
 function tcDown(ev){
   ev.preventDefault();
   const p=tcSnap(tcPos(ev));
-  if(TCTX==null&&p.h>tcNowH()){ toast('지금 이후 시간에는 기록할 수 없어요'); return; }
+  if(TCTX==null&&p.h>tcNowH()){ toast('현재 이후 시간에는 기록할 수 없어요'); return; }
   const src=tempSrc();
   const ex=src.findIndex(r=>Math.abs(r.h-p.h)<0.26);
   _tc={grab:ex>=0?ex:null, h:ex>=0?src[ex].h:p.h, v:ex>=0?src[ex].v:p.v};
+  _tc.oh=_tc.h; _tc.ov=_tc.v;
   try{ $('tcanv').setPointerCapture(ev.pointerId); }catch(e){}
   tcPrev();
 }
@@ -1274,15 +1275,15 @@ function tcUp(ev){
     else src.push({h:t.h,v:t.v});
   }
   src.sort((a,b)=>a.h-b.h);
-  TCB=src.findIndex(r=>r.h===t.h);
-  if(TCTX==null){ S.temp.last=t.v.toFixed(1); if(tempSite) S.temp.site=tempSite; }
-  if(t.v>=37.5) tempWarn=t.v.toFixed(1);
+  TCB=(t.grab!==null)?src.findIndex(r=>r.h===t.h):null;
+  if(TCTX==null){ S.temp.last=t.v.toFixed(1); }
+  if(t.v>=37.5&&!TWD) tempWarn=t.v.toFixed(1);
   render(); tempCanvas();
 }
 function tcVal(d){
   const src=tempSrc(), r=src[TCB]; if(!r) return;
   r.v=Math.round(Math.min(42,Math.max(34,r.v+d))*10)/10;
-  if(r.v>=37.5) tempWarn=r.v.toFixed(1);
+  if(r.v>=37.5&&!TWD) tempWarn=r.v.toFixed(1);
   if(TCTX==null) S.temp.last=r.v.toFixed(1);
   render(); tempCanvas();
 }
@@ -1290,7 +1291,7 @@ function tcTime(d){
   const src=tempSrc(), r=src[TCB]; if(!r) return;
   const now=new Date(); const nowH=now.getHours()+now.getMinutes()/60;
   let nh=Math.min(23.5,Math.max(0,Math.round((r.h+d)*2)/2));
-  if(TCTX==null&&nh>nowH){ toast('지금 이후 시간으로는 옮길 수 없어요'); return; }
+  if(TCTX==null&&nh>nowH){ toast('현재 이후 시간으로는 옮길 수 없어요'); return; }
   if(src.some((o,j)=>j!==TCB&&Math.abs(o.h-nh)<0.26)){ toast('그 시간에는 이미 기록이 있어요'); return; }
   r.h=nh;
   src.sort((a,b)=>a.h-b.h); TCB=src.indexOf(r);
@@ -1302,7 +1303,6 @@ function tcDel(){
   toast(`삭제했어요 · ${fmtTime(r.h)} ${r.v.toFixed(1)}℃`, ()=>{src.push(r);src.sort((a,b)=>a.h-b.h);});
   render(); tempCanvas();
 }
-function pickSite(st){ tempSite=tempSite===st?null:st; tempCanvas(); }
 
 /* 가글 · 좌욕 */
 function tCare(key){
@@ -1861,9 +1861,10 @@ function emCard(i){
   </div>`;
 }
 function openEmergency(keep){
+  if(!keep&&window._emgFrom!=='temp') window._emgFrom=null;
   if(!keep) _emOpen=[0];
   const L=[0,2,4,6,8], R=[1,3,5,7];
-  openPop(`<div class="pt"><span class="t" style="color:var(--red);">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t" style="color:var(--red);">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;if(window._emgFrom==='temp'){window._emgFrom=null;tempCanvas();}else closePop()">닫기</button></span></div>
     <div class="emsub">다음과 같은 신호가 보이면 <b>바로 병원 진료</b>를 받으세요. 의식이 흐리거나 숨쉬기 힘들어하면 <b>119</b>입니다.</div>
     <div class="emgrid">
       <div class="emcol">${L.map(emCard).join('')}</div>
