@@ -1218,7 +1218,7 @@ function tempCanvas(hidx){
       <button class="btn pri sm" onclick="TCB=null;tempCanvas()">완료</button>
     </div>`;
   }
-  openPop(`<div class="pt"><span class="t">체온 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${today?'오늘':pdLab(TCTX)} ${n}회 기록${n?` · 최고 ${hi.toFixed(1)}℃`:''}</span></span><span class="r"><span class="chip" onclick="toast('기기 연동(블루투스 체온계) — 추후 기획')">${SEGSVG.chart} 기기 연동</span></span></div>
+  openPop(`<div class="pt"><span class="t">체온 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${today?'오늘':pdLab(TCTX)} ${n}회 기록${n?` · 최고 ${hi.toFixed(1)}℃`:''}</span></span><span class="r"><span class="chip" onclick="toast('기기 연동(블루투스 체온계) — 추후 기획')">${SEGSVG.chart} 기기 연동</span><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
     ${warn}
     ${axis}
     <div id="tcanv" style="position:relative;height:300px;margin-top:10px;border:1px solid #EDF0F4;border-radius:12px;background:#FCFDFE;overflow:visible;cursor:crosshair;touch-action:none;" onpointerdown="tcDown(event)" onpointermove="tcMove(event)" onpointerup="tcUp(event)" onpointercancel="_tc=null;tcPrevClear()">
