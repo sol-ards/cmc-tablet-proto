@@ -238,14 +238,14 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .chip.mt{background:#F3F4F6;border-color:#F3F4F6;font-size:15px;font-weight:600;padding:8px 16px;border-radius:18px;}
 .chip.mt.on{background:#fff;border-color:var(--blue);color:var(--blue);font-weight:700;}
 .tchip{display:inline-flex;align-items:center;gap:8px;background:#F9FAFB;color:#4B5563;font-size:16px;font-weight:400;border-radius:4px;padding:4px 8px;cursor:pointer;}
-.btn{display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;border-radius:99px;padding:8px 16px;min-height:44px;border:0;cursor:pointer;white-space:nowrap;background:#F3F4F6;color:#4B5563;font-family:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;border-radius:99px;padding:8px 16px;min-height:48px;border:0;cursor:pointer;white-space:nowrap;background:#F3F4F6;color:#4B5563;font-family:inherit;}
 .btn:disabled{opacity:.45;cursor:default;}
 .btn.pri:disabled,.btn.warn:disabled{background:#F3F4F6;color:#C3C9D1;opacity:1;box-shadow:none;}
 .btn.pri{background:var(--blue);color:#fff;}
 .btn.warn{background:var(--red);color:#fff;}
 .btn.done{background:var(--greenbg);color:var(--green);}
 .btn.act{background:#fff;border:1.4px solid var(--blue);color:var(--blue);}
-.btn.sm{font-size:15px;padding:10px 18px;border-radius:10px;font-weight:500;background:#fff;border:1px solid #d7dde5;color:#374151;}
+.btn.sm{font-size:15px;padding:0 18px;min-height:44px;border-radius:10px;font-weight:500;background:#fff;border:1px solid #d7dde5;color:#374151;}
 .btn.sm.pri{background:var(--blue);border-color:var(--blue);color:#fff;}
 .btn.sm.warn{background:var(--red);border-color:var(--red);color:#fff;}
 .btn.sm.done{background:var(--greenbg);border-color:var(--greenbg);color:var(--green);}
@@ -1573,7 +1573,7 @@ function tMed(kind){
   openPop(`<div class="pt"><span class="t">${M.name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b style="color:#374151;">${st.none?'안 씀':st.list.length+'건'}</b></span></span><span class="r"><button class="btn sm" onclick="_medCustom=false;closePop()">닫기</button></span></div>
     <div class="psub">사용한 약제를 모두 눌러 주세요. 다시 누르면 선택이 해제돼요.</div>
     <div class="hact">${base.map(d=>`<span class="chip ${st.list.includes(d)?'on':''}" onclick="medTap('${kind}','${d}')">${st.list.includes(d)?'✓ ':''}${d}</span>`).join('')}${customs.map(d=>`<span class="chip on" onclick="medTap('${kind}','${d}')">✓ ${d}</span>`).join('')}<span class="chip ${st.none?'on':''}" onclick="abxNoneToggle()">${st.none?'✓ ':''}안 씀</span></div>
-    <div class="hact"><button class="btn sm ${_medCustom?'pri':''}" onclick="_medCustom=!_medCustom;tMed('${kind}')">⌨ 직접 입력</button></div>
+    <div class="hact"><button class="btn ${_medCustom?'pri':''}" onclick="_medCustom=!_medCustom;tMed('${kind}')">⌨ 직접 입력</button></div>
     ${_medCustom?`<div class="hact"><input class="obinp" id="med-custom" placeholder="약제명을 입력해 주세요" style="flex:1;padding:9px 12px;font-size:15px;" oninput="$('med-add').disabled=!this.value.trim()"><button class="btn pri sm" id="med-add" disabled onclick="medAddCustom('${kind}')">추가</button></div>`:''}`);
   if(_medCustom){ const el=$('med-custom'); if(el) el.focus(); }
 }
@@ -1627,7 +1627,7 @@ function tShot(){
   const custom=(cur&&cur!=='안 맞음'&&!base.includes(cur))?chip(cur):'';
   openPop(`<div class="pt"><span class="t">${dcToday()?'오늘':dcLab()} 수치주사를 맞았나요?</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     <div class="hact" style="margin-top:12px;">${base.map(chip).join('')}${custom}${chip('안 맞음')}</div>
-    <div class="hact"><button class="btn sm ${_shotCustom?'pri':''}" onclick="_shotCustom=!_shotCustom;tShot()">⌨ 직접 입력</button></div>
+    <div class="hact"><button class="btn ${_shotCustom?'pri':''}" onclick="_shotCustom=!_shotCustom;tShot()">⌨ 직접 입력</button></div>
     ${_shotCustom?`<div class="hact"><input class="obinp" id="shot-custom" placeholder="약제명을 입력해 주세요" style="flex:1;padding:9px 12px;font-size:15px;" oninput="$('shot-add').disabled=!this.value.trim()"><button class="btn pri sm" id="shot-add" disabled onclick="shotSet($('shot-custom').value.trim())">저장</button></div>`:''}`);
   if(_shotCustom){ const el=$('shot-custom'); if(el) el.focus(); }
 }
