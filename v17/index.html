@@ -232,7 +232,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .hv b{color:var(--ink);}
 .hact{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;align-items:center;}
 .chip{display:inline-flex;align-items:center;font-size:15.5px;font-weight:500;border:1.2px solid #d7dde5;color:#4a5a63;border-radius:18px;padding:8px 15px;cursor:pointer;background:#fff;white-space:nowrap;}
-.chip.on{background:#4B5563;border-color:#4B5563;color:#fff;}
+
 .chip.site{background:#F3F4F6;border-color:#F3F4F6;color:#4a5a63;}
 .chip.site.on{background:#FFEEEE;border-color:#EF4444;color:#EF4444;}
 .chip.mt{background:#F3F4F6;border-color:#F3F4F6;font-size:15px;font-weight:600;padding:8px 16px;border-radius:18px;}
@@ -420,7 +420,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .obtrow .arw{margin-left:auto;color:#9CA3AF;font-weight:500;font-size:18px;padding:0 6px;}
 .obchips{display:flex;flex-wrap:wrap;gap:9px;margin-top:6px;}
 .obchips .chip{background:#fff;border:1px solid #E5E7EB;color:#374151;font-size:16px;font-weight:500;padding:10px 18px;border-radius:99px;}
-.obchips .chip.on{background:#fff;border:1.4px solid var(--blue);color:var(--blue);}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff;}
 .chip.bfill{background:var(--blue) !important;border-color:var(--blue) !important;color:#fff !important;}
 .dgadd{background:#4B5563;color:#fff;border:0;border-radius:10px;padding:0 24px;font-size:16.5px;font-weight:500;cursor:pointer;flex:none;font-family:inherit;}
 .obcal{margin-top:10px;background:#fff;border:0;border-radius:14px;padding:16px 20px 14px;box-shadow:0 1px 3px rgba(20,30,42,.05);}
@@ -488,7 +488,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 <div class="topbar">
   <h1>캔모어차일드 보호자 모드 · 태블릿 신호등 기록 프로토타입 <span class="ver">v2.2 작업본 · sol 박지현 · 2026-09-30</span></h1>
 </div>
-<div class="hint"><b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
+<div class="hint"><b>260930 3차</b> : 칩 선택 = 파랑 채움 전역 통일 · 2단 소제목 = 라벨 회색 + 상태 값 진하게(설명문과 위계 구분 · "오늘 안 씀" 유지) · 자명한 설명(스테퍼 조정 문구) 삭제 · 조작 안내문 7일 노출 = 기획 문서 규칙(프로토 미구현 · 상시 노출) · [⌨ 직접 입력] 명칭 통일. <b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
 
 <div class="stage">
   <div class="tablet" id="tablet">
@@ -1060,7 +1060,7 @@ function tempCanvas(hidx){
       <button class="btn pri sm" onclick="TCB=null;tempCanvas()">완료</button>
     </div>`;
   }
-  openPop(`<div class="pt"><span class="t">체온 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${today?'오늘':pdLab(TCTX)} ${n}회 기록${n?` · 최고 ${hi.toFixed(1)}℃`:''}</span></span><span class="r"><span class="chip" onclick="toast('기기 연동(블루투스 체온계) · 추후 기획')">${SEGSVG.chart} 기기 연동</span><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">체온 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${today?'오늘':pdLab(TCTX)} <b style="color:#374151;">${n}회 기록</b>${n?` · 최고 ${hi.toFixed(1)}℃`:''}</span></span><span class="r"><span class="chip" onclick="toast('기기 연동(블루투스 체온계) · 추후 기획')">${SEGSVG.chart} 기기 연동</span><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
     ${warn}
     ${axis}
     <div id="tcanv" style="position:relative;height:300px;margin-top:10px;border:1px solid #EDF0F4;border-radius:12px;background:#FCFDFE;overflow:visible;cursor:crosshair;touch-action:none;" onpointerdown="tcDown(event)" onpointermove="tcMove(event)" onpointerup="tcUp(event)" onpointercancel="_tc=null;tcPrevClear()">
@@ -1161,7 +1161,7 @@ function tCare(key){
   const st=careSt(key), name=key==='gargle'?'가글':'좌욕';
   const ment=key==='gargle'?'입안이 까져서 아프거나 목이 따가움, 입 마름, 삼키기 어려움 등의 증상이 있다면':'피부 가려움, 발진, 건조, 두드러기 등의 증상이 있다면';
   const recs=dcToday()?proBySrc(key):[];
-  openPop(`<div class="pt"><span class="t">${name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} ${st.none?'안 함':st.times.length+'회'}</span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b style="color:#374151;">${st.none?'안 함':st.times.length+'회'}</b></span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     ${st.times.length?`<div class="hact" style="margin-top:10px;">${st.times.map((t,i)=>`<span class="tchip" onclick="delTime('${key}',${i})">${t} <b style="color:#9CA3AF;">×</b></span>`).join('')}</div>`:''}
     <div class="hact" style="margin-top:12px;">
       <button class="btn ${st.times.length?'pri':''}" style="flex:1;" onclick="careDo('${key}')">＋ 1회</button>
@@ -1244,16 +1244,15 @@ let _stp=null;
 function stepperWin(cfg){
   if(cfg) _stp=cfg;
   const c=_stp;
-  openPop(`<div class="pt"><span class="t">${c.name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} ${c.cur?c.cur+c.unit:'기록 전 · '+c.baseLab}</span></span><span class="r"><button class="btn pri sm" onclick="_stp.save(_stp.val)">저장</button><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${c.name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b style="color:#374151;">${c.cur?c.cur+c.unit:'기록 전'}</b>${c.cur?'':' · '+c.baseLab}</span></span><span class="r"><button class="btn pri sm" onclick="_stp.save(_stp.val)">저장</button><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
     <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin:24px 0 4px;">
       <button class="tstep" style="width:54px;height:54px;font-size:22px;" onclick="stpAdj(-1)">▼</button>
       <div class="bigval" style="min-width:160px;text-align:center;">${c.val.toFixed(1)}<small>${c.unit}</small></div>
       <button class="tstep" style="width:54px;height:54px;font-size:22px;" onclick="stpAdj(1)">▲</button>
     </div>
-    <div class="psub" style="text-align:center;">${c.baseLab} 기준으로 ▼▲ 0.1씩 조정해 주세요</div>
     <div class="hact" style="justify-content:center;margin-top:12px;">
       ${c.cur?`<span class="chip" onclick="_stp.clear()">기록 지우기</span>`:''}
-      <span class="chip" onclick="stpKey()">⌨ 키패드</span>
+      <span class="chip" onclick="stpKey()">⌨ 직접 입력</span>
     </div>`);
 }
 function stpAdj(d){ _stp.val=Math.round(Math.min(_stp.max,Math.max(_stp.min,_stp.val+d*0.1))*10)/10; stepperWin(); }
@@ -1426,7 +1425,7 @@ function tWater(){
   const total=dcToday()?S.water:dcH().water;
   const ref=waterRef();
   const log=ref.length?`<div class="hact" style="margin-top:6px;">${ref.map((e,i)=>`<span class="tchip" onclick="delWater(${i})">${e.t} <b>${e.n}</b>mL <b style="color:#9CA3AF;">×</b></span>`).join('')}</div>`:'';
-  openPop(`<div class="pt"><span class="t">수분 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} ${total.toLocaleString()}mL · <u style="cursor:pointer;" onclick="goalKey()">목표 ${S.waterGoal.toLocaleString()}mL</u></span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">수분 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b style="color:#374151;">${total.toLocaleString()}mL</b> · <u style="cursor:pointer;" onclick="goalKey()">목표 ${S.waterGoal.toLocaleString()}mL</u></span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     ${total>=S.waterGoal?`<div class="hv" style="color:var(--green);font-weight:800;">✓ 목표 달성. 추가 입력도 돼요</div>`:''}
     ${log}
     <div class="hact" style="margin-top:10px;">
@@ -1571,7 +1570,7 @@ function tMed(kind){
   const M=MEDS[kind], st=abxSt();
   const base=M.drugs.filter(x=>x!=='직접 입력');
   const customs=st.list.filter(d=>!base.includes(d));
-  openPop(`<div class="pt"><span class="t">${M.name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} ${st.none?'안 씀':st.list.length+'건'}</span></span><span class="r"><button class="btn sm" onclick="_medCustom=false;closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${M.name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b style="color:#374151;">${st.none?'안 씀':st.list.length+'건'}</b></span></span><span class="r"><button class="btn sm" onclick="_medCustom=false;closePop()">닫기</button></span></div>
     <div class="psub">사용한 약제를 모두 눌러 주세요. 다시 누르면 선택이 해제돼요.</div>
     <div class="hact">${base.map(d=>`<span class="chip ${st.list.includes(d)?'on':''}" onclick="medTap('${kind}','${d}')">${st.list.includes(d)?'✓ ':''}${d}</span>`).join('')}${customs.map(d=>`<span class="chip on" onclick="medTap('${kind}','${d}')">✓ ${d}</span>`).join('')}<span class="chip ${st.none?'on':''}" onclick="abxNoneToggle()">${st.none?'✓ ':''}안 씀</span></div>
     <div class="hact"><button class="btn sm ${_medCustom?'pri':''}" onclick="_medCustom=!_medCustom;tMed('${kind}')">⌨ 직접 입력</button></div>
