@@ -764,12 +764,12 @@ function cbcRows(){
       if(d.type==='future'){ h+='<div class="cel cbcs fut"></div>'; return; }
       if(d.type==='past'){
         const hh=d.hidx!=null?H[d.hidx]:null, hosp=d.visit||d.inpat;
-        if(hh&&hh.cbc==='검사 없음'){ h+=cell('cbc',i,ri===0?'검사 없음':'','cbcs fill',true); return; }
+        if(hh&&hh.cbc==='검사 없음'){ h+=cell('cbc',i,ri===0?'검사 없음':'–','cbcs fill',true); return; }
         const _v=(hh&&hh.cbcv)?hh.cbcv[k]:''; const v=_v==='—'?'':_v;
         if(hh&&hh.cbcv){ h+=cell('cbc',i,v,'cbcs'+(v?' fill':''),true); return; }
         h+=cell('cbc',i,hosp&&!S.present?(ri===0?'<span class="addbtn p">＋</span>':''):'<span class="mdot">·</span>','cbcs',d.hidx!=null); return; }
       if(!hosp){ h+=cell('cbc',i,ri===0?(S.visitAsk===null?'':'진료일만'):'','cbcs lock',true); return; }
-      if(S.visit.cbc==='none'){ h+=cell('cbc',i,ri===0?'검사 없음':'','cbcs fill',true); return; }
+      if(S.visit.cbc==='none'){ h+=cell('cbc',i,ri===0?'검사 없음':'–','cbcs fill',true); return; }
       if(S.visit.cbc){ const v=today[k]==='—'?'':today[k]; h+=cell('cbc',i,v,'cbcs'+(v?' fill':''),true); return; }
       h+=cell('cbc',i,ri===0?'<span class="addbtn">＋</span>':'','cbcs emp',true);
     });
