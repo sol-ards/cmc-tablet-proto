@@ -709,6 +709,7 @@ function weightRow(){
   const pplus=VD.map((d,i)=>(d.type==='past'&&d.hidx!=null&&!H[d.hidx].wk&&!S.present)?`<div class="rplus" style="left:${((i+0.5)/7*100).toFixed(2)}%;top:50%;"><span class="addbtn p">＋</span></div>`:'').join('');
   return rlabel('체중','wk')+`<div class="rowg" style="height:${H2}px;">
     <div class="cols">${VD.map((d,i)=>`<i class="${i===TIDX?'t':''}"></i>`).join('')}</div>
+    ${VD.map((d,i)=>{const has=(i===TIDX&&S.weightToday!==null)||(d.hidx!=null&&H[d.hidx].wk); return has?`<div style="position:absolute;left:${(i/7*100).toFixed(3)}%;width:${(100/7).toFixed(3)}%;top:0;bottom:0;background:#EEF8F0;"></div>`:'';}).join('')}
     <div class="wbase" style="top:${Y(21.5).toFixed(1)}px;"></div>
     <svg viewBox="0 0 700 ${H2}" preserveAspectRatio="none">${wsegs}</svg>
     ${labs}${plus}${pplus}
