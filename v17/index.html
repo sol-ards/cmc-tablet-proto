@@ -710,7 +710,7 @@ function weightRow(){
   const pplus=VD.map((d,i)=>(d.type==='past'&&d.hidx!=null&&!H[d.hidx].wk&&!S.present)?`<div class="rplus" style="left:${((i+0.5)/7*100).toFixed(2)}%;top:50%;"><span class="addbtn p">＋</span></div>`:'').join('');
   return rlabel('체중','wk')+`<div class="rowg" style="height:${H2}px;">
     <div class="cols">${VD.map((d,i)=>`<i class="${i===TIDX?'t':''}"></i>`).join('')}</div>
-    ${VD.map((d,i)=>{const has=(i===TIDX&&S.weightToday!==null)||(d.hidx!=null&&H[d.hidx].wk); return has?`<div style="position:absolute;left:${(i/7*100).toFixed(3)}%;width:${(100/7).toFixed(3)}%;top:0;bottom:0;background:#EEF8F0;"></div>`:'';}).join('')}
+    ${VD.map((d,i)=>{const has=(i===TIDX&&S.weightToday!==null); return has?`<div style="position:absolute;left:${(i/7*100).toFixed(3)}%;width:${(100/7).toFixed(3)}%;top:0;bottom:0;background:#EEF8F0;"></div>`:'';}).join('')}
     <div class="wbase" style="top:${Y(21.5).toFixed(1)}px;"></div>
     <svg viewBox="0 0 700 ${H2}" preserveAspectRatio="none">${wsegs}</svg>
     ${labs}${plus}${pplus}
@@ -792,7 +792,7 @@ function render(){
     if(d.visit||(d.type==='today'&&S.visitAsk==='clinic')) c.push('visit');
     if(d.inpat||(d.type==='today'&&S.visitAsk==='inpat')) c.push('inpat');
     if(d.type==='today') c.push('today');
-    if((d.type==='today'&&S.visitAsk!==null)||(d.type==='past'&&d.hidx!=null&&d.answered)) c.push('ans');
+    if(d.type==='today'&&S.visitAsk!==null) c.push('ans');
     if(d.type==='future') c.push('future');
     const _df=(S.d1off===null)?null:(d.off-S.d1off+1); const dnum=(_df===null||_df<=0)?'':'D'+_df;
     let sub='';
