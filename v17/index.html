@@ -72,6 +72,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .hd.visit .vsub{color:var(--blue);}
 .hd.inpat .vsub{color:#F59E0B;}
 .hd.today{background:var(--tdb);}
+.hd.ans{background:#EEF8F0;}
 .hd.today .vsub{color:#3568d4;}
 .hd.today.visit .vsub{color:var(--blue);}
 .hd.today.inpat .vsub{color:#F59E0B;}
@@ -791,6 +792,7 @@ function render(){
     if(d.visit||(d.type==='today'&&S.visitAsk==='clinic')) c.push('visit');
     if(d.inpat||(d.type==='today'&&S.visitAsk==='inpat')) c.push('inpat');
     if(d.type==='today') c.push('today');
+    if((d.type==='today'&&S.visitAsk!==null)||(d.type==='past'&&d.hidx!=null&&d.answered)) c.push('ans');
     if(d.type==='future') c.push('future');
     const _df=(S.d1off===null)?null:(d.off-S.d1off+1); const dnum=(_df===null||_df<=0)?'':'D'+_df;
     let sub='';
