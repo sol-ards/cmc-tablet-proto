@@ -488,7 +488,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 <div class="topbar">
   <h1>캔모어차일드 보호자 모드 · 태블릿 신호등 기록 프로토타입 <span class="ver">v2.2 작업본 · sol 박지현 · 2026-09-30</span></h1>
 </div>
-<div class="hint"><b>260930 3차</b> : 칩 선택 = 파랑 채움 전역 통일 · 2단 소제목 = 라벨 회색 + 상태 값 진하게(설명문과 위계 구분 · "오늘 안 씀" 유지) · 자명한 설명(스테퍼 조정 문구) 삭제 · 조작 안내문 7일 노출 = 기획 문서 규칙(프로토 미구현 · 상시 노출) · [⌨ 직접 입력] 명칭 통일. <b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
+<div class="hint"><b>261001 PRD 동기화</b> : 입원 = 상태(이후 미응답 날짜 자동 입원 중 · 다른 값 선택 = 그날부터 종료) · 진료 기록 확인 = 수혈 · CBC만 대상 · [진료 없음] 변경 · 응답 삭제 시 입원에도 적용 · 키 = 날짜 제한 없음 · CBC 입력 · 상세 창 [닫기] · CBC 삭제 되돌리기 · 체온 지난 날짜 기준 초과 배너 미발동 · 체온 증상 안내 문구. <b>260930 3차</b> : 칩 선택 = 파랑 채움 전역 통일 · 2단 소제목 = 라벨 회색 + 상태 값 진하게(설명문과 위계 구분 · "오늘 안 씀" 유지) · 자명한 설명(스테퍼 조정 문구) 삭제 · 조작 안내문 7일 노출 = 기획 문서 규칙(프로토 미구현 · 상시 노출) · [⌨ 직접 입력] 명칭 통일. <b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
 
 <div class="stage">
   <div class="tablet" id="tablet">
@@ -646,7 +646,6 @@ function openPastTool(key,hidx){
   DC=hidx; _medCustom=false; _shotCustom=false;
   const d=DAYS[hidx];
   if(key==='temp'){ tempCanvas(hidx); return; }
-  if(key==='ht'&&!(d.visit||d.inpat)){ toast('키는 진료일에 기록해요. 날짜 헤더에서 진료를 확인해 주세요'); return; }
   if((key==='trans'||key==='cbc')&&!(d.visit||d.inpat)){ toast('외래 · 입원일에만 기록해요. 날짜 헤더에서 진료를 확인해 주세요'); return; }
   openTool(key);
 }
@@ -893,7 +892,7 @@ function togglePresent(){
 
 /* ---------- 행 라벨 온오프 ---------- */
 function labelTap(key){
-  if(S.present){ toast('의료진 열람 중이에요 · 우상단에서 잠금을 풀어 주세요'); return; }
+  if(S.present){ toast('의료진 열람 중이에요. 우상단에서 잠금을 풀어 주세요'); return; }
   const itemKey=OFFABLE[key];
   const NAMES={wk:'체중',ht:'키',water:'수분',cond:'컨디션',meal:'식사량',bowel:'배변',shot:'수치주사',trans:'수혈',cbc:'CBC',abx:'항생제',cvc:'중심정맥관'};
   openPop(`<div class="pt"><span class="t">${NAMES[key]||key}</span></div>
@@ -907,7 +906,7 @@ function labelTap(key){
 /* ---------- 셀 터치 ---------- */
 function cellTap(key,i){
   if(tipT!==null||tipW!==null){ tipT=null; tipW=null; render(); }
-  if(S.present){ toast('의료진 열람 중이에요 · 우상단에서 잠금을 풀어 주세요'); return; }
+  if(S.present){ toast('의료진 열람 중이에요. 우상단에서 잠금을 풀어 주세요'); return; }
   const d=VD[i];
   if(d.type==='future'){ toast('미래 날짜에는 기록할 수 없어요'); return; }
   if(d.type==='past'){ if(d.hidx!=null) openPastTool(key,d.hidx); return; }
@@ -915,7 +914,7 @@ function cellTap(key,i){
   if(key==='trans'||key==='cbc'){
     if(!(S.visitAsk==='clinic'||S.visitAsk==='inpat')){
       if(S.visitAsk===null) return;
-      toast('외래 · 입원일에만 기록해요 · 날짜 헤더에서 변경'); return;
+      toast('외래 · 입원일에만 기록해요. 날짜 헤더에서 변경해 주세요'); return;
     }
   }
   openTool(key);
@@ -928,14 +927,15 @@ function openLab(i){
   const dd=today?mdOf(0):DAYS[i].d;
   const lab=today?dLab(0):dLab(DAYS[i].off);
   const src=today?(S.visit.cbcSrc==='manual'?'직접 입력':'촬영 입력'):'';
-  openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="cbcDel()">삭제</button>`:''}</span></div>
+  openPop(`<div class="pt"><span class="t">CBC · ${dd}${lab?' ('+lab+')':''}</span><span class="r">${!S.present?`<button class="btn sm" onclick="cbcConfirm('edit')">수정</button><button class="btn sm" onclick="cbcDel()">삭제</button>`:''}<button class="btn sm" onclick="closePop()">닫기</button></span></div>
     <div class="hv">WBC <b>${v.wbc}</b> · Hb <b>${v.hb}</b> · Plt <b>${v.plt}</b> · Reti ${v.reti} · ANC <b>${v.anc}</b>${src?'<br>'+src:''}</div>`);
 }
 
 function cbcDel(){
-  if(dcToday()) S.visit.cbc=false;
-  else { dcH().cbc=''; delete dcH().cbcv; }
-  closePop(); render(); toast(`삭제했어요 · ${dcLab()} CBC 기록`);
+  const lab=dcLab();
+  if(dcToday()){ const pv=S.visit.cbc; S.visit.cbc=false; closePop(); render(); toast(`삭제했어요 · ${lab} CBC 기록`, ()=>{ S.visit.cbc=pv; render(); }); return; }
+  const h=dcH(), pc=h.cbc, pv=h.cbcv; h.cbc=''; delete h.cbcv;
+  closePop(); render(); toast(`삭제했어요 · ${lab} CBC 기록`, ()=>{ h.cbc=pc; if(pv) h.cbcv=pv; render(); });
 }
 
 /* ---------- 입력 도구 ---------- */
@@ -1068,7 +1068,8 @@ function tempCanvas(hidx){
       ${futShade}${nowLine}${dots}
     </div>
     ${bub}
-    <div class="psub" style="margin-top:8px;">그래프를 눌러 기록하고 드래그하여 미세 조정(시간 30분 · 온도 0.1℃ 단위)하세요. 점을 누르면 수정 · 삭제할 수 있어요.</div>`,'wide');
+    <div class="psub" style="margin-top:8px;">그래프를 눌러 기록하고 드래그하여 미세 조정(시간 30분 · 온도 0.1℃ 단위)하세요. 점을 누르면 수정 · 삭제할 수 있어요.</div>
+    <div class="prolink" style="cursor:default;">몸이 춥고 떨림(오한), 피로·기운 없음 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`,'wide');
 }
 let _tc=null;
 function tcPos(ev){ const rc=$('tcanv').getBoundingClientRect();
@@ -1119,13 +1120,13 @@ function tcUp(ev){
   src.sort((a,b)=>a.h-b.h);
   TCB=(t.grab!==null)?src.findIndex(r=>r.h===t.h):null;
   if(TCTX==null){ S.temp.last=t.v.toFixed(1); }
-  if(t.v>=37.5&&!TWD) tempWarn=t.v.toFixed(1);
+  if(TCTX==null&&t.v>=37.5&&!TWD) tempWarn=t.v.toFixed(1);
   render(); tempCanvas();
 }
 function tcVal(d){
   const src=tempSrc(), r=src[TCB]; if(!r) return;
   r.v=Math.round(Math.min(42,Math.max(34,r.v+d))*10)/10;
-  if(r.v>=37.5&&!TWD) tempWarn=r.v.toFixed(1);
+  if(TCTX==null&&r.v>=37.5&&!TWD) tempWarn=r.v.toFixed(1);
   if(TCTX==null) S.temp.last=r.v.toFixed(1);
   render(); tempCanvas();
 }
@@ -1314,19 +1315,30 @@ function vqCur(){
   return d.inpat?'inpat':(d.visit?'clinic':(d.answered?false:null));
 }
 function vqRecs(){
-  if(dcToday()){ const v=S.visit; return {has:!!(v.shot||v.trans.length||v.transNone||v.cbc||v.height),
-    items:[v.shot?('수치주사 '+(v.shot==='no'?'안 맞음':'· '+v.shotDrug)):null, v.transNone?'수혈 안 받음':(v.trans.length?'수혈 · '+v.trans.join(' · '):null), v.cbc?(v.cbc==='none'?'CBC 검사 없음':'CBC'):null, v.height?'키 '+v.height+'cm':null].filter(Boolean)}; }
-  const h=dcH(); return {has:!!(h.shot||h.trans||h.cbc||h.ht),
-    items:[h.shot?'수치주사 '+h.shot.replace('↑ ',''):null, h.trans?'수혈 · '+h.trans:null, h.cbc?'CBC':null, h.ht?'키 '+h.ht:null].filter(Boolean)};
+  if(dcToday()){ const v=S.visit; return {has:!!(v.trans.length||v.transNone||v.cbc),
+    items:[v.transNone?'수혈 안 받음':(v.trans.length?'수혈 · '+v.trans.join(' · '):null), v.cbc?(v.cbc==='none'?'CBC 검사 없음':'CBC'):null].filter(Boolean)}; }
+  const h=dcH(); return {has:!!(h.trans||h.cbc),
+    items:[h.trans?'수혈 · '+h.trans:null, h.cbc?(h.cbc==='검사 없음'?'CBC 검사 없음':'CBC'):null].filter(Boolean)};
 }
+function dayAns(i){ const d=DAYS[i]; if(d.type==='today') return S.visitAsk; return d.inpat?'inpat':(d.visit?'clinic':(d.answered?false:null)); }
+function dayIsAuto(i){ return DAYS[i].type==='today'?!!S.visitAuto:!!DAYS[i].auto; }
+function daySet(i,val,auto){
+  const d=DAYS[i];
+  if(d.type==='today'){ S.visitAsk=val; S.visitAuto=!!auto; return; }
+  d.visit=val==='clinic'; d.inpat=val==='inpat'; d.answered=val!==null; d.auto=!!auto;
+}
+/* 입원 = 상태 : 이후 미응답 날짜(오늘까지) 자동 입원 중 · 다른 값 선택 = 그날부터 종료(자동 채움분 해제) */
 function vqWrite(val){
-  if(dcToday()){ S.visitAsk=val; return; }
-  const d=DAYS[DC];
-  d.visit=val==='clinic'; d.inpat=val==='inpat'; d.answered=val!==null;
+  const i=dcToday()?TIDX:DC;
+  daySet(i,val,false);
+  for(let j=i+1;j<=TIDX;j++){
+    if(val==='inpat'){ if(dayAns(j)===null) daySet(j,'inpat',true); else break; }
+    else { if(dayIsAuto(j)) daySet(j,null,false); else break; }
+  }
 }
 function vqClearRecs(){
-  if(dcToday()){ S.visit={shot:false,shotDrug:null,trans:[],transNone:false,cbc:false,height:null}; }
-  else { const h=dcH(); h.shot=''; h.trans=''; h.cbc=''; h.ht=''; delete h.cbcv; }
+  if(dcToday()){ S.visit.trans=[]; S.visit.transNone=false; S.visit.cbc=false; }
+  else { const h=dcH(); h.trans=''; h.cbc=''; delete h.cbcv; }
 }
 function vqChange(target){
   window._vqT=target;
@@ -1346,8 +1358,9 @@ function vqSet(v){
   const val=v==='none'?false:v;
   const cur=vqCur();
   const has=vqRecs().has;
-  if(cur==='clinic'&&has&&val!=='clinic'){ vqChange(val); return; }
-  if(cur==='clinic'&&has&&cur===val){ vqChange(null); return; }
+  const hosp=cur==='clinic'||cur==='inpat';
+  if(hosp&&has&&val!==cur&&val!=='clinic'&&val!=='inpat'){ vqChange(val); return; }
+  if(hosp&&has&&cur===val){ vqChange(null); return; }
   if(cur===val){
     vqWrite(null); closePop(); render();
     toast(`지웠어요 · ${dcLab()} 진료 응답`); return;
@@ -1356,7 +1369,7 @@ function vqSet(v){
   vqWrite(val);
   closePop(); render();
   const pre=fromInpat?'입원을 마치고 ':'';
-  toast(val==='clinic'?`${pre}기록했어요 · ${dcLab()} 외래 진료`+(dcToday()&&!fromInpat?'. 수치주사 · 수혈 · CBC 기록이 열렸어요':''):(val==='inpat'?`기록했어요 · ${dcLab()} 입원`+(dcToday()?'. 알림은 쉬어요':''):`${pre}기록했어요 · ${dcLab()} 진료 없음`));
+  toast(val==='clinic'?`${pre}기록했어요 · ${dcLab()} 외래 진료`+(dcToday()&&!fromInpat?'. 수혈 · CBC 기록이 열렸어요':''):(val==='inpat'?`기록했어요 · ${dcLab()} 입원`+(dcToday()?'. 알림은 쉬어요':''):`${pre}기록했어요 · ${dcLab()} 진료 없음`));
 }
 function tVisitQ(){
   const cur=vqCur();
@@ -1703,7 +1716,7 @@ function cbcDraw(){
   const psub=_cbMode==='ocr'?'인식된 값을 확인하고, 다르면 칸을 눌러 고쳐 주세요.':(_cbMode==='edit'?'값을 고치고 저장해 주세요.':'검사 결과지의 값을 입력해 주세요. 없는 값은 비워 두면 돼요.');
   const KEYS=['7','8','9','4','5','6','1','2','3','.','0','back'];
   const decOK=CB_FIELDS.find(f=>f[0]===_cbF)[3].dec;
-  openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" ${Object.values(_cbV).some(v=>(v||'').trim())?'':'disabled'} onclick="saveCbcV()">저장</button></span></div>
+  openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" ${Object.values(_cbV).some(v=>(v||'').trim())?'':'disabled'} onclick="saveCbcV()">저장</button><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     <div class="psub">${psub}</div>
     <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto 0;">${KEYS.map(x=>`<button class="btn" style="padding:10px 0;font-size:18px;${x==='.'&&!decOK?'opacity:.3;pointer-events:none;':''}" onclick="cbKey('${x}')">${x==='back'?'⌫':x}</button>`).join('')}</div>
@@ -1736,7 +1749,7 @@ function saveCbcV(){
 
 /* ---------- 메모 · 항목 · 응급 ---------- */
 function openDday(){
-  if(S.present){ toast('의료진 열람 중이에요 · 우상단에서 잠금을 풀어 주세요'); return; }
+  if(S.present){ toast('의료진 열람 중이에요. 우상단에서 잠금을 풀어 주세요'); return; }
   const b=S.d1off!==null?dOff(S.d1off):_RT;
   window._c3={y:b.getFullYear(),m:b.getMonth()+1};
   renderDday();
