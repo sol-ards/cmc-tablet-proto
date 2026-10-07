@@ -2081,13 +2081,13 @@ const CH={
   {d:'2026-07-10',t:'09:20',sym:'입안이 헐어서 아프거나 목이 따가운 증상(구내염)',g:2},{d:'2026-07-10',t:'14:00',sym:'열',g:3},
   {d:'2026-07-10',t:'19:30',sym:'두통',g:3},{d:'2026-07-10',t:'19:30',sym:'메스꺼움',g:2}
  ],
- THEMES:[
-  {id:'day1',n:'꽃의 들판',sec:'Day',v:1,c:[410,432,80]},{id:'day2',n:'해안가 신호등',sec:'Day',c:[540,540,95]},{id:'day3',n:'물놀이',sec:'Day',c:[392,404,150]},
-  {id:'day4',n:'초록 들판',sec:'Day',c:[400,432,85]},{id:'day5',n:'풍선',sec:'Day',c:[400,500,100]},{id:'day6',n:'징검다리',sec:'Day',c:[420,440,100]},
-  {id:'sunset1',n:'들판 노을',sec:'Sunset',v:1,c:[321,497,85]},{id:'sunset2',n:'새벽',sec:'Sunset',c:[380,560,90]},{id:'sunset3',n:'돌다리',sec:'Sunset',c:[392,472,85]},
-  {id:'sunset4',n:'바다 노을',sec:'Sunset',c:[380,520,95]},{id:'sunset5',n:'버스정류장',sec:'Sunset',c:[312,448,90]},{id:'sunset6',n:'별 관측',sec:'Sunset',c:[380,512,85]},
-  {id:'night1',n:'별빛 들판',sec:'Night',v:1,c:[327,472,80]},{id:'night2',n:'달과 배',sec:'Night',c:[368,380,95]},{id:'night3',n:'밤의 들판',sec:'Night',c:[320,400,90]},
-  {id:'night4',n:'캠프파이어',sec:'Night',c:[370,436,140]},{id:'night5',n:'공원',sec:'Night',c:[360,500,95]},{id:'night6',n:'오로라',sec:'Night',c:[360,460,90]}
+ THEMES:[ /* 홈테마 화면 순서 = 피그마 2.홈테마 격자 순서 = 열리는 순서 */
+  {id:'day1',n:'꽃의 들판',sec:'Day',v:1,c:[410,432,80]},{id:'sunset1',n:'들판 노을',sec:'Sunset',v:1,c:[321,497,85]},{id:'night1',n:'별빛 들판',sec:'Night',v:1,c:[327,472,80]},
+  {id:'sunset6',n:'별 관측',sec:'Sunset',c:[380,512,85]},{id:'day3',n:'물놀이',sec:'Day',c:[392,404,150]},{id:'night2',n:'달과 배',sec:'Night',c:[368,380,95]},
+  {id:'day5',n:'풍선',sec:'Day',c:[400,500,100]},{id:'day2',n:'해안가 신호등',sec:'Day',c:[540,540,95]},{id:'night3',n:'밤의 들판',sec:'Night',c:[320,400,90]},
+  {id:'sunset2',n:'새벽',sec:'Sunset',c:[380,560,90]},{id:'night4',n:'캠프파이어',sec:'Night',c:[370,436,140]},{id:'sunset3',n:'돌다리',sec:'Sunset',c:[392,472,85]},
+  {id:'day4',n:'초록 들판',sec:'Day',c:[400,432,85]},{id:'night5',n:'공원',sec:'Night',c:[360,500,95]},{id:'sunset4',n:'바다 노을',sec:'Sunset',c:[380,520,95]},
+  {id:'night6',n:'오로라',sec:'Night',c:[360,460,90]},{id:'sunset5',n:'버스정류장',sec:'Sunset',c:[312,448,90]},{id:'day6',n:'징검다리',sec:'Day',c:[420,440,100]}
  ],
  FAM:{
   Day:{panel:'rgba(255,255,255,.8)',bd:'#FFFFFF',swbg:'#FFFFFF',pilltx:'#4B5563',pt:'#59C6CE',g:['#4ED3DD','#0BA2AD'],clip:'#72E1E2',copy:'#374151',ln:'#E5E7EB'},
@@ -2101,7 +2101,7 @@ const CH={
  },
  FXMODE:{petal:'fall',leaf:'fall',snow:'fall',glow:'rise',balloon:'rise',star:'burst',drop:'burst'},
  BASE_UNLOCK:['day1','sunset1','night1'],
- UNLOCK_ORDER:['day2','sunset2','night2','day3','sunset3','night3','day4','sunset4','night4','day5','sunset5','night5','day6','sunset6','night6'],
+ UNLOCK_ORDER:['sunset6','day3','night2','day5','day2','night3','sunset2','night4','sunset3','day4','night5','sunset4','night6','sunset5','day6'],
  COPY:{
   first:['{n}가 건강해지는 이야기, 오늘부터 같이 써보자.','이제부터 {n} 곁에서 함께 할게.','이야기의 첫 페이지, 우리 같이 시작해보자.','낯설고 어려운 것도, 이제 하나씩 같이 알아가자.'],
   morning:['잘 잤어, {n}아? 오늘 상태가 어떤지 들려줄래?','작은 기록 하나가 다음 진료에 큰 도움이 돼.','좋은 아침이야, {n}아. 오늘 이야기를 시작해볼까?'],
