@@ -2260,12 +2260,12 @@ const CH={
   }
  },
  fxDown(e){
-  const t=e.target; if(!t.classList||!(t.classList.contains('chh')||t.classList.contains('chhit')))return;
+  const t=e.target; if(!t.classList||!t.classList.contains('chh'))return;
   const cb=$('childview').getBoundingClientRect(); this._fx={x:e.clientX,y:e.clientY};
   this.fxSpawn(e.clientX-cb.left,e.clientY-cb.top,6);
  },
  fxMove(e){
-  const f=this._fx; if(!f)return;
+  const f=this._fx; if(!f||!e.target.classList||!e.target.classList.contains('chh'))return;
   if(Math.hypot(e.clientX-f.x,e.clientY-f.y)<26)return;
   const cb=$('childview').getBoundingClientRect(); f.x=e.clientX; f.y=e.clientY;
   this.fxSpawn(e.clientX-cb.left,e.clientY-cb.top,1);
