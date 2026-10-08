@@ -2288,10 +2288,14 @@ const CH={
   if(bg.dataset.th!==th.id){
    bg.dataset.th=th.id;
    const still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-   bg.innerHTML=`<div class="bgwrap" style="transform-origin:${th.c[0]}px ${th.c[1]}px;"><img src="${cimg('bg/'+th.id+'.jpg')}" alt="">${th.v&&!still?`<video muted loop playsinline preload="auto" src="skin/skin_${th.id}_loop.mp4" oncanplay="this.classList.add('on')" onerror="this.remove()"></video>`:''}</div><div id="chfx"></div>`;
+   bg.innerHTML=`<div class="bgwrap" style="transform-origin:${th.c[0]}px ${th.c[1]}px;"><img src="${cimg('bg/'+th.id+'.jpg')}" alt="">${th.v&&!still?`<video muted loop playsinline preload="auto" src="skin/skin_${th.id}_loop.mp4" oncanplay="this.classList.add('on');CH.playBg()" onerror="this.remove()"></video>`:''}</div><div id="chfx"></div>`;
   }
-  const v=bg.querySelector('video'); if(!v)return;
-  if(home){ const p=v.play(); if(p&&p.catch)p.catch(()=>{}); } else v.pause();
+  this.playBg();
+ },
+ playBg(){
+  const v=$('chbg').querySelector('video'); if(!v)return;
+  const home=!$('childview').hidden&&this.top().n==='home';
+  if(home){ if(v.paused){ const p=v.play(); if(p&&p.catch)p.catch(()=>{}); } } else v.pause();
  },
  afterHome(){
   const S=this.S, hero=$('chhero'); if(!hero)return;
