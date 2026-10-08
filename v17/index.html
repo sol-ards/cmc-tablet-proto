@@ -574,7 +574,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .p1row{display:flex;align-items:center;gap:12px;padding:11px 2px;font-size:16px;border-top:1px solid #f1f4f8;}
 .p1row:first-child{border-top:0;}
 .p1row .pk{flex:none;width:130px;font-weight:600;color:#6B7280;font-size:15px;}
-.p1row .pv{flex:1;font-weight:600;color:#374151;}
+.p1row .pv{flex:1;font-weight:600;color:#374151;display:block;position:static;inset:auto;background:none;z-index:auto;}
 .p1row .pv small{font-size:12.5px;color:#9CA3AF;font-weight:500;margin-left:7px;}
 .p1row .pe{flex:none;font-size:14.5px;font-weight:600;color:var(--blue);cursor:pointer;}
 .p1row .pe.go{background:var(--blue);color:#fff;border-radius:99px;padding:6px 15px;}
@@ -599,7 +599,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 <div class="topbar">
   <h1>캔모어차일드 보호자 모드 · 태블릿 신호등 기록 프로토타입 <span class="ver">v2.4 작업본 · sol 박지현 · 2026-10-08</span></h1>
 </div>
-<div class="hint"><b>261008 환아 홈 상단 줄</b> : [홈테마] · 모드 전환을 보호자 상단 바와 같은 위치로(모드를 바꿔도 버튼이 제자리) · 패널 오른쪽 끝 = 모드 전환 오른쪽 끝. <b>261007 스플래시 모션</b> : 가입 전 실행 = 밤하늘 · 가입 후 실행(새로고침) = 연파랑 · 각 3초 · 터치하면 넘어감. <b>261007 환아 홈 배경 터치 효과</b> : 배경을 누르거나 문지르면 테마별 효과(꽃잎 · 눈송이 · 별 등). <b>261006 환아 모드 홈</b> : 피그마 시안 적용(홈 3계열 · 홈테마 · 튜토리얼) · 배경 반복 영상 3종 · 기록일차 = 누적 기록일 · 홈테마 = 기록한 날마다 1종. <b>261002 개발 질문 §8 반영</b> : 메모 미래 4주까지 · 메모 · 증상 노트 지난 주 = 가입일이 있는 주까지(데모 가입일 25일 전). <b>261001 강조 · 소제목</b> : 강조 = 창이 닫힐 때 그 창에서 바뀐 칸 1회(전 창 공통 · 그래프 행 = 그날 열) · 소제목 상태 값 = 17px 굵게(기록 있음 파랑 · 기록 전 · 미시행 회색). <b>261001 기록 토스트 폐지</b> : 기록 = 셀 · 창이 피드백 · 토스트 = 삭제 · 해제 / 화면에 안 보이는 결과(진료 확인 부수 효과 · 차수 · 기준일 · 목표 설정 · 진료 기록 지우고 변경) / 차단 · 오류만. <b>261001 최종 점검</b> : 입원 = 날짜별 응답(연쇄 없음) · 체온 입력 34~42℃(▲▼ 길게 누르면 연속) · 범위 밖 값 = 그날 축 확장 · 차수 시작 = 지난 D 유지 · 오늘부터 D1 · 지난 날짜 칩 "1회" · "650mL"(일괄 표기 없음) · 되돌리기 = 지운 날짜로 복구 · 열린 창 갱신 · CBC 미입력 행 빈칸 · 지난 [검사 없음] 표시 · 지난 외래 · 입원일 진료 행 ＋ · 약제 중복 방지 · 키패드 자릿수 · 하한 · 100mL 단위 · 토스트 형식 통일. <b>261001 PRD 점검 2차</b> : 타이틀 "서준이의 신호등 기록" · 하위 입력 화면(직접 입력 · 목표 설정 · CBC 인식 중 · D 기준일) [닫기] · 직접 입력 약제 칩 유지 · 수분 직접 입력 줄 분리 · [추가] · 키 시작값 날짜 기준 · 체온 같은 시각 중복 차단 · 조정 범위 = 표시 범위 · 되돌리기 후 캔버스 갱신 · CBC 지난 날짜 입력 경로 · 중심정맥관 셀 = 항목명 · 소제목 규칙 · 수치주사 지난 빈칸 ＋ · 진료 행 안내 토스트 오늘 · 과거 공통 · 토스트 통일(지웠어요 · 날짜 라벨 · 상호배타) · 메모 도트 · 질문 수명 · 증상 격자 순서 · 메모 · 증상 노트 = 첫 기록 주까지 이동(데모 4주 분량) · 툴팁 바깥 터치 닫힘 · 질문 없음 = 카드 미표시. <b>261001 PRD 동기화</b> : 입원 = 상태(이후 미응답 날짜 자동 입원 중 · 다른 값 선택 = 그날부터 종료) · 진료 기록 확인 = 수혈 · CBC만 대상 · [진료 없음] 변경 · 응답 삭제 시 입원에도 적용 · 키 = 날짜 제한 없음 · CBC 입력 · 상세 창 [닫기] · CBC 삭제 되돌리기 · 체온 지난 날짜 기준 초과 배너 미발동 · 체온 증상 안내 문구. <b>260930 3차</b> : 칩 선택 = 파랑 채움 전역 통일 · 2단 소제목 = 라벨 회색 + 상태 값 진하게(설명문과 위계 구분 · "오늘 안 씀" 유지) · 자명한 설명(스테퍼 조정 문구) 삭제 · 조작 안내문 7일 노출 = 기획 문서 규칙(프로토 미구현 · 상시 노출) · [⌨ 직접 입력] 명칭 통일. <b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
+<div class="hint"><b>261008 가입 정보</b> : 중심정맥관 [수정] = 관 교체 · 관 제거 · 삽입일 · 값 칸 표시 복구. <b>261008 환아 홈 상단 줄</b> : [홈테마] · 모드 전환을 보호자 상단 바와 같은 위치로(모드를 바꿔도 버튼이 제자리) · 패널 오른쪽 끝 = 모드 전환 오른쪽 끝. <b>261007 스플래시 모션</b> : 가입 전 실행 = 밤하늘 · 가입 후 실행(새로고침) = 연파랑 · 각 3초 · 터치하면 넘어감. <b>261007 환아 홈 배경 터치 효과</b> : 배경을 누르거나 문지르면 테마별 효과(꽃잎 · 눈송이 · 별 등). <b>261006 환아 모드 홈</b> : 피그마 시안 적용(홈 3계열 · 홈테마 · 튜토리얼) · 배경 반복 영상 3종 · 기록일차 = 누적 기록일 · 홈테마 = 기록한 날마다 1종. <b>261002 개발 질문 §8 반영</b> : 메모 미래 4주까지 · 메모 · 증상 노트 지난 주 = 가입일이 있는 주까지(데모 가입일 25일 전). <b>261001 강조 · 소제목</b> : 강조 = 창이 닫힐 때 그 창에서 바뀐 칸 1회(전 창 공통 · 그래프 행 = 그날 열) · 소제목 상태 값 = 17px 굵게(기록 있음 파랑 · 기록 전 · 미시행 회색). <b>261001 기록 토스트 폐지</b> : 기록 = 셀 · 창이 피드백 · 토스트 = 삭제 · 해제 / 화면에 안 보이는 결과(진료 확인 부수 효과 · 차수 · 기준일 · 목표 설정 · 진료 기록 지우고 변경) / 차단 · 오류만. <b>261001 최종 점검</b> : 입원 = 날짜별 응답(연쇄 없음) · 체온 입력 34~42℃(▲▼ 길게 누르면 연속) · 범위 밖 값 = 그날 축 확장 · 차수 시작 = 지난 D 유지 · 오늘부터 D1 · 지난 날짜 칩 "1회" · "650mL"(일괄 표기 없음) · 되돌리기 = 지운 날짜로 복구 · 열린 창 갱신 · CBC 미입력 행 빈칸 · 지난 [검사 없음] 표시 · 지난 외래 · 입원일 진료 행 ＋ · 약제 중복 방지 · 키패드 자릿수 · 하한 · 100mL 단위 · 토스트 형식 통일. <b>261001 PRD 점검 2차</b> : 타이틀 "서준이의 신호등 기록" · 하위 입력 화면(직접 입력 · 목표 설정 · CBC 인식 중 · D 기준일) [닫기] · 직접 입력 약제 칩 유지 · 수분 직접 입력 줄 분리 · [추가] · 키 시작값 날짜 기준 · 체온 같은 시각 중복 차단 · 조정 범위 = 표시 범위 · 되돌리기 후 캔버스 갱신 · CBC 지난 날짜 입력 경로 · 중심정맥관 셀 = 항목명 · 소제목 규칙 · 수치주사 지난 빈칸 ＋ · 진료 행 안내 토스트 오늘 · 과거 공통 · 토스트 통일(지웠어요 · 날짜 라벨 · 상호배타) · 메모 도트 · 질문 수명 · 증상 격자 순서 · 메모 · 증상 노트 = 첫 기록 주까지 이동(데모 4주 분량) · 툴팁 바깥 터치 닫힘 · 질문 없음 = 카드 미표시. <b>261001 PRD 동기화</b> : 입원 = 상태(이후 미응답 날짜 자동 입원 중 · 다른 값 선택 = 그날부터 종료) · 진료 기록 확인 = 수혈 · CBC만 대상 · [진료 없음] 변경 · 응답 삭제 시 입원에도 적용 · 키 = 날짜 제한 없음 · CBC 입력 · 상세 창 [닫기] · CBC 삭제 되돌리기 · 체온 지난 날짜 기준 초과 배너 미발동 · 체온 증상 안내 문구. <b>260930 3차</b> : 칩 선택 = 파랑 채움 전역 통일 · 2단 소제목 = 라벨 회색 + 상태 값 진하게(설명문과 위계 구분 · "오늘 안 씀" 유지) · 자명한 설명(스테퍼 조정 문구) 삭제 · 조작 안내문 7일 노출 = 기획 문서 규칙(프로토 미구현 · 상시 노출) · [⌨ 직접 입력] 명칭 통일. <b>디자인 정합 · 카피 정리(260930 2차)</b> : 시트 pill 3종(＋ 진료 확인 · ＋ 체온 기록 · ＋ 교환일 지남) 규격 통일(색만 성격별) · 헤더 = [저장(채움)]+[닫기(테두리)] 고정([닫기] 항상 맨 끝) · 체중 · 키 시작값 = 직전 기록 → 없으면 가입 시 입력값 · 배변 [특이사항 없음] 삭제 · 수혈 소제목 삭제 · [퇴원했어요] 삭제(입원 중 다른 값 선택 = 입원 종료) · 입원 안내 문장 삭제 · "항암제 투여 예정일" 카피. <b>기록창 문법 v0.2 반영(260930 · v2.2)</b> · ① 오늘 = 과거 완전 통일 : 과거 전용 창 폐지, 모든 창이 날짜 컨텍스트로 동작(과거 건 = 시각 없는 "일괄" 기록 · 건별 삭제 동일) ② 가글 · 좌욕 = [＋ 1회] ③ 체중 · 키 = 직전 값 스테퍼(▼▲ 0.1) + [⌨ 키패드] 병행 ④ 전 창 우상단 [닫기](A형 자동 닫힘 유지) ⑤ 수분 = 소제목 "목표 n mL" 탭 → 목표 설정(100mL 단위) ⑥ 수혈 = 복수 선택(혈소판 · 적혈구 동시 · 셀 나열 · [안 받음] 배타 · 창 유지형) ⑦ 미시행 칩 = 시행 선택지 줄 마지막 동형([안 씀] · [특이사항 없음] 포함) ⑧ [⌨ 직접 입력] = 칩에서 분리한 기능 버튼(수치주사 · 항생제) ⑨ 본문 문구 줄표(—) 전수 제거 ⑩ CBC = 오늘 · 과거 모두 수정 · 삭제. 이 외 = v2.1과 동일(3유형 문법 · 명사형 표기 · 체온 캔버스).</div>
 <div class="chdemo" id="chdemo" hidden><b>환아 홈 상태 보기</b>
   <button data-scn="first" onclick="CH.setScn('first')">첫 기록 전</button><button data-scn="none" onclick="CH.setScn('none')">오늘 미기록</button><button data-scn="comeback" onclick="CH.setScn('comeback')">오랜만</button><button data-scn="done" onclick="CH.setScn('done')">오늘 기록 완료</button><button data-scn="g3" onclick="CH.setScn('g3')">많이 힘든 날</button>
   <span>·</span><button onclick="CH.replayTut()">튜토리얼 다시 보기</button>
@@ -3181,7 +3181,7 @@ function ftipClose(){ $('ftipov').hidden=true; const k=ftipKey; ftipKey=null; if
 /* ---- 가입 정보 (P-1) ---- */
 function openP1(){
  const d=OBD;
- const cvcVal=d.cvc==='none'?`<span style='color:#92400E;'>없어요</span>`:(d.cvcType==='잘 모르겠어요'?'삽입됨 · 종류 확인 중':(d.cvcType||'히크만'));
+ const cvcVal=d.cvc==='none'?`<span style='color:#92400E;'>없어요</span>`:(d.cvcType==='잘 모르겠어요'?'삽입됨 · 종류 확인 중':(d.cvcType||'히크만'))+(d.cvcIns?`<small>삽입일 ${cvFmt(d.cvcIns)}</small>`:'');
  openPop(`<div class="pt"><span class="t">가입 정보</span><span class="r"></span></div>
   <div style="margin-top:6px;">
   <div class="p1row"><span class="pk">이름</span><span class="pv">이서준 (2018. 05. 30)<small>병원 등록 정보</small></span></div>
@@ -3191,7 +3191,7 @@ function openP1(){
   <div class="p1row"><span class="pk">첫 항암일</span><span class="pv">${d1Full()?d1Full()+" (D1)":"<span style='color:#9CA3AF;'>아직 몰라요</span>"}<small>고치면 전체 D 재계산</small></span><span class="pe" onclick="closePop();openDday()">${d1Full()?'수정':'등록'}</span></div>
   <div class="p1row"><span class="pk">다음 항암 예정일</span><span class="pv">${(d.next&&(()=>{const n=parseNext();return n&&offOfYMD(n.y,n.m,n.d)>=0;})())?d.next:'아직 몰라요'}</span><span class="pe" onclick="obNextCal('p1')">수정</span></div>
   <div class="p1row"><span class="pk">항암제</span><span class="pv">${d.drugs.length?d.drugs.join(' · '):`<span style='color:#9CA3AF;'>미입력</span>`}</span><span class="pe" onclick="p1Drugs()">${d.drugs.length?'수정':'입력'}</span></div>
-  <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:(d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:'')}</div>
+  <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:`${d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:''}<span class="pe" onclick="p1CvcEdit()">수정</span>`}</div>
   <div class="p1row"><span class="pk">보호자 정보</span><span class="pv">${d.age||`<span style='color:#9CA3AF;'>연령대 미입력</span>`}<small>선택</small></span><span class="pe" onclick="p1Age()">입력</span></div>
   <div class="p1row"><span class="pk">데모 초기화</span><span class="pv">회원가입 · 튜토리얼부터 다시<small>새로고침해도 기록 화면이 유지되도록 기기에 저장돼요</small></span><span class="pe" onclick="resetSess()">초기화</span></div>
   <div class="p1row"><span class="pk">튜토리얼</span><span class="pv">화면 안내 8장</span><span class="pe" onclick="closePop();cmStart()">다시 보기</span></div>
@@ -3227,7 +3227,57 @@ function p1Cvc(){ const t=OBD._ct||null;
  <div class="hact" style="flex-wrap:wrap;">${['히크만','케모포트','PICC','잘 모르겠어요'].map(x=>`<span class="chip ${t===x?'on':''}" onclick="OBD._ct='${x}';p1Cvc()">${x}</span>`).join('')}</div>
  <div class="hv" style="margin-top:10px;">삽입일 (선택 · 관리 주기 계산의 시작점 · 미입력 시 첫 수행 기록일부터)</div>
  <div class="hact">${[mdOf(-6),mdOf(-2)].map(x=>`<span class="chip ${OBD._ci===x?'on':''}" onclick="OBD._ci=OBD._ci==='${x}'?null:'${x}';p1Cvc()">${x}</span>`).join('')}</div>
- <div class="pact hact" style="justify-content:flex-end;margin-top:12px;"><button class="btn pri" ${t?'':'disabled'} onclick="OBD.cvc='yes';OBD.cvcType=OBD._ct;OBD._ct=null;openP1();toast(OBD.cvcType==='잘 모르겠어요'?'등록했어요 · 관 종류를 확인해 주세요':'등록했어요 · 중심정맥관 행이 활성돼요 (데모 시트 = 등록 상태 고정)')">저장</button></div>`); }
+ <div class="pact hact" style="justify-content:flex-end;margin-top:12px;"><button class="btn pri" ${t?'':'disabled'} onclick="OBD.cvc='yes';OBD.cvcType=OBD._ct;OBD._ct=null;OBD.cvcIns=(OBD._ci===mdOf(-6)?ymdOf(-6):OBD._ci===mdOf(-2)?ymdOf(-2):(OBD.cvcIns||null));OBD._ci=null;saveSess();openP1();toast(OBD.cvcType==='잘 모르겠어요'?'등록했어요 · 관 종류를 확인해 주세요':'등록했어요 · 중심정맥관 행이 활성돼요 (데모 시트 = 등록 상태 고정)')">저장</button></div>`); }
+/* 중심정맥관 수정 — 관 교체 · 관 제거 · 삽입일 (신호등기록 PRD 2장) */
+var CV=null;
+function cvFmt(o){ return o?`${o.y}. ${o.m}. ${o.d}`:''; }
+function cvAdd(o,n){ const t=new Date(o.y,o.m-1,o.d+n); return {y:t.getFullYear(),m:t.getMonth()+1,d:t.getDate()}; }
+function cvPrev(){ const h=OBD.cvcHist||[]; return h.length?h[h.length-1]:null; }
+function p1CvcEdit(){ CV=null; const d=OBD, unk=d.cvcType==='잘 모르겠어요';
+ openPop(`<div class="pt"><span class="t">중심정맥관</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
+  <div class="p1row"><span class="pk">관 종류</span><span class="pv">${unk?'삽입됨 · 종류 확인 중':(d.cvcType||'히크만')}</span>${unk?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:''}</div>
+  <div class="p1row"><span class="pk">삽입일</span><span class="pv">${d.cvcIns?cvFmt(d.cvcIns):`<span style='color:#9CA3AF;'>미입력</span>`}</span><span class="pe" onclick="p1CvcForm('ins')">${d.cvcIns?'수정':'입력'}</span></div>
+  <div class="p1row"><span class="pk">관 교체</span><span class="pv">새 관으로 바꿨어요<small>새 관은 주기를 새로 시작해요</small></span><span class="pe" onclick="p1CvcForm('rep')">관 교체</span></div>
+  <div class="p1row"><span class="pk">관 제거</span><span class="pv">관을 뺐어요<small>제거 후에는 '없어요'로 바뀌어요</small></span><span class="pe" style="color:#DC2626;" onclick="p1CvcForm('rm')">관 제거</span></div>`);
+}
+function p1CvcForm(mode){
+ const T=OB_TODAY;
+ if(!CV||CV.mode!==mode){ const cur=OBD.cvcIns||null, pv=cvPrev();
+  let min=null;
+  if(mode==='rep') min=cur?cvAdd(cur,1):null;
+  if(mode==='rm') min=cur;
+  if(mode==='ins'&&pv) min=pv.removed?pv.end:(pv.ins?cvAdd(pv.ins,1):null);
+  let date=mode==='ins'?cur:{y:T.y,m:T.m,d:T.d};
+  if(date&&min&&cmpYMD(date.y,date.m,date.d,min.y,min.m,min.d)<0) date=null;
+  const b=date||T; CV={mode,type:null,date,min,cal:{y:b.y,m:b.m}}; }
+ const {y,m}=CV.cal, first=new Date(y,m-1,1).getDay(), dim=new Date(y,m,0).getDate();
+ let g='<b>일</b><b>월</b><b>화</b><b>수</b><b>목</b><b>금</b><b>토</b>';
+ for(let i=0;i<first;i++) g+='<s class="dim"></s>';
+ for(let d=1;d<=dim;d++){
+  const dis=cmpYMD(y,m,d,T.y,T.m,T.d)>0||(CV.min&&cmpYMD(y,m,d,CV.min.y,CV.min.m,CV.min.d)<0);
+  const sel=CV.date&&CV.date.y===y&&CV.date.m===m&&CV.date.d===d, tdy=y===T.y&&m===T.m&&d===T.d;
+  g+=`<s class="${dis?'dim':''}${sel?' sel':''}${tdy?' tdy':''}"${dis?'':` onclick="CV.date={y:${y},m:${m},d:${d}};p1CvcForm('${mode}')"`}>${d}${tdy?'<i class="tdl">오늘</i>':''}</s>`;
+ }
+ const ttl={rep:'관 교체',rm:'관 제거',ins:'삽입일'}[mode], dl={rep:'삽입일 (필수)',rm:'제거일',ins:'삽입일'}[mode];
+ const hint=mode==='rep'?(OBD.cvcIns?`이전 관 삽입일(${OBD.cvcIns.m}/${OBD.cvcIns.d}) 다음 날부터 오늘까지 선택할 수 있어요.`:'오늘까지 선택할 수 있어요.')
+  :mode==='rm'?'오늘까지 선택할 수 있어요.':(CV.min?`${CV.min.m}/${CV.min.d}부터 오늘까지 선택할 수 있어요.`:'오늘까지 선택할 수 있어요.');
+ const ok=!!CV.date&&(mode!=='rep'||!!CV.type);
+ openPop(`<div class="pt"><span class="t">${ttl}</span><span class="r"><button class="btn sm" onclick="p1CvcEdit()">← 중심정맥관</button></span></div>
+  ${mode==='rep'?`<div class="hv">새 관 종류</div>
+  <div class="hact" style="flex-wrap:wrap;">${['히크만','케모포트','PICC','잘 모르겠어요'].map(x=>`<span class="chip ${CV.type===x?'on':''}" onclick="CV.type='${x}';p1CvcForm('rep')">${x}</span>`).join('')}</div>`:''}
+  <div class="hv" style="${mode==='rep'?'margin-top:10px;':''}">${dl} · <b style="color:#374151;">${CV.date?cvFmt(CV.date):'선택해 주세요'}</b></div>
+  <div class="hv" style="font-size:13.5px;color:#9CA3AF;">${hint}</div>
+  <div class="obcal" style="box-shadow:none;padding:6px 4px 0;margin-top:2px;"><div class="cm2"><span style="cursor:pointer;" onclick="cvNav(-1)">‹</span><span>${y}년 ${m}월</span><span style="cursor:pointer;" onclick="cvNav(1)">›</span></div><div class="gr2">${g}</div></div>
+  <div class="pact hact" style="justify-content:flex-end;margin-top:12px;"><button class="btn pri" ${ok?'':'disabled'} onclick="cvSave()">${mode==='rm'?'관 제거':'저장'}</button></div>`);
+}
+function cvNav(dir){ const T=OB_TODAY, cur=T.y*12+T.m, lo=CV.min?CV.min.y*12+CV.min.m:cur-24; let mi=CV.cal.y*12+CV.cal.m+dir; mi=Math.max(lo,Math.min(cur,mi)); CV.cal={y:Math.floor((mi-1)/12),m:((mi-1)%12)+1}; p1CvcForm(CV.mode); }
+function cvSave(){ const c=CV, d=OBD; if(!c||!c.date) return; d.cvcHist=d.cvcHist||[]; CV=null;
+ if(c.mode==='rep'){ d.cvcHist.push({type:d.cvcType,ins:d.cvcIns||null,end:c.date}); d.cvcType=c.type; d.cvcIns=c.date; saveSess(); openP1();
+  toast(c.type==='잘 모르겠어요'?'관을 교체했어요 · 관 종류를 확인해 주세요':`관을 교체했어요 · ${c.type} · 주기를 새로 시작해요 (데모 시트 = 등록 상태 고정)`); }
+ else if(c.mode==='rm'){ d.cvcHist.push({type:d.cvcType,ins:d.cvcIns||null,end:c.date,removed:true}); d.cvc='none'; d.cvcType=null; d.cvcIns=null; saveSess(); openP1();
+  toast(`관 제거를 기록했어요 · 제거일 ${c.date.m}/${c.date.d} (데모 시트 = 등록 상태 고정)`); }
+ else { d.cvcIns=c.date; const pv=cvPrev(); if(pv&&!pv.removed) pv.end=c.date; saveSess(); p1CvcEdit(); toast(`삽입일을 ${c.date.m}/${c.date.d}로 바꿨어요`); }
+}
 function p1Age(){ openPop(`<div class="pt"><span class="t">보호자 정보 · 연령대 (선택)</span><span class="r"><button class="btn sm" onclick="openP1()">← 가입 정보</button></span></div>
  <div class="hv">사용성 분석 참고용이에요 · 성별 · 지역은 받지 않아요.</div>
  <div class="hact" style="flex-wrap:wrap;">${['20대','30대','40대','50대','60대 이상'].map(x=>`<span class="chip ${OBD.age===x?'on':''}" onclick="OBD.age=OBD.age==='${x}'?null:'${x}';openP1()">${x}</span>`).join('')}</div>`); }
