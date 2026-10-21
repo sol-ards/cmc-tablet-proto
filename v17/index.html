@@ -2530,7 +2530,7 @@ const CH={
    let box;
    if(!S.part) box=`<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;line-height:30px;color:#9ca3af;">오른쪽 그림에서 불편한 부위를 눌러봐</div>`;
    else { const label=this.srPartName(this.BODY_UI.find(b=>b[0]===S.part)); this._partSyms=this.srPack(this.P.body[S.part]||[],424);
-    box=`<div style="font-size:24px;font-weight:600;color:#4b5563;line-height:32px;">${label}</div><div style="margin-top:4px;font-size:18px;font-weight:500;color:#9ca3af;line-height:28px;">선생님이 확인하고 싶어하셔.</div><div class="chips" style="margin-top:20px;">${this._partSyms.map((s,i)=>`<button class="rchip${sv.sel.includes(s)?' on':''}" onclick="CH.togPartSym(${i})">${s}</button>`).join('')}</div>`; }
+    box=`<div style="font-size:24px;font-weight:600;color:#4b5563;line-height:32px;">${label}</div><div style="margin-top:4px;font-size:18px;font-weight:500;color:#9ca3af;line-height:28px;">선생님이 확인하고 싶어하셔.</div><div class="chips" style="margin-top:12px;">${this._partSyms.map((s,i)=>`<button class="rchip${sv.sel.includes(s)?' on':''}" onclick="CH.togPartSym(${i})">${s}</button>`).join('')}</div>`; }
    return this.srWrap(this.srHead('다른 증상 찾기')+`
     <div class="bub gd side" style="left:32px;top:141px;width:314px;font-size:20px;line-height:30px;">불편한 곳을 눌러 증상을 선택해볼까?<br>여러 부위를 선택해도 돼.<i class="tail"></i></div>
     <img src="${cimg('byeori.png')}" alt="" style="position:absolute;left:376px;top:128px;height:150px;">
