@@ -1215,7 +1215,7 @@ function tempCanvas(hidx){
     </div>
     ${bub}
     <div class="psub" style="margin-top:8px;">그래프를 눌러 기록하고 드래그하여 미세 조정(시간 30분 · 온도 0.1℃ 단위)하세요. 점을 누르면 수정 · 삭제할 수 있어요.</div>
-    <div class="prolink" style="cursor:default;">몸이 춥고 떨림(오한), 피로·기운 없음 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`,'wide');
+    <div class="prolink" style="cursor:default;">몸이 춥고 떨림(오한) · 피로, 피곤함 또는 기운 없음 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`,'wide');
 }
 let _tc=null;
 function tcPos(ev){ const rc=$('tcanv').getBoundingClientRect();
@@ -1304,7 +1304,7 @@ function careSync(key){
 function tCare(key){
   curKey=key;
   const st=careSt(key), name=key==='gargle'?'가글':'좌욕';
-  const ment=key==='gargle'?'입안이 까져서 아프거나 목이 따가움, 입 마름, 삼키기 어려움 등의 증상이 있다면':'피부 가려움, 발진, 건조, 두드러기 등의 증상이 있다면';
+  const ment=key==='gargle'?'입안이 까져서 아프거나 목이 따가운 증상 · 입 마름 · 삼키기 어려움 등의 증상이 있다면':'피부 가려움 · 피부 발진(빨개지거나 붓거나 표면이 울퉁불퉁해지는 증상) · 피부 건조 · 두드러기(피부가 가렵고 붉게 올라옴) 등의 증상이 있다면';
   const recs=dcToday()?proBySrc(key):[];
   openPop(`<div class="pt"><span class="t">${name} 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b class="stv ${st.times.length?'on':''}">${st.none?'안 함':(st.times.length?st.times.length+'회':'기록 전')}</b></span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     ${st.times.length?`<div class="hact" style="margin-top:10px;">${st.times.map((t,i)=>`<span class="tchip" onclick="delTime('${key}',${i})">${t==='일괄'?'1회':t} <b style="color:#9CA3AF;">×</b></span>`).join('')}</div>`:''}
@@ -1363,7 +1363,7 @@ function tCvc(){
   openPop(`<div class="pt"><span class="t">중심정맥관 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${sub}</span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     <div class="hact" style="margin-top:10px;">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}</span>`).join('')}<span class="chip ${st.obs?'on':''}" onclick="cvcNone()">${st.obs?'✓ ':''}특이사항 없음</span></div>
     ${recs.length?`<div class="prolink" style="cursor:default;">기록한 증상 · ${recs.map(r=>`<span class="gbadge g${r.g}">${gSymName(r.sym)} G${r.g}</span>`).join('')} <span class="ar">＋</span></div>`
-      :`<div class="prolink" style="cursor:default;">항암 주사 맞은 부위 통증·부기·빨개짐, 피부 발진, 열 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
+      :`<div class="prolink" style="cursor:default;">항암 주사 맞은 부위 통증, 부기, 빨개짐 · 피부 발진(빨개지거나 붓거나 표면이 울퉁불퉁해지는 증상) · 열 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
 }
 function cvcToggle(k){
   const st=cvcSt();
@@ -1557,7 +1557,7 @@ function tBowel(){
       ${[0,1,2,3].map(c=>`<button class="o" onclick="bowelSet(${c})">${cur===c?'✓ ':''}${c===3?'3회 이상':c+'회'}</button>`).join('')}
     </div>
     ${recs.length?`<div class="prolink" style="cursor:default;">기록한 증상 · ${recs.map(r=>`<span class="gbadge g${r.g}">${gSymName(r.sym)} G${r.g}</span>`).join('')} <span class="ar">＋</span></div>`
-      :`<div class="prolink" style="cursor:default;">변비, 무른 변(설사), 출혈 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
+      :`<div class="prolink" style="cursor:default;">변비 · 무른 변(설사) · 출혈(구토, 가래, 소변, 대변, 상처부위) 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
 }
 function bowelSet(c){
   const cur=bowelCur();
