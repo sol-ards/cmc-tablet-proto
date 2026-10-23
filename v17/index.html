@@ -2546,7 +2546,7 @@ const CH={
   r_s3(){
    const S=this.S,sv=S.sv,n=sv.sel.length;
    const MAP={'신체 전반':0,'머리':1,'얼굴':2,'목':3,'가슴, 등':4,'배, 허리':5,'팔':6,'비뇨, 생식기':7,'다리':8};
-   const pins=this.SR_S3.chips.map(([lb,x,y])=>{const i=MAP[lb]; if(i==null)return ''; const b=this.BODY_UI[i]; return `<button class="pin${S.part===b[0]?' on':''}" style="left:${661+x}px;top:${122+y}px;" onclick="CH.pickPin(${i})">${this.srPartName(b)}</button>`;}).join('');
+   const pins=this.SR_S3.chips.map(([lb,x,y])=>{const i=MAP[lb]; if(i==null)return ''; const b=this.BODY_UI[i]; const X=661+x, pos=X>900?'left:1123px;transform:translateX(-100%)':`left:${X}px`; /* 오른쪽 이름표 = 오른쪽 끝 x 1123에 맞춤(피그마 3-2) */ return `<button class="pin${S.part===b[0]?' on':''}" style="${pos};top:${122+y}px;" onclick="CH.pickPin(${i})">${this.srPartName(b)}</button>`;}).join('');
    let box;
    if(!S.part) box=`<div style="height:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;line-height:30px;color:#9ca3af;">오른쪽 그림에서 불편한 부위를 눌러봐</div>`;
    else { const label=this.srPartName(this.BODY_UI.find(b=>b[0]===S.part)); this._partSyms=this.srPack(this.P.body[S.part]||[],424);
