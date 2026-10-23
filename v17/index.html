@@ -1700,7 +1700,7 @@ function guideFor(sym){
   const k=Object.keys(SYM_GUIDE).find(x=>x.includes(sym)||sym.includes(x));
   return k?SYM_GUIDE[k]:null;
 }
-function gSymName(s){ const L=CH.D.symptoms; const k=L.includes(s)?s:(SYM_ALIAS[s]&&L.includes(SYM_ALIAS[s])?SYM_ALIAS[s]:L.find(x=>x.startsWith(s+'('))); return k?CH.srName(k):s; }
+function gSymName(s){ /* 보호자 모드에서는 CH.D가 아직 없을 수 있어 원천 목록을 직접 씀 */ const L=(window.CHDATA||{}).symptoms||[]; const k=L.includes(s)?s:(SYM_ALIAS[s]&&L.includes(SYM_ALIAS[s])?SYM_ALIAS[s]:L.find(x=>x.startsWith(s+'('))); const no=k?L.indexOf(k)+1:0; return (no&&no!==65&&CH.SR_NAME[no])||k||s; }
 function openSymGuide(sym,g,day,fromNote){
   const gd=guideFor(sym)||{};
   const tip=gd['G'+g]||'이 증상은 등록된 자가 관리 지침이 없어요.';
