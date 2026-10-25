@@ -886,7 +886,11 @@ function cbcRows(){
   });
   return h;
 }
-function render(){
+let _hwSync={wk0:'21.5',wk1:'21.4',ht1:'118.2cm'}; /* 마지막으로 맞춘 시연 값 — 이 값 그대로일 때만 바꿈 */
+function syncDemoHW(){ if(typeof OBD==='undefined') return; const w=parseFloat(OBD.wt), h=parseFloat(OBD.ht);
+ if(w){ const a=(w+0.1).toFixed(1), b=w.toFixed(1); if(H[0].wk===_hwSync.wk0){ H[0].wk=a; _hwSync.wk0=a; } if(H[1].wk===_hwSync.wk1){ H[1].wk=b; _hwSync.wk1=b; } }
+ if(h){ const c=h.toFixed(1)+'cm'; if(H[1].ht===_hwSync.ht1){ H[1].ht=c; _hwSync.ht1=c; } } }
+function render(){ syncDemoHW();
   calcView();
   $('ttop').innerHTML = S.present ? `
     <div class="tt2">
