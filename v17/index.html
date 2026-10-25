@@ -2618,7 +2618,8 @@ const CH={
 
   r_s5(){
    const sv=this.S.sv,r=sv.result;
-   if(r.rej) return this.srWrap(this.srHead('기록 완료')+` /* 서버가 거절한 직후(9-4) — 기록 정리 카드 없이 가운데 정렬 */
+   /* 서버가 거절한 직후(9-4) — 기록 정리 카드 없이 가운데 정렬 */
+   if(r.rej) return this.srWrap(this.srHead('기록 완료')+`
     <div class="bub gd" style="left:427px;top:140px;width:425px;"><div style="font-size:26px;line-height:39px;">기록을 보내지 못했어.</div><div style="margin-top:8px;font-size:20px;line-height:30px;">미안해, 처음부터 다시 기록해 줄래?</div><i class="tail"></i></div>
     <img src="${cimg('sr/s1.webp')}" alt="" style="position:absolute;left:575px;top:300px;width:130px;">
     <div class="desc" style="position:absolute;left:340px;top:500px;width:600px;margin:0;box-sizing:border-box;">열이 38도 이상이거나 갑자기 많이 아프면 바로 보호자에게 알려줘. 보호자와 함께 병원에 연락해봐.</div>
