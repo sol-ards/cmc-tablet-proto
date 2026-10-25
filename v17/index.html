@@ -2618,11 +2618,10 @@ const CH={
 
   r_s5(){
    const sv=this.S.sv,r=sv.result;
-   /* 서버가 거절한 직후(9-4) — 기록 정리 카드 없이 가운데 정렬 */
+   /* 서버가 거절한 직후(9-4) — 기록 정리 카드 · 안전 안내 없이 가운데 정렬 */
    if(r.rej) return this.srWrap(this.srHead('기록 완료')+`
-    <div class="bub gd" style="left:427px;top:150px;width:425px;"><div style="font-size:26px;line-height:39px;">기록을 보내지 못했어.</div><div style="margin-top:8px;font-size:20px;line-height:30px;">미안해, 처음부터 다시 기록해 줄래?</div><i class="tail"></i></div>
-    <img src="${cimg('sr/s1.webp')}" alt="" style="position:absolute;left:575px;top:315px;width:130px;">
-    <div class="desc" style="position:absolute;left:340px;top:530px;width:600px;margin:0;box-sizing:border-box;background:#e5e7eb;text-align:center;">열이 38도 이상이거나 갑자기 많이 아프면 바로 보호자에게 알려줘. 보호자와 함께 병원에 연락해봐.</div>
+    <div class="bub gd" style="left:427px;top:190px;width:425px;"><div style="font-size:26px;line-height:39px;">기록을 보내지 못했어.</div><div style="margin-top:8px;font-size:20px;line-height:30px;">미안해, 처음부터 다시 기록해 줄래?</div><i class="tail"></i></div>
+    <img src="${cimg('sr/s1.webp')}" alt="" style="position:absolute;left:575px;top:355px;width:130px;">
     <button class="cta" style="left:403px;top:690px;width:474px;" onclick="CH.home()">홈으로</button>`);
    let title,sub;
    if(r.g0){ title=`잘 기록했어 ${this.josa('아야')}!`; sub='오늘은 힘든 증상이 없구나. 컨디션 잘 유지해줘. 언제든 증상이 생기면 알려줘!'; }
