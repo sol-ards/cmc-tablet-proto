@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캔모어차일드 보호자 모드 — 가로모드 프로토타입 v0.1</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800&display=swap">
+<style>
+:root{
+  --blue:#4A80F0; --blue-d:#3568d4; --ink:#22303a; --soft:#6b7a86; --mut:#9aa6b0;
+  --bg:#eef1f5; --card:#fff; --line:#e6eaef; --red:#DD5244; --redbg:#FDEDEB;
+  --amber:#c9a24a; --amberbg:#fdf8ec; --green:#1c6b39; --greenbg:#e2f2e6;
+  --gnone:#f3ede0; --g1bg:#DFF0E2; --g1tx:#1c6b39; --g2bg:#FDF3CD; --g2tx:#8a6d00;
+  --g3bg:#FDE3D0; --g3tx:#B04A17; --g4bg:#FBD9D3; --g4tx:#B03A2E;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Pretendard','Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;background:#dfe4ea;color:var(--ink);line-height:1.5;font-feature-settings:'tnum';}
+.topbar{max-width:1200px;margin:0 auto;padding:18px 20px 6px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.topbar h1{font-size:15px;font-weight:800;}
+.topbar .ver{font-size:11px;color:var(--soft);font-weight:600;margin-left:2px;}
+.hint{max-width:1200px;margin:0 auto;padding:0 20px 12px;font-size:11px;color:var(--soft);}
+.stage{display:flex;justify-content:center;padding:8px 16px 60px;}
+
+/* ---------- 가로 폰 ---------- */
+.phone{width:844px;max-width:98vw;height:416px;background:var(--bg);border-radius:34px;border:10px solid #1b232b;
+  box-shadow:0 24px 60px rgba(20,30,42,.35);position:relative;overflow:hidden;display:flex;}
+
+/* 레일 */
+.rail{width:62px;flex:none;background:#e3e8ee;display:flex;flex-direction:column;align-items:center;padding:12px 0 10px;gap:4px;}
+.rail .time{font-size:10.5px;font-weight:800;color:#33414d;margin-bottom:8px;}
+.rico{width:44px;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;border-radius:12px;font-family:inherit;}
+.rico i{width:38px;height:38px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-style:normal;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.rico span{font-size:8.5px;color:#6a7a85;font-weight:700;}
+.rico.on i{background:var(--ink);color:#fff;}
+.rico.on span{color:var(--ink);}
+.rico.em i{color:#e4574f;}
+.rail .sp{flex:1;}
+
+/* 화면 */
+.main{flex:1;position:relative;overflow:hidden;}
+.scr{position:absolute;inset:0;display:none;}
+.scr.on{display:flex;}
+
+/* ---------- 기록 화면 : 항목 열 + 도구 ---------- */
+#scr-rec{gap:9px;padding:9px;}
+.itemcol{width:212px;flex:none;background:#fff;border-radius:16px;padding:9px 8px;display:flex;flex-direction:column;overflow:hidden;}
+.itemcol .h{font-size:9.5px;color:#98a2ad;font-weight:800;letter-spacing:.03em;padding:1px 4px 6px;flex:none;display:flex;justify-content:space-between;align-items:baseline;}
+.itemcol .h b{color:#33506e;}
+.ilist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding-bottom:2px;}
+.igroup{font-size:8.5px;color:#98a2ad;font-weight:800;letter-spacing:.05em;padding:6px 4px 1px;}
+.item{border:1.2px solid #dfe4ea;border-radius:11px;padding:6px 9px;font-size:11px;font-weight:700;color:#4a5a63;display:flex;justify-content:space-between;align-items:center;gap:6px;cursor:pointer;background:#fff;flex:none;}
+.item .s{font-size:8.5px;color:#98a2ad;font-weight:600;text-align:right;white-space:nowrap;}
+.item.cur{border-color:var(--ink);background:#f1f4f8;color:#1d2b38;box-shadow:inset 3px 0 0 var(--blue);}
+.item.done{color:#1c6b39;border-color:#cfe6d4;background:#f4faf5;}
+.item.done .s{color:#5c9a6e;}
+.item.alert{border-color:#f3c8c2;background:var(--redbg);color:#B03A2E;box-shadow:inset 3px 0 0 var(--red);}
+.item.alert .s{color:#c07a70;}
+.item.visit{border-color:#e9d9a6;background:var(--amberbg);}
+.item.visit.done{border-color:#cfe6d4;background:#f4faf5;}
+
+/* 도구 패널 */
+.tool{flex:1;background:#fff;border-radius:16px;padding:11px 13px;display:flex;flex-direction:column;overflow:hidden;}
+.tool .tt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex:none;}
+.tool .tt .t{font-size:14px;font-weight:800;}
+.tool .tt .s{font-size:9.5px;color:#98a2ad;font-weight:600;text-align:right;}
+.modes{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;align-items:center;flex:none;}
+.tbody{flex:1;display:flex;gap:14px;margin-top:4px;min-height:0;}
+.tleft{flex:1;display:flex;flex-direction:column;min-width:0;}
+.tfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:7px;flex:none;}
+.tnote{font-size:9.5px;color:#98a2ad;font-weight:600;line-height:1.5;}
+.alertline{font-size:9.5px;font-weight:800;color:#B03A2E;background:var(--redbg);border-radius:8px;padding:4px 9px;}
+
+.chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;border:1.3px solid #c9d2dc;color:#4a5a63;border-radius:9px;padding:4px 10px;cursor:pointer;background:#fff;white-space:nowrap;}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.chip.blood{border-color:#e5a49c;color:#B03A2E;}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;border-radius:10px;padding:8px 15px;border:0;cursor:pointer;white-space:nowrap;background:#eef2f8;color:#33506e;font-family:inherit;}
+.btn.pri{background:var(--blue);color:#fff;}
+.btn.warn{background:var(--red);color:#fff;}
+.btn.done{background:var(--greenbg);color:var(--green);}
+.btn.act{background:#fff;border:1.3px solid var(--blue);color:var(--blue);}
+.btn.big{font-size:13px;padding:13px 24px;}
+.btn:disabled{opacity:.45;cursor:default;}
+
+.bigval{font-size:37px;font-weight:800;text-align:center;padding:8px 0 0;}
+.bigval small{font-size:15px;color:var(--mut);font-weight:700;}
+.bigval .ghost{color:#c3cad2;}
+.rangewarn{font-size:10.5px;color:var(--red);font-weight:700;text-align:center;min-height:15px;margin-top:2px;}
+.tpad{width:188px;flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.tpad button{background:#f4f6f8;border:0;border-radius:10px;font-size:16px;font-weight:800;color:var(--ink);cursor:pointer;font-family:inherit;}
+.tpad button.fn{color:var(--mut);font-size:13px;}
+.tpad button:active{background:#e3e8ee;}
+
+.prolink{font-size:10.5px;color:#4a5a63;margin-top:8px;border-top:1px dashed var(--line);padding-top:7px;cursor:pointer;line-height:1.5;}
+.prolink b{color:var(--ink);}
+.prolink .ar{color:var(--blue);font-weight:800;}
+.opts{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.opts .o{border:1.3px solid #c9d2dc;border-radius:12px;padding:12px 18px;font-size:12.5px;font-weight:700;color:#39434e;background:#fff;cursor:pointer;font-family:inherit;}
+.opts .o.on{border-color:var(--ink);background:#f1f4f8;color:#1d2b38;}
+.hsub{font-size:9.5px;color:var(--mut);font-weight:600;margin-top:6px;line-height:1.5;}
+.timeschip{display:inline-flex;background:#f1f3f6;color:#5a6875;font-size:10px;font-weight:700;border-radius:8px;padding:4px 9px;}
+
+/* CBC 촬영 */
+.cam{background:#232b33;border-radius:14px;flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;}
+.cam .guide{border:1.6px dashed #9fb0c0;border-radius:11px;color:#cfd9e2;font-size:10.5px;font-weight:700;text-align:center;padding:18px 26px;line-height:1.7;}
+.cam .shutter{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.35);cursor:pointer;border:0;}
+.ocr{display:grid;grid-template-columns:80px 1fr 56px;gap:5px;align-items:center;font-size:11px;margin-top:4px;}
+.ocr .k{font-weight:800;color:#33506e;}
+.ocr .v{background:#f4f6f8;border:1px solid #e0e5eb;border-radius:8px;padding:5px 9px;font-weight:700;}
+.ocr .u{color:var(--mut);font-weight:600;font-size:9px;text-align:right;}
+
+/* 토글 */
+.tog{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:#33506e;cursor:pointer;flex:none;}
+.tog .sw{width:32px;height:19px;border-radius:11px;background:#c9d2dc;position:relative;transition:.15s;}
+.tog .sw::after{content:'';position:absolute;top:2.5px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.15s;}
+.tog .sw.on{background:var(--blue);}
+.tog .sw.on::after{left:15px;}
+.tog .sw.lock{background:#4a3a86;}
+
+/* ---------- 진료노트 화면 ---------- */
+#scr-note{flex-direction:column;padding:9px;gap:6px;}
+.note-head{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:7px 13px;font-size:11.5px;font-weight:800;flex:none;}
+.note-head .r{font-size:9.5px;color:var(--mut);font-weight:600;}
+.note-head .nav{display:flex;gap:2px;align-items:center;}
+.note-head .ar{color:#c3cad2;font-size:13px;padding:0 7px;cursor:pointer;border:0;background:none;font-family:inherit;font-weight:800;}
+.notescroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;min-height:0;}
+.sig{background:#fff;border-radius:14px;padding:8px;display:grid;grid-template-columns:88px repeat(7,1fr);gap:2px;font-size:9px;flex:none;}
+.sig .hd{background:#fbe3d9;font-weight:800;text-align:center;padding:3px 0;color:#7a2e26;line-height:1.35;}
+.sig .hd.visit{background:#f3e3ad;color:#6b4e00;}
+.sig .hd.today{outline:1.5px solid var(--ink);outline-offset:-1.5px;}
+.sig .rl{font-weight:800;color:#33506e;padding:3px 5px;background:#f4f6f8;display:flex;align-items:center;line-height:1.25;}
+.sig .rl small{font-weight:600;color:#98a2ad;font-size:7.5px;margin-left:3px;}
+.sig .c{background:#fafbfc;border:1px solid #eef1f5;min-height:17px;text-align:center;color:#39434e;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.sig .c.visit{background:#fdf9ec;}
+.sig .c.tap{cursor:pointer;}
+.sig .divider{grid-column:1 / -1;background:#efeadf;font-weight:800;color:#6b5c3a;padding:3px 8px;font-size:9px;border-radius:4px;margin-top:3px;}
+.sig .temp{grid-column:2 / span 7;height:62px;background:repeating-linear-gradient(90deg,#f0f3f6 0 1px,transparent 1px 14.28%);position:relative;border:1px solid #eef1f5;}
+.sig .temp .base{position:absolute;left:0;right:0;top:36%;border-top:1.5px dashed var(--red);}
+.sig .temp .baselab{position:absolute;right:3px;top:calc(36% - 13px);font-size:8px;color:var(--red);font-weight:800;}
+.sig .temp svg{position:absolute;inset:0;width:100%;height:100%;}
+.gc{border-radius:3px;font-size:8.5px;font-weight:800;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.g0{background:var(--gnone);color:#8a7f66;}.g1{background:var(--g1bg);color:var(--g1tx);}
+.g2{background:var(--g2bg);color:var(--g2tx);}.g3{background:var(--g3bg);color:var(--g3tx);}
+.g4c{background:var(--g4bg);color:var(--g4tx);}
+.qbar{background:#fff;border-radius:12px;padding:7px 13px;display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#33506e;flex:none;cursor:pointer;}
+.qbar .s{font-size:9px;color:var(--mut);font-weight:600;}
+
+/* ---------- 응급 화면 ---------- */
+#scr-em{flex-direction:column;padding:9px;gap:6px;}
+.em-top{display:flex;gap:6px;flex:none;align-items:stretch;}
+.em-lead{flex:1;background:#fff;border-radius:12px;padding:8px 13px;font-size:11px;color:#4a5561;line-height:1.55;}
+.em-lead b{color:#B03A2E;}
+.em-lead .t{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:1px;}
+.em-call{background:#22303a;border-radius:12px;padding:8px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;flex:none;}
+.em-call .tt{font-size:11.5px;font-weight:800;color:#fff;}
+.em-call .st{font-size:9px;color:rgba(255,255,255,.65);}
+.emscroll{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;min-height:0;}
+.em-fever{background:var(--redbg);border:1px solid #f3c8c2;border-left:4px solid var(--red);border-radius:12px;padding:9px 12px;flex:none;}
+.em-fever .tt{font-size:12px;font-weight:800;color:#B03A2E;}
+.em-fever .sg{font-size:10px;color:#7a3a32;margin-top:2px;line-height:1.55;}
+.em-why{font-size:9.5px;color:#8a6560;background:#fff;border-radius:9px;padding:6px 9px;margin-top:6px;line-height:1.6;}
+.em-why b{color:#B03A2E;}
+.emgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:none;}
+.em-sig{background:#f7f8fa;border:1px solid #e8ebef;border-radius:12px;padding:8px 11px;cursor:pointer;}
+.em-sig .tt{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#1d2b38;}
+.em-sig .tt .cv{margin-left:auto;font-size:10px;color:#98a2ad;font-weight:700;}
+.em-sig .sg{font-size:9.5px;color:#66707b;margin-top:2px;line-height:1.5;}
+.em-sig.open{background:#fff;border-color:#d9dee4;box-shadow:0 1px 4px rgba(30,42,56,.07);grid-column:1 / -1;}
+.em-sig .why2{font-size:9.5px;color:#7a858f;background:#f7f8fa;border-radius:9px;padding:6px 9px;margin-top:6px;line-height:1.6;}
+.em-sig .why2 b{color:#4a5561;}
+.em-prep{background:#eef5f5;border-radius:12px;padding:9px 12px;flex:none;}
+.em-prep .tt{font-size:11.5px;font-weight:800;color:#0c5a5f;}
+.em-prep .intro{font-size:9.5px;color:#5a7578;margin-top:2px;line-height:1.55;}
+.em-prep .it{font-size:9.5px;color:#3c5a5d;margin-top:5px;line-height:1.55;display:flex;gap:6px;cursor:pointer;}
+.em-prep .it i{font-style:normal;flex:none;}
+.em-prep.arrive{background:#f3effa;}
+.em-prep.arrive .tt{color:#4a3a86;}
+.em-prep.arrive .it{color:#4a4468;cursor:default;}
+.em-note{font-size:9.5px;color:#a3adb8;line-height:1.5;text-align:center;padding:4px 8px 8px;flex:none;}
+
+/* ---------- 오버레이 · 토스트 ---------- */
+.center-ov{position:absolute;inset:0;background:rgba(20,30,42,.45);z-index:30;display:none;align-items:center;justify-content:center;padding:26px 90px;}
+.center-ov.on{display:flex;}
+.pop{background:#fff;border-radius:16px;padding:15px 16px;width:100%;max-width:460px;max-height:100%;overflow-y:auto;box-shadow:0 14px 40px rgba(20,30,42,.35);animation:up .16s ease;}
+@keyframes up{from{transform:translateY(18px);opacity:.6;}to{transform:none;opacity:1;}}
+.pop .pt{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.pop .pt .t{font-size:14px;font-weight:800;}
+.pop .hv{font-size:11.5px;color:#4a5a63;margin-top:5px;line-height:1.6;}
+.pop .hv b{color:var(--ink);}
+.pact{display:flex;gap:7px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap;}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;background:#22303a;color:#fff;font-size:11.5px;font-weight:700;border-radius:11px;padding:8px 14px;z-index:40;display:none;align-items:center;gap:11px;white-space:nowrap;box-shadow:0 8px 20px rgba(20,30,42,.35);}
+.toast.on{display:flex;}
+.toast .undo{color:#9fc0ff;font-weight:800;cursor:pointer;}
+
+/* 항목 켜기·끄기 팝업 */
+.itrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:11px;padding:7px 11px;margin-top:6px;}
+.itrow .n{font-size:12px;font-weight:800;}
+.itrow .d{font-size:9.5px;color:var(--mut);font-weight:600;}
+.itgrp{font-size:10px;font-weight:800;color:#66707b;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>캔모어차일드 보호자 모드 — 가로모드 프로토타입 <span class="ver">v0.1 · sol 박지현 · 2026-08-26</span></h1>
+</div>
+<div class="hint">보호자 기록과 진료노트를 같은 가로 방향으로 — 왼쪽 레일로 [기록 · 진료노트 · 응급 · 항목] 전환. 기록 화면은 항목 열(왼쪽)에서 항목을 고르면 오른쪽 도구가 바뀌고, 저장하면 다음 미기록 항목으로 이동. 시나리오 : 체온 키패드 기록(기준 초과) → 좌욕 [했어요]+[증상 관찰](PRO 연결) → 컨디션 · 식사량 · 체중 이어 기록 → 배변 +1 · 물설사(PRO 연결) → CBC 촬영 → 레일 [진료노트] 셀 탭 상세. 음성 입력 · OCR · 블루투스 · PRO 문진은 화면 진입까지만 동작.</div>
+
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="rail">
+      <div class="time">9:41</div>
+      <button class="rico on" id="rb-rec" onclick="go('rec')"><i>✍</i><span>기록</span></button>
+      <button class="rico" id="rb-note" onclick="go('note')"><i>📋</i><span>진료노트</span></button>
+      <button class="rico em" id="rb-em" onclick="go('em')"><i>🚨</i><span>응급</span></button>
+      <button class="rico" onclick="openItemsPop()"><i>☰</i><span>항목</span></button>
+      <div class="sp"></div>
+      <button class="rico" onclick="toast('환아 모드 전환 — 데모 범위 외')"><i>👦</i><span>모드</span></button>
+    </div>
+    <div class="main">
+      <div class="scr on" id="scr-rec">
+        <div class="itemcol">
+          <div class="h" id="col-head"></div>
+          <div class="ilist" id="ilist"></div>
+        </div>
+        <div class="tool" id="tool"></div>
+      </div>
+      <div class="scr" id="scr-note"></div>
+      <div class="scr" id="scr-em"></div>
+      <div class="center-ov" id="centerov" onclick="if(event.target===this)closeCenter()"><div class="pop" id="centerpop"></div></div>
+      <div class="toast" id="toast"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- state (프로토타입 v0.1과 동일 시나리오 데이터) ---------- */
+const S = {
+  temp:{last:'36.8', time:'14:20', next:'16:20', count:1, site:'겨드랑이'},
+  gargle:{count:2, times:['09:10','13:05'], obs:null},
+  sitz:{count:0, times:[], obs:null},
+  cvc:{done:false, checks:{}, obs:null},
+  bowel:{count:2, aspect:null},
+  water:650,
+  condition:null, meal:null,
+  weightToday:null, weightLast:'21.4',
+  items:{weight:true, bowel:true, condition:true, meal:true, water:true, shot:true, trans:true, cbc:true, height:true},
+  visit:{shot:false, shotDrug:null, trans:null, cbc:false, height:null},
+  questions:['밤에 자꾸 깬다','가글 후 헛구역질'],
+  memoDraft:''
+};
+const $ = id => document.getElementById(id);
+const CONDS = ['평소처럼 잘 논다','평소보다 처진다','많이 처져 있다'];
+const MEALS = ['평소만큼','절반쯤','거의 못 먹음'];
+
+/* ---------- 공통 ---------- */
+let toastTimer=null, undoFn=null;
+function toast(msg, undo){
+  const t=$('toast');
+  t.innerHTML = msg + (undo?' <span class="undo" onclick="doUndo()">되돌리기</span>':'');
+  undoFn = undo||null;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('on'), undo?5000:2200);
+}
+function doUndo(){ if(undoFn){undoFn(); undoFn=null;} $('toast').classList.remove('on'); renderRec(); }
+function openCenter(html){ $('centerpop').innerHTML=html; $('centerov').classList.add('on'); }
+function closeCenter(){ $('centerov').classList.remove('on'); }
+function go(scr){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  ['rec','note','em'].forEach(k=>$('rb-'+k).classList.toggle('on',k===scr));
+  $('scr-'+scr).classList.add('on');
+  if(scr==='note') renderNote();
+  if(scr==='em') renderEm();
+}
+
+/* ---------- PRO 핸드오프 (목업) ---------- */
+function proMock(name){
+  closeCenter();
+  openCenter(`<div class="pt"><span class="t">서준이와 함께 기록해요</span></div>
+    <div class="hv">「${name}」 증상을 환아 모드를 통해 문진을 진행해 보세요.</div>
+    <div class="pact" style="justify-content:flex-start;">
+      <button class="btn pri" onclick="proGo('${name}')">지금 기록하기</button>
+      <button class="btn" onclick="proLater('${name}')">나중에 하기</button>
+    </div>
+    <div class="hsub">지금 기록하면 해당 증상 문진으로 바로 이동하고, 끝나면 보호자 모드로 돌아와요. 나중에는 환아 모드 홈에 "오늘 기록할 증상"으로 담겨요.</div>`);
+}
+function proGo(name){
+  openCenter(`<div class="pt"><span class="t">환아 모드 · 벼리 문진 (목업)</span></div>
+    <div class="hv">「${name}」 문진 첫 화면으로 이동했어요 — 증상 선택 없이 바로. PRO 문진 본편은 데모 범위 외.</div>
+    <div class="pact"><button class="btn pri" onclick="proDone('${name}')">문진 마치고 돌아오기</button></div>`);
+}
+function proDone(name){ closeCenter(); toast(`서준이가 「${name}」 증상을 기록했어요 — 보호자 모드 복귀`); }
+function proLater(name){ closeCenter(); toast(`환아 모드 홈에 「${name}」을 오늘 기록할 증상으로 담아뒀어요`); }
+
+/* ---------- 항목 열 ---------- */
+const ITEMS = [
+  {k:'cvc',   name:'중심정맥관', done:()=>S.cvc.done, show:()=>true, daily:true,
+    sub:()=>S.cvc.done?'교환 완료':'교환일 2일 지남', alert:()=>!S.cvc.done},
+  {k:'temp',  name:'체온', done:()=>S.temp.count>0, show:()=>true, daily:true,
+    sub:()=>`${S.temp.last}℃ · ${S.temp.time}`},
+  {k:'gargle',name:'가글', done:()=>S.gargle.count>0, show:()=>true, daily:true,
+    sub:()=>S.gargle.count?`${S.gargle.count}회 · ${S.gargle.times[S.gargle.times.length-1]}`:'0회'},
+  {k:'sitz',  name:'좌욕', done:()=>S.sitz.count>0, show:()=>true, daily:true,
+    sub:()=>S.sitz.count?`${S.sitz.count}회 · ${S.sitz.times[S.sitz.times.length-1]}`:'0회'},
+  {k:'weight',name:'체중', done:()=>S.weightToday!==null, show:()=>S.items.weight, daily:true,
+    sub:()=>S.weightToday?`${S.weightToday}kg 오늘`:`어제 ${S.weightLast}kg`},
+  {k:'condition',name:'컨디션', done:()=>S.condition!==null, show:()=>S.items.condition, daily:true,
+    sub:()=>S.condition||'하루 1회'},
+  {k:'meal',  name:'식사량', done:()=>S.meal!==null, show:()=>S.items.meal, daily:true,
+    sub:()=>S.meal||'하루 1회'},
+  {k:'bowel', name:'배변', done:()=>S.bowel.count>0, show:()=>S.items.bowel, daily:true,
+    sub:()=>`오늘 ${S.bowel.count}회${S.bowel.aspect?' · '+S.bowel.aspect:''}`},
+  {k:'water', name:'수분', done:()=>S.water>0, show:()=>S.items.water, daily:true,
+    sub:()=>`${S.water.toLocaleString()}mL`},
+  {k:'shot',  name:'수치주사', done:()=>!!S.visit.shot, show:()=>S.items.shot, visit:true,
+    sub:()=>S.visit.shot?`✓ ${S.visit.shotDrug}`:'외래일만'},
+  {k:'trans', name:'수혈', done:()=>!!S.visit.trans, show:()=>S.items.trans, visit:true,
+    sub:()=>S.visit.trans?`✓ ${S.visit.trans}`:'외래일만'},
+  {k:'cbc',   name:'CBC', done:()=>!!S.visit.cbc, show:()=>S.items.cbc, visit:true,
+    sub:()=>S.visit.cbc?'✓ ANC 5,130':'스티커 촬영'},
+  {k:'height',name:'키', done:()=>S.visit.height!==null, show:()=>S.items.height, visit:true,
+    sub:()=>S.visit.height?`✓ ${S.visit.height}cm`:'외래 측정값만'},
+  {k:'memo',  name:'메모', done:()=>false, show:()=>true, free:true,
+    sub:()=>`질문 ${S.questions.length}건`}
+];
+let cur='temp';
+function remainCount(){ return ITEMS.filter(it=>it.daily && it.show() && !it.done()).length; }
+function renderRec(){
+  $('col-head').innerHTML=`<span>8/25 (화) · D18</span><span>남은 <b>${remainCount()}</b></span>`;
+  let h='', lastGrp='';
+  ITEMS.forEach(it=>{
+    if(!it.show()) return;
+    const grp = it.visit?'진료 기록 — 외래에서 시행한 날만':(it.free?'자유 기록':'');
+    if(grp && grp!==lastGrp){ h+=`<div class="igroup">${grp}</div>`; lastGrp=grp; }
+    const cls=['item']; if(it.k===cur) cls.push('cur');
+    if(it.alert && it.alert()) cls.push('alert');
+    else if(it.done()) cls.push('done');
+    if(it.visit) cls.push('visit');
+    h+=`<div class="${cls.join(' ')}" onclick="select('${it.k}')">${it.done()&&!(it.alert&&it.alert())?'✓ ':''}${it.name}<span class="s">${it.sub()}</span></div>`;
+  });
+  $('ilist').innerHTML=h;
+  renderTool();
+}
+function select(k){ cur=k; renderRec(); }
+function nextItem(){
+  const order=ITEMS.filter(it=>it.daily&&it.show());
+  const i=order.findIndex(it=>it.k===cur);
+  for(let step=1; step<=order.length; step++){
+    const it=order[(i+step)%order.length];
+    if(!it.done()){ cur=it.k; renderRec(); return; }
+  }
+  toast('오늘 남은 기록이 없어요 — 수정은 항목을 골라서');
+  renderRec();
+}
+
+/* ---------- 키패드 (도구 패널 안) ---------- */
+function keypadTool(opt){ // {title, meta, unit, dec, intLen, min, max, ghost, extra, note, alert, onSave, deviceChip}
+  let digits='';
+  const fmt=()=>{ if(!digits) return null;
+    if(digits.includes('.')) return digits;
+    if(digits.length<=opt.intLen) return digits;
+    return digits.slice(0,-opt.dec)+'.'+digits.slice(-opt.dec); };
+  $('tool').innerHTML=`
+    <div class="tt"><span class="t">${opt.title}</span><span class="s">${opt.meta}</span></div>
+    <div class="modes">
+      <span class="chip on">⌨ 직접 입력</span>
+      <span class="chip" onclick="voicePopup('${opt.title}')">🎤 음성 입력</span>
+      ${opt.deviceChip?`<span class="chip" onclick="toast('기기 연동(블루투스 체온계) — 데모 범위 외')">📶 기기 연동</span>`:''}
+      ${opt.extra||''}
+    </div>
+    <div class="tbody">
+      <div class="tleft">
+        <div class="bigval" id="kp-val"><span class="ghost">${opt.ghost}</span><small>${opt.unit}</small></div>
+        <div class="rangewarn" id="kp-warn"></div>
+        <div style="flex:1;"></div>
+        <div class="tnote">${opt.note||''}</div>
+      </div>
+      <div class="tpad">
+        ${[7,8,9,4,5,6,1,2,3].map(n=>`<button onclick="kpIn('${n}')">${n}</button>`).join('')}
+        <button class="fn" onclick="kpIn('.')">.</button><button onclick="kpIn('0')">0</button><button class="fn" onclick="kpIn('⌫')">⌫</button>
+      </div>
+    </div>
+    <div class="tfoot">
+      <span>${opt.alert?`<span class="alertline">${opt.alert}</span>`:''}</span>
+      <button class="btn pri" id="kp-save" disabled>저장 → 다음</button>
+    </div>`;
+  window.kpIn=(k)=>{
+    if(k==='⌫') digits=digits.slice(0,-1);
+    else if(k==='.'){ if(digits && !digits.includes('.')) digits+='.'; }
+    else if(digits.replace('.','').length<opt.intLen+opt.dec) digits+=k;
+    const v=fmt();
+    $('kp-val').innerHTML = v? v+`<small>${opt.unit}</small>` : `<span class="ghost">${opt.ghost}</span><small>${opt.unit}</small>`;
+    const num=parseFloat(v);
+    const complete = v && digits.replace('.','').length>=opt.intLen;
+    const inRange = complete && num>=opt.min && num<=opt.max;
+    $('kp-warn').textContent = (complete && !inRange)? `입력 범위 ${opt.min.toFixed(1)}~${opt.max.toFixed(1)}${opt.unit}` : '';
+    $('kp-save').disabled = !inRange;
+    $('kp-save').onclick = ()=>opt.onSave(num.toFixed(opt.dec));
+  };
+  window.kpSetVoice=(v)=>{ digits=v.replace('.',''); window.kpIn(''); };
+}
+function voicePopup(what){
+  openCenter(`<div class="pt"><span class="t">${what}을 말씀해 주세요</span><span style="font-size:20px;">🎤</span></div>
+  <div class="bigval" id="vc-val" style="color:#9aa6b0;font-size:30px;">듣는 중 …</div>
+  <div class="pact" id="vc-act"></div>
+  <div class="hsub">음성 인식은 목업 — 1초 뒤 예시값이 들어옵니다</div>`);
+  setTimeout(()=>{
+    if(!$('vc-val'))return;
+    $('vc-val').innerHTML='37.2<small style="font-size:14px;color:#9aa6b0;">℃</small>'; $('vc-val').style.color='';
+    $('vc-act').innerHTML=`<button class="btn" onclick="voicePopup('${what}')">다시 말하기</button><button class="btn pri" onclick="closeCenter();kpSetVoice('37.2')">확인</button>`;
+  },1000);
+}
+
+/* ---------- 도구 렌더 ---------- */
+let tempSite=null;
+function renderTool(){
+  const T=$('tool');
+  if(cur==='temp'){
+    tempSite=null;
+    keypadTool({
+      title:'체온', meta:`2시간마다 · 다음 ${S.temp.next} · 오늘 ${S.temp.count}회`,
+      unit:'℃', dec:1, intLen:2, min:34.0, max:42.0, ghost:S.temp.last, deviceChip:true,
+      extra:`<span class="chip" id="site-a" onclick="pickSite('겨드랑이')">겨드랑이</span><span class="chip" id="site-b" onclick="pickSite('고막')">고막</span>`,
+      note:'직전값 흐리게 표시 · 소수점 자동(372 → 37.2)',
+      alert:'기준 37.5℃ — 넘으면 병원 연락 기준 안내',
+      onSave:(v)=>{
+        const prev={...S.temp};
+        S.temp.last=v; S.temp.time='16:21'; S.temp.next='18:21'; S.temp.count++;
+        if(tempSite) S.temp.site=tempSite;
+        if(parseFloat(v)>=37.5){
+          openCenter(`<div class="pt"><span class="t" style="color:#B03A2E;">${v}℃ — 기준을 넘었어요</span></div>
+          <div class="hv">병원 연락 기준(겨드랑이 37.8℃ 1회 또는 37.5℃ 1시간 지속)을 확인해 주세요. 1시간 뒤 재측정 알림을 예약했어요.</div>
+          <div class="prolink" onclick="proMock('오한 · 몸살')">몸이 춥고 떨리거나 처지면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>
+          <div class="pact"><button class="btn warn" onclick="closeCenter();go('em')">응급 신호 안내 보기</button><button class="btn" onclick="closeCenter();nextItem()">닫기 → 다음</button></div>`);
+          renderRec();
+        } else { toast(`기록했어요 · ${v}℃ · 16:21`, ()=>{Object.assign(S.temp,prev);}); nextItem(); }
+      }
+    });
+    return;
+  }
+  if(cur==='weight'){
+    keypadTool({
+      title:'체중', meta:'하루 1회 · 같은 시각 · 같은 옷차림 · 배뇨 후',
+      unit:'kg', dec:1, intLen:2, min:10.0, max:100.0, ghost:S.weightLast, deviceChip:false,
+      note:'기기 연동 없음 · 어제 '+S.weightLast+'kg',
+      onSave:(v)=>{
+        const diff=(parseFloat(v)-parseFloat(S.weightLast)).toFixed(1);
+        S.weightToday=v;
+        toast(`기록했어요 · ${v}kg (어제 대비 ${diff>0?'+':''}${diff})`, ()=>{S.weightToday=null;});
+        nextItem();
+      }
+    });
+    return;
+  }
+  if(cur==='height'){
+    if(S.visit.height){ T.innerHTML=doneTool('키','오늘 외래 측정값 '+S.visit.height+'cm를 기록했어요.'); return; }
+    keypadTool({
+      title:'키 — 외래 측정값', meta:'가정 측정은 받지 않아요',
+      unit:'cm', dec:1, intLen:3, min:50.0, max:200.0, ghost:'118.2', deviceChip:false,
+      note:'외래에서 잰 값만 기록해요',
+      onSave:(v)=>{ S.visit.height=v; toast(`기록했어요 · 키 ${v}cm`); renderRec(); }
+    });
+    return;
+  }
+  if(cur==='gargle'||cur==='sitz'){
+    const st=S[cur], name=cur==='gargle'?'가글':'좌욕';
+    const pro = cur==='gargle'
+      ? `<div class="prolink" onclick="proMock('구내염 · 입마름')">입안 통증, 출혈 등이 있다면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>`
+      : `<div class="prolink" onclick="proMock('피부 발진 · 가려움')">항문·성기 주위 발적, 벗겨짐, 가려움 등이 있다면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>`;
+    T.innerHTML=`
+      <div class="tt"><span class="t">${name}</span><span class="s">시행 시 · 오늘 ${st.count}회</span></div>
+      ${st.times.length?`<div class="modes">${st.times.map(t=>`<span class="timeschip">${t}</span>`).join('')}</div>`:''}
+      <div class="tbody"><div class="tleft">
+        <div class="opts" style="margin-top:6px;">
+          <button class="o" style="border-color:var(--blue);color:var(--blue);font-weight:800;" onclick="careDo('${cur}')">＋ 했어요</button>
+          <button class="o ${st.obs==='ok'?'on':''}" onclick="careObs('${cur}','ok')">${st.obs==='ok'?'✓ ':''}특이사항 없음</button>
+          <button class="o ${st.obs==='issue'?'on':''}" style="${st.obs==='issue'?'border-color:var(--red);background:var(--redbg);color:#B03A2E;':''}" onclick="careObs('${cur}','issue')">증상 관찰</button>
+        </div>
+        ${st.obs==='issue'?pro:''}
+        <div style="flex:1;"></div>
+        <div class="tnote">시각은 저장 시각으로 · 관찰은 하루 1회면 충분해요</div>
+      </div></div>
+      <div class="tfoot"><span></span><button class="btn" onclick="nextItem()">다음 ▼</button></div>`;
+    return;
+  }
+  if(cur==='cvc'){
+    const chk=(k,label)=>`<button class="o ${S.cvc.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${S.cvc.checks[k]?'✓ ':''}${label}</button>`;
+    T.innerHTML=`
+      <div class="tt"><span class="t">중심정맥관${S.cvc.done?'':' — 교환일 2일 지남'}</span><span class="s">히크만 · 삽입 8/1 · 7일 주기</span></div>
+      <div class="tbody"><div class="tleft">
+        <div class="hsub" style="margin-top:2px;">수행한 것만 체크</div>
+        <div class="opts" style="margin-top:4px;">${chk('dress','드레싱 교환 · 소독')}${chk('cap','캡 교환')}${chk('hep','헤파린 잠금 주입')}</div>
+        <div class="modes" style="margin-top:9px;">
+          <span class="chip ${S.cvc.obs==='ok'?'on':''}" onclick="cvcObs('ok')">${S.cvc.obs==='ok'?'✓ ':''}특이사항 없음</span>
+          <span class="chip ${S.cvc.obs==='issue'?'blood':''}" style="${S.cvc.obs==='issue'?'background:var(--redbg);':''}" onclick="cvcObs('issue')">증상 관찰</span>
+        </div>
+        ${S.cvc.obs==='issue'?`<div class="prolink" onclick="proMock('주사 부위 통증 · 부기')">삽입부위 발적, 부기 등이 있다면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>`:''}
+        <div style="flex:1;"></div>
+      </div></div>
+      <div class="tfoot"><span class="tnote">저장하면 다음 교환일 9/1로 계산돼요</span>
+        <button class="btn pri" ${Object.values(S.cvc.checks).some(Boolean)?'':'disabled'} onclick="saveCvc()">저장 → 다음</button></div>`;
+    return;
+  }
+  if(cur==='condition'||cur==='meal'){
+    const list=cur==='condition'?CONDS:MEALS, val=cur==='condition'?S.condition:S.meal;
+    const q=cur==='condition'?'서준이 컨디션은 어때요?':'오늘 식사는 어땠어요?';
+    T.innerHTML=`
+      <div class="tt"><span class="t">${cur==='condition'?'컨디션':'식사량'}</span><span class="s">하루 1회</span></div>
+      <div class="tbody"><div class="tleft">
+        <div style="font-size:15px;font-weight:800;margin-top:8px;">${q}</div>
+        <div class="opts">${list.map(c=>`<button class="o ${val===c?'on':''}" onclick="pickChoice('${cur}','${c}')">${c}</button>`).join('')}</div>
+        <div style="flex:1;"></div>
+        <div class="tnote">누르면 저장되고 다음 미기록 항목으로 넘어가요</div>
+      </div></div>
+      <div class="tfoot"><span></span><button class="btn" onclick="nextItem()">다음 ▼</button></div>`;
+    return;
+  }
+  if(cur==='bowel'){
+    const asp=(a,blood)=>`<span class="chip ${blood?'blood ':''}${S.bowel.aspect===a?'on':''}" onclick="bowelAspect('${a}')">${a}</span>`;
+    let pro='';
+    if(S.bowel.aspect==='묽음'||S.bowel.aspect==='물설사') pro=`<div class="prolink" onclick="proMock('무른 변(설사)')">묽은 변이 이어지면 <b>무른 변(설사)</b> 증상을 기록해 주세요 <span class="ar">→</span></div>`;
+    if(S.bowel.aspect==='딱딱함') pro=`<div class="prolink" onclick="proMock('변비')">변이 계속 딱딱하면 <b>변비</b> 증상을 기록해 주세요 <span class="ar">→</span></div>`;
+    if(S.bowel.aspect==='혈변') pro=`<div class="prolink" style="color:#B03A2E;" onclick="proMock('출혈')">혈변은 <b>병원 연락 기준</b>이에요 — 출혈 증상도 함께 기록해 주세요 <span class="ar">→</span></div>`;
+    T.innerHTML=`
+      <div class="tt"><span class="t">배변</span><span class="s">배변 후 · 오늘 ${S.bowel.count}회${S.bowel.aspect?' · '+S.bowel.aspect:''}</span></div>
+      <div class="tbody"><div class="tleft">
+        <div class="opts" style="margin-top:6px;"><button class="o" style="border-color:var(--blue);color:var(--blue);font-weight:800;font-size:15px;padding:12px 30px;" onclick="bowelPlus()">+1</button></div>
+        <div class="modes" style="margin-top:9px;">${asp('딱딱함')}${asp('보통')}${asp('묽음')}${asp('물설사')}${asp('혈변',true)}</div>
+        ${pro}
+        <div style="flex:1;"></div>
+        <div class="tnote">+1 직후 양상 칩 1탭으로 완료 — 양상은 그날 대표값</div>
+      </div></div>
+      <div class="tfoot"><span></span><button class="btn" onclick="nextItem()">다음 ▼</button></div>`;
+    return;
+  }
+  if(cur==='water'){
+    T.innerHTML=`
+      <div class="tt"><span class="t">수분</span><span class="s">마실 때마다 · 의료진 지시 항목</span></div>
+      <div class="tbody"><div class="tleft">
+        <div class="bigval" style="text-align:left;padding-top:4px;">${S.water.toLocaleString()}<small>mL</small></div>
+        <div class="opts" style="margin-top:4px;">
+          <button class="o" onclick="waterPlus(100)">+100</button>
+          <button class="o" onclick="waterPlus(200)">+200</button>
+          <button class="o" onclick="waterPlus(250)">컵 250</button>
+        </div>
+        <div style="flex:1;"></div>
+        <div class="tnote">누른 만큼 바로 더해져요 · 되돌리기 5초</div>
+      </div></div>
+      <div class="tfoot"><span></span><button class="btn" onclick="nextItem()">다음 ▼</button></div>`;
+    return;
+  }
+  if(cur==='shot'){
+    if(S.visit.shot){ T.innerHTML=doneTool('수치주사',`오늘 수치주사(${S.visit.shotDrug})를 기록했어요.`); return; }
+    T.innerHTML=`
+      <div class="tt"><span class="t">수치주사</span><span class="s">외래 진료 시 · 탭한 날만 기록</span></div>
+      <div class="tbody"><div class="tleft">
+        <div class="hsub" style="margin-top:2px;">첫 기록 — 약제를 골라 주세요 (이후에는 [맞았어요] 1탭)</div>
+        <div class="modes" style="margin-top:6px;" id="drugchips">
+          ${['그라신','뉴라스타','류코스팀','직접 입력'].map(d=>`<span class="chip ${S.visit.shotDrug===d?'on':''}" onclick="pickDrug('${d}')">${d}</span>`).join('')}
+        </div>
+        <div style="flex:1;"></div>
+      </div></div>
+      <div class="tfoot"><button class="btn" onclick="toast('기록하지 않았어요')">안 맞았어요</button>
+        <button class="btn pri" id="shot-save" ${S.visit.shotDrug?'':'disabled'} onclick="saveShot()">맞았어요</button></div>`;
+    return;
+  }
+  if(cur==='trans'){
+    if(S.visit.trans){ T.innerHTML=doneTool('수혈','오늘 수혈('+S.visit.trans+')을 기록했어요.'); return; }
+    T.innerHTML=`
+      <div class="tt"><span class="t">수혈</span><span class="s">외래 진료 시 · 탭한 날만 기록</span></div>
+      <div class="tbody"><div class="tleft">
+        <div class="opts" style="margin-top:8px;">
+          <button class="o ${transPick==='혈소판'?'on':''}" onclick="pickTrans('혈소판')">혈소판</button>
+          <button class="o ${transPick==='적혈구'?'on':''}" onclick="pickTrans('적혈구')">적혈구</button>
+        </div>
+        <div class="hsub">팩 수 · 시각 (접힘)</div>
+        <div style="flex:1;"></div>
+      </div></div>
+      <div class="tfoot"><span></span><button class="btn pri" ${transPick?'':'disabled'} onclick="saveTrans()">저장</button></div>`;
+    return;
+  }
+  if(cur==='cbc'){ renderCbc('cam'); return; }
+  if(cur==='memo'){
+    T.innerHTML=`
+      <div class="tt"><span class="t">메모</span><span class="s">자유 기록 · 질문 표시 메모만 진료노트에</span></div>
+      <div class="tbody"><div class="tleft">
+        <textarea id="memo-in" placeholder="어제부터 밤에 자꾸 깬다…" style="width:100%;border:1.3px solid #c9d2dc;border-radius:11px;padding:10px;font-size:12px;font-family:inherit;flex:1;resize:none;margin-top:6px;">${S.memoDraft}</textarea>
+        <div class="modes" style="margin-top:8px;">
+          <span class="chip" id="memo-q" onclick="this.classList.toggle('on')">🙋 진료 때 물어볼 것</span>
+          <span class="chip" onclick="toast('사진 첨부 — 데모 범위 외')">📷 사진</span>
+          <span class="chip" onclick="toast('음성 입력 — 데모 범위 외')">🎤 음성 입력</span>
+        </div>
+      </div></div>
+      <div class="tfoot"><span class="tnote">질문 표시가 붙은 메모만 진료노트에 모여요</span><button class="btn pri" onclick="saveMemo()">저장</button></div>`;
+    return;
+  }
+}
+function doneTool(name,msg){
+  return `<div class="tt"><span class="t">${name}</span><span class="s">오늘 기록 완료</span></div>
+    <div class="tbody"><div class="tleft">
+      <div style="font-size:13px;font-weight:700;color:var(--green);background:var(--greenbg);border-radius:12px;padding:12px 14px;margin-top:8px;">✓ ${msg}</div>
+      <div style="flex:1;"></div>
+      <div class="tnote">수정 — 데모 범위 외</div>
+    </div></div>
+    <div class="tfoot"><span></span><button class="btn" onclick="nextItem()">다음 ▼</button></div>`;
+}
+
+/* ---------- 기록 동작 ---------- */
+function pickSite(s){ tempSite = tempSite===s?null:s;
+  $('site-a').classList.toggle('on', tempSite==='겨드랑이');
+  $('site-b').classList.toggle('on', tempSite==='고막'); }
+function careDo(k){
+  S[k].count++; S[k].times.push('16:05');
+  toast(`기록했어요 · ${k==='gargle'?'가글':'좌욕'} ${S[k].count}회 · 16:05`, ()=>{S[k].count--; S[k].times.pop();});
+  renderRec();
+}
+function careObs(k,v){
+  S[k].obs=S[k].obs===v?null:v;
+  if(S[k].obs==='ok') toast(`기록했어요 · ${k==='gargle'?'입안':'항문·성기 주위'} 특이사항 없음`);
+  renderRec();
+}
+function cvcToggle(k){ S.cvc.checks[k]=!S.cvc.checks[k]; renderRec(); }
+function cvcObs(v){ S.cvc.obs=S.cvc.obs===v?null:v; renderRec(); }
+function saveCvc(){
+  S.cvc.done=true;
+  toast('기록했어요 · 중심정맥관 (다음 교환일 9/1)', ()=>{S.cvc.done=false;});
+  nextItem();
+}
+function pickChoice(k,c){
+  if(k==='condition'){ S.condition=c; toast(`기록했어요 · ${c}`, ()=>{S.condition=null;}); }
+  else { S.meal=c; toast(`기록했어요 · 식사 ${c}`, ()=>{S.meal=null;}); }
+  nextItem();
+}
+function bowelPlus(){
+  S.bowel.count++; S.bowel.aspect=null;
+  toast(`기록했어요 · 배변 ${S.bowel.count}회 — 양상을 골라 주세요`, ()=>{S.bowel.count--;});
+  renderRec();
+}
+function bowelAspect(a){ S.bowel.aspect=a; toast(`기록했어요 · ${a}`); renderRec(); }
+function waterPlus(n){ S.water+=n; toast(`기록했어요 · 수분 ${S.water}mL`, ()=>{S.water-=n;}); renderRec(); }
+function pickDrug(d){ S.visit.shotDrug=d; renderRec(); }
+function saveShot(){
+  S.visit.shot=true; renderRec();
+  toast(`기록했어요 · 수치주사 (${S.visit.shotDrug})`);
+  setTimeout(()=>openCenter(`<div class="pt"><span class="t">수치주사 저장</span></div>
+    <div class="prolink" onclick="proMock('통증')">주사 후 팔다리나 뼈를 아파하면 <b>통증 증상</b>을 기록해 주세요 <span class="ar">→</span></div>
+    <div class="pact"><button class="btn" onclick="closeCenter()">닫기</button></div>`),600);
+}
+let transPick=null;
+function pickTrans(t){ transPick=t; renderRec(); }
+function saveTrans(){
+  S.visit.trans=transPick; renderRec();
+  toast('기록했어요 · 수혈 '+transPick);
+  setTimeout(()=>openCenter(`<div class="pt"><span class="t">수혈 저장</span></div>
+    <div class="prolink" onclick="proMock('수혈 부작용')">발열, 오한, 호흡곤란, 두드러기가 있다면 <b>증상 기록</b>을 해 주세요 <span class="ar">→</span></div>
+    <div class="pact"><button class="btn" onclick="closeCenter()">닫기</button></div>`),600);
+}
+function renderCbc(step){
+  const T=$('tool');
+  if(S.visit.cbc){ T.innerHTML=doneTool('CBC','오늘 CBC를 기록했어요 · ANC 5,130'); return; }
+  if(step==='cam') T.innerHTML=`
+    <div class="tt"><span class="t">CBC — 스티커 촬영</span><span class="s">외래 진료 시</span></div>
+    <div class="tbody"><div class="tleft">
+      <div class="cam" style="margin-top:6px;">
+        <div class="guide">WBC · Hb · Plt · Reti<br>스티커를 테두리 안에 맞춰 주세요</div>
+        <button class="shutter" onclick="renderCbc('scan')"></button>
+      </div>
+    </div></div>
+    <div class="tfoot"><span class="tnote">촬영 → 인식 → 값별 확인 후 저장 (OCR은 목업)</span><button class="btn" onclick="renderCbc('confirm')">⌨ 직접 입력</button></div>`;
+  if(step==='scan'){
+    T.innerHTML=`
+      <div class="tt"><span class="t">CBC — 인식 중</span></div>
+      <div class="tbody"><div class="tleft">
+        <div style="font-size:12px;font-weight:800;color:#33506e;background:#eef2f8;border-radius:12px;padding:14px;text-align:center;margin-top:10px;">🔍 인식 중 — 값을 읽고 있어요 …</div>
+      </div></div>`;
+    setTimeout(()=>{ if(cur==='cbc'&&!S.visit.cbc) renderCbc('confirm'); },1100);
+  }
+  if(step==='confirm') T.innerHTML=`
+    <div class="tt"><span class="t">CBC — 인식 결과 확인</span><span class="s">값별 수정 가능 — 스티커와 같은 배치</span></div>
+    <div class="tbody"><div class="tleft">
+      <div class="ocr"><span class="k">14-1 WBC</span><span class="v">8430 (60.9%)</span><span class="u">/µL · %</span></div>
+      <div class="ocr"><span class="k">14-2 Hb</span><span class="v">11.1</span><span class="u">g/dL</span></div>
+      <div class="ocr"><span class="k">14-3 Plt</span><span class="v">131</span><span class="u">×10³/µL</span></div>
+      <div class="ocr"><span class="k">14-4 Reti</span><span class="v">—</span><span class="u">%</span></div>
+      <div class="ocr"><span class="k">14-5 ANC</span><span class="v" style="background:#e8f3f3;">5,130 — 자동 계산</span><span class="u">/µL</span></div>
+      <div style="flex:1;"></div>
+    </div></div>
+    <div class="tfoot"><span class="tnote">검사일 8/25 (촬영일 · 수정 가능) · ANC = WBC × 호중구 %</span><button class="btn pri" onclick="saveCbc()">저장</button></div>`;
+}
+function saveCbc(){ S.visit.cbc=true; toast('기록했어요 · CBC (ANC 5,130)'); renderRec(); }
+function saveMemo(){
+  const v=$('memo-in').value.trim();
+  if(v && $('memo-q').classList.contains('on')) S.questions.push(v);
+  S.memoDraft='';
+  toast(v?'메모를 저장했어요':'메모가 비어 있어요');
+  renderRec();
+}
+
+/* ---------- 항목 켜기·끄기 ---------- */
+function openItemsPop(){
+  const row=(key,name,desc,locked)=>`
+    <div class="itrow">
+      <span><span class="n">${name}</span> <span class="d">· ${desc}</span></span>
+      <span class="tog" onclick="${locked?`toast('의료진 지시 항목 — 끌 수 없어요')`:`toggleItem('${key}')`}">
+        <span class="sw ${locked?'lock':(S.items[key]?'on':'')}"></span>${locked?'의료진 지시':(S.items[key]?'켜짐':'꺼짐')}</span>
+    </div>`;
+  openCenter(`<div class="pt"><span class="t">기록 항목 추가</span><span style="font-size:9.5px;color:var(--mut);font-weight:600;">체온 · 가글 · 좌욕은 기본, 끌 수 없어요</span></div>
+    <div class="itgrp">매일 · 수시 기록</div>
+    ${row('weight','체중','하루 1회 · 같은 시간에',false)}
+    ${row('bowel','배변','볼 때 +1 · 하루 1~3회',false)}
+    ${row('condition','컨디션','하루 1회',false)}
+    ${row('meal','식사량','하루 1회',false)}
+    ${row('water','수분 섭취량','마실 때 +100 — 선생님 지시로 켜짐',true)}
+    <div class="itgrp">진료 기록 — 외래에서 시행한 날만</div>
+    ${row('shot','수치주사','외래 시 [맞았어요] 1탭',false)}
+    ${row('trans','수혈','종류 선택 — 혈소판 / 적혈구',false)}
+    ${row('cbc','CBC','스티커 촬영 · 직접 입력',false)}
+    ${row('height','키','외래 측정값만',false)}
+    <div class="hsub">켜진 항목만 항목 열에 · 끈 항목은 다시 묻지 않아요 · 기존 기록은 유지</div>
+    <div class="pact"><button class="btn" onclick="closeCenter()">닫기</button></div>`);
+}
+function toggleItem(k){
+  S.items[k]=!S.items[k];
+  if(!S.items[k] && cur===k) cur='temp';
+  openItemsPop(); renderRec();
+  toast(S.items[k]?'항목을 켰어요 — 항목 열에 생겨요':'항목을 껐어요 — 다시 묻지 않아요');
+}
+
+/* ---------- 진료노트 (가로) ---------- */
+const NOTE_DAYS = [['8/19','D12',''],['8/20','D13',''],['8/21','D14','visit'],['8/22','D15',''],['8/23','D16',''],['8/24','D17',''],['8/25','D18','today']];
+function nrow(label, cells){
+  return `<div class="rl">${label}</div>` + cells.map((c,i)=>{
+    const cls=['c']; if(NOTE_DAYS[i][2]==='visit') cls.push('visit');
+    if(c && c.pop) cls.push('tap');
+    const click=c&&c.pop?` onclick="openCenter(window['${c.pop}'])"`:'';
+    return `<div class="${cls.join(' ')}"${click}>${c?c.t:''}</div>`;
+  }).join('');
+}
+function C(t,pop){ return {t:t, pop:pop||null}; }
+function grow(name, gs, pops){
+  return `<div class="rl">${name}</div>` + gs.map((g,i)=>{
+    const cls=['c']; if(NOTE_DAYS[i][2]==='visit') cls.push('visit');
+    const pop = pops&&pops[i];
+    if(pop) cls.push('tap');
+    const click = pop?` onclick="openCenter(window['${pop}'])"`:'';
+    const inner = g===null?'':`<span class="gc g${g}">${g===0?'':'G'+g}</span>`;
+    return `<div class="${cls.join(' ')}"${click}>${inner}</div>`;
+  }).join('');
+}
+function checks(n){ return n>0?'✓'.repeat(Math.min(n,4)):''; }
+function condShort(c){ return c===null?'':(c==='평소처럼 잘 논다'?'잘 논다':(c==='평소보다 처진다'?'처짐':'많이 처짐')); }
+function mealShort(m){ return m===null?'':(m==='평소만큼'?'평소만큼':(m==='절반쯤'?'절반쯤':'못 먹음')); }
+function renderNote(){
+  const today = {
+    gargle:checks(S.gargle.count), sitz:checks(S.sitz.count),
+    cvc:S.cvc.done?'교환':'', weight:S.weightToday||'',
+    shot:S.visit.shot?'↑ '+S.visit.shotDrug:'', trans:S.visit.trans||'',
+    cbc:S.visit.cbc?'A)5130':'', bowel:S.bowel.count?`${S.bowel.count}${S.bowel.aspect?' '+S.bowel.aspect:''}`:'',
+    cond:condShort(S.condition), meal:mealShort(S.meal), water:S.water?String(S.water):''
+  };
+  const rows = [
+    nrow('가글', [C('✓✓'),C('✓✓✓'),C('✓✓'),C('✓✓'),C('✓✓✓'),C('✓✓'),C(today.gargle)]),
+    nrow('좌욕', [C('✓'),C('✓'),C(''),C('✓'),C('✓'),C(''),C(today.sitz)]),
+    nrow('중심정맥관 <small>히크만</small>', [C(''),C(''),C(''),C('교환'),C(''),C(''),C(today.cvc)]),
+    S.items.weight?nrow('체중 <small>kg</small>', [C('21.6'),C('21.5'),C('21.5'),C('21.4'),C('21.4'),C('21.4'),C(today.weight)]):'',
+    S.items.shot?nrow('수치주사', [C(''),C(''),C('↑ 그라신'),C(''),C(''),C(''),C(today.shot)]):'',
+    S.items.trans?nrow('수혈', [C(''),C(''),C('혈소판'),C(''),C(''),C(''),C(today.trans)]):'',
+    S.items.cbc?nrow('CBC <small>ANC</small>', [C(''),C(''),C('A)850','notePopCbc'),C(''),C(''),C(''),C(today.cbc, S.visit.cbc?'notePopCbcToday':null)]):'',
+    S.items.bowel?nrow('배변 <small>회 · 양상</small>', [C('2 보통'),C('1 보통'),C('0'),C('0'),C('1 묽음'),C('2 물설사'),C(today.bowel)]):'',
+    S.items.condition?nrow('컨디션', [C('잘 논다'),C('잘 논다'),C('처짐'),C('처짐'),C('잘 논다'),C('잘 논다'),C(today.cond)]):'',
+    S.items.meal?nrow('식사량', [C('평소만큼'),C('평소만큼'),C('절반쯤'),C('절반쯤'),C('평소만큼'),C('평소만큼'),C(today.meal)]):'',
+    S.items.water?nrow('수분 <small>mL</small>', [C('820'),C('750'),C('400'),C('600'),C('700'),C('650'),C(today.water)]):''
+  ].join('');
+  const syms = [
+    grow('열', [0,0,2,1,0,0,0]),
+    grow('메스꺼움', [1,0,2,1,0,null,1], [null,null,'notePopSym']),
+    grow('구토', [0,0,2,0,0,null,0]),
+    grow('피로 · 기운 없음', [2,2,3,2,2,1,1]),
+    grow('구내염', [0,1,2,1,0,null,0]),
+    grow('통증', [0,0,0,3,0,null,0]),
+    grow('무른 변(설사)', [0,0,0,0,1,2,2]),
+    grow('쉽게 멍이 듦', [0,0,1,1,0,null,0]),
+    grow('식욕감소', [0,1,2,2,1,1,2]),
+    grow('불안감', [null,null,1,null,null,null,0])
+  ].join('');
+  $('scr-note').innerHTML=`
+    <div class="note-head">
+      <span>서준 · 진료노트</span>
+      <span class="nav"><button class="ar" onclick="toast('지난 7일 — 데모 범위 외')">‹</button>
+        <span style="font-size:10.5px;">8/19 (D12) ~ 8/25 (D18)</span>
+        <button class="ar" onclick="toast('다음 7일 — 데모 범위 외')">›</button></span>
+      <span class="r">지난 진료 8/21 · 열람 전용 · 셀 탭 = 상세</span>
+    </div>
+    <div class="notescroll">
+      <div class="sig">
+        <div class="rl">날짜 · D</div>
+        ${NOTE_DAYS.map(d=>`<div class="hd ${d[2]}">${d[0]}<br>${d[1]}${d[2]==='visit'?' 외래':(d[2]==='today'?' 오늘':'')}</div>`).join('')}
+        <div class="rl">체온 <small>℃</small></div>
+        <div class="temp">
+          <div class="base"></div><div class="baselab">37.5</div>
+          <svg viewBox="0 0 700 62" preserveAspectRatio="none"><polyline fill="none" stroke="#22303a" stroke-width="1.4" points="0,45 25,43 50,41 75,37 100,29 125,19 150,25 175,33 200,39 225,43 250,41 275,42 300,40 325,43 350,44 375,42 400,41 425,43 450,45 475,44 500,42 525,41 550,40 575,42 600,43 625,41 650,40 700,39"/></svg>
+        </div>
+        ${rows}
+        <div class="divider">증상 — 환아 PRO 기록 · G등급 (색 없음 = 기록했지만 증상 없음 · 빈칸 = 미기록)</div>
+        ${syms}
+      </div>
+      <div class="qbar" onclick="openCenter(notePopQ())">
+        <span>🙋 진료 때 물어볼 것 ${S.questions.length} — "${S.questions[0]}" 외 ${S.questions.length-1}건</span>
+        <span class="s">탭하여 펼침 · 질문 표시 메모만</span>
+      </div>
+    </div>`;
+}
+window.notePopCbc = `<div class="pt"><span class="t">CBC · 8/21 (D14)</span><span style="font-size:10px;color:#98a2ad;font-weight:700;">외래</span></div>
+  <div class="hv">WBC <b>1,400</b> (60.9%) · Hb <b>9.1</b> · Plt <b>45</b> · Reti — · ANC <b>850</b></div>
+  <div class="hsub">열람 전용 — 바깥을 탭하면 닫혀요</div>`;
+window.notePopCbcToday = `<div class="pt"><span class="t">CBC · 8/25 (D18)</span><span style="font-size:10px;color:#98a2ad;font-weight:700;">오늘</span></div>
+  <div class="hv">WBC <b>8,430</b> (60.9%) · Hb <b>11.1</b> · Plt <b>131</b> · Reti — · ANC <b>5,130</b></div>
+  <div class="hsub">열람 전용 — 바깥을 탭하면 닫혀요</div>`;
+window.notePopSym = `<div class="pt"><span class="t">메스꺼움 · 8/21 (D14)</span><span class="chip" style="background:var(--g2bg);color:var(--g2tx);border-color:var(--g2bg);cursor:default;">G2</span></div>
+  <div class="hv">하루 2~5회 · 먹는 양이 줄었다 — 환아 PRO 문진 답변 요약</div>
+  <div class="hsub">열람 전용 — 수정 없음 · 바깥 탭으로 닫힘</div>`;
+function notePopQ(){
+  return `<div class="pt"><span class="t">🙋 진료 때 물어볼 것 ${S.questions.length}</span><span style="font-size:9.5px;color:var(--mut);font-weight:600;">질문 표시 메모만</span></div>
+    ${S.questions.map(q=>`<div class="hv">· "${q}"</div>`).join('')}
+    <div class="pact"><button class="btn" onclick="closeCenter()">닫기</button></div>`;
+}
+
+/* ---------- 응급 화면 (가로) ---------- */
+const EM_SIGNALS = [
+  {i:'🩸',t:'피가 멈추지 않아요',sum:'코피·잇몸 출혈이 멈추지 않음 · 혈변 · 넓게 퍼진 멍',det:'코피·잇몸 출혈이 10분 넘게 멈추지 않음 · 변이나 소변에 피가 섞여 나옴 · 부딪히지 않았는데 멍이 넓게 퍼짐',why:'항암 치료로 피를 멎게 하는 혈소판이 줄면, 저절로 피가 나거나 잘 멎지 않을 수 있어요.'},
+  {i:'💧',t:'하루 종일 못 먹고 못 마셔요',sum:'소변량이 확 줄어듦 · 축 처져 있음',det:'구토·설사가 계속돼 하루 종일 먹지도 마시지도 못함 · 소변량이 확 줄어듦 · 축 처져 있음',why:'구토·설사가 이어지면 몸의 수분과 전해질 균형이 무너져 빠르게 나빠질 수 있어요.'},
+  {i:'😮‍💨',t:'갑자기 숨쉬기 힘들어해요',sum:'얼굴·목이 부음 · 기침이 갑자기 심해짐',det:'갑작스러운 호흡곤란 · 얼굴·목이 붓기 시작함 · 기침이 갑자기 심해짐',why:'가슴 안쪽 종양이 기도나 큰 혈관을 누르고 있다는 신호일 수 있어요. 숨을 잘 못 쉬면 119예요.'},
+  {i:'🤕',t:'배가 몹시 아프고 열이 나요',sum:'심한 복통 + 발열 동반',det:'참기 어려운 심한 복통이 계속됨 · 열이 함께 남',why:'백혈구가 적은 시기의 심한 복통은 배 속 감염이 빠르게 번질 수 있는 신호예요.'},
+  {i:'🔴',t:'발진·물집이 넓게 퍼져요',sum:'몸 여러 곳에 빠르게 번지는 발진·물집',det:'발진이나 물집이 몸 여러 곳으로 빠르게 번짐',why:'감염이나 약물 반응의 신호일 수 있어요.'},
+  {i:'💉',t:'주사 부위가 점점 아프고 부어요',sum:'통증·부기가 심해짐 · 색이 변함',det:'항암 주사를 맞은 자리의 통증·부기가 점점 심해짐 · 색이 변함',why:'항암제가 혈관 밖으로 새어 나왔을 수 있어요. 늦어지면 피부·조직이 상할 수 있어요.'},
+  {i:'🦵',t:'등이 아프고 다리에 힘이 빠져요',sum:'누우면 심해지는 등 통증 + 다리 저림·힘 빠짐',det:'누우면 더 심해지는 등 통증 · 다리가 저리거나 힘이 빠짐',why:'종양이 척수를 누르고 있다는 신호일 수 있어요. 몇 시간의 지연도 위험해요.'},
+  {i:'💤',t:'항암 직후 소변이 줄고 축 처져요',sum:'소변량 감소 · 근육 경련 · 심한 무기력',det:'항암 시작 직후 소변량이 줄어듦 · 근육 경련 · 심하게 축 처짐',why:'암세포가 한꺼번에 파괴되면서 몸속 전해질이 급격히 변할 수 있는 시기예요.'},
+];
+const EM_BAG = [
+  {i:'📄',g:'의료 정보·서류',rep:'진단서·소견서 · 최근 혈액검사 결과지 · 복용 약 목록 · 중심정맥관 정보',intro:'다니던 병원이 아닌 응급실로 갈 때 아이의 상태를 증명할 서류가 필요해요.',items:'진단서·주치의 소견서(진단명 · 마지막 항암일 · 치료 일정) · 최근 혈액검사 결과지(호중구 ANC · 혈소판 수치) · 복용 중인 약·영양제 목록(처방전) · 중심정맥관(히크만·케모포트) 정보'},
+  {i:'😷',g:'감염 예방',rep:'KF94 마스크 · 손 소독제 · 체온계',intro:'응급실은 감염원이 많은 곳이라 아이를 지킬 차단벽이 필요해요.',items:'KF94 마스크(아이용·보호자용) · 휴대용 손 소독제 · 소독 물티슈 · 체온계(이동·대기 중 수시 확인)'},
+  {i:'🧣',g:'체온 조절·위생',rep:'면 담요 · 여벌 옷 · 비닐봉지 · 구강케어 용품',intro:'오한이나 갑작스러운 구토·설사에 대비해요.',items:'면 담요 · 여벌 옷·수건(면 소재) · 일회용 비닐봉지·위생장갑 · 처방받은 구강 가글액·부드러운 칫솔'},
+  {i:'🧸',g:'대기 시간',rep:'애착 물품 · 태블릿·충전기 · 멸균 생수',intro:'대기가 길어질 때 아이를 달래줄 물품이에요.',items:'애착 물품(작은 인형·담요) · 영상 기기·충전기 · 시판 멸균 생수'},
+];
+let emOpen={}, emBagOpen={};
+function renderEm(keep){
+  const scrollEl=document.querySelector('#scr-em .emscroll');
+  const scroll=keep&&scrollEl?scrollEl.scrollTop:0;
+  if(!keep){emOpen={};emBagOpen={};}
+  const sigs=EM_SIGNALS.map((s,i)=>{
+    const o=emOpen[i];
+    return `<div class="em-sig ${o?'open':''}" onclick="emOpen[${i}]=!emOpen[${i}];renderEm(true)">
+      <div class="tt">${s.i} ${s.t}<span class="cv">${o?'⌃':'⌄'}</span></div>
+      <div class="sg">${o?s.det:s.sum}</div>
+      ${o?`<div class="why2"><b>왜 바로 연락해야 하나요?</b> ${s.why}</div>`:''}</div>`;
+  }).join('');
+  const bag=EM_BAG.map((g,i)=>{
+    const o=emBagOpen[i];
+    return `<div class="it" onclick="emBagOpen[${i}]=!emBagOpen[${i}];renderEm(true)"><i>${g.i}</i>
+      <span><b>${g.g}</b> — ${o?`${g.intro}<br>${g.items}`:g.rep} <span style="color:#8fa8aa;">${o?'⌃':'⌄'}</span></span></div>`;
+  }).join('');
+  $('scr-em').innerHTML=`
+    <div class="em-top">
+      <div class="em-lead"><div class="t">미리 준비하는 응급 신호</div>아래 신호가 보이면 <b>바로</b> 병원 진료를 받으세요. 의식이 흐리거나 숨쉬기 힘들어하면 <b>119</b>입니다.</div>
+      <div class="em-call" onclick="toast('전화 연결(tel:) — 병원명·번호는 운영 설정값')">
+        <span style="font-size:16px;">📞</span>
+        <span><div class="tt">병원에 바로 문의하기</div><div class="st">{병원명} 소아혈액종양 병동</div></span>
+        <span style="color:rgba(255,255,255,.7);">›</span></div>
+    </div>
+    <div class="emscroll">
+      <div class="em-fever">
+        <div class="tt">🌡 열이 38.0℃ 이상이에요</div>
+        <div class="sg">체온이 38.0℃를 한 번이라도 넘음 · 심한 오한이 있음</div>
+        <div class="em-why"><b>왜 바로 연락해야 하나요?</b> 항암 치료 후에는 감염과 싸우는 백혈구가 매우 적을 수 있어요. 이때 열은 감염이 빠르게 번지고 있다는 신호일 수 있고, 치료가 늦어질수록 위험해져요. 밤이어도 미루지 마세요.</div>
+      </div>
+      <div class="emgrid">${sigs}</div>
+      <div class="em-prep">
+        <div class="tt">🎒 응급 가방을 미리 챙겨두세요</div>
+        <div class="intro">감염 차단 물품과 의료 정보 서류를 가방 하나에 상시 보관해 두면, 열이 나는 순간 바로 출발할 수 있어요.</div>
+        ${bag}
+      </div>
+      <div class="em-prep arrive">
+        <div class="tt">🏥 응급실 도착 직후, 꼭 알리세요</div>
+        <div class="it"><i>1</i>"소아암 항암 치료 중인 환자"임을 접수 즉시 알리기</div>
+        <div class="it"><i>2</i>격리 공간(별도 대기)을 요청하기</div>
+        <div class="it"><i>3</i>항문 체온 측정 · 관장 · 좌약 금지임을 먼저 알리기</div>
+      </div>
+      <div class="em-note">여기 없는 모습이라도 아이가 평소와 많이 다르면 병원에 연락하세요.</div>
+    </div>`;
+  if(keep&&scroll){ const el=document.querySelector('#scr-em .emscroll'); if(el) el.scrollTop=scroll; }
+}
+
+renderRec();
+</script>
+</body>
+</html>

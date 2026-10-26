@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캔모어차일드 보호자 모드 — 가로 기록 브레인스토밍</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+:root{--paper:#f6f3ec;--ink:#22303a;--soft:#5a6b73;--line:#dcd5c7;--card:#fffdf8;--blue:#4A80F0;--teal:#2ba3a9;--g4:#DD5244;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;
+  background-image:radial-gradient(var(--line) .6px,transparent .6px);background-size:22px 22px;}
+.wrap{max-width:1120px;margin:0 auto;padding:40px 24px 70px;}
+header{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:26px;}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);font-weight:700;}
+h1{font-size:24px;font-weight:800;margin-top:4px;line-height:1.4;}
+h1 .ver{font-size:14px;color:var(--soft);font-weight:600;margin-left:8px;}
+.sub{font-size:13px;color:var(--soft);margin-top:6px;max-width:920px;}
+.worker{display:inline-block;background:var(--ink);color:var(--paper);font-size:11px;font-weight:700;padding:4px 11px;border-radius:16px;margin-top:10px;}
+h2{font-size:18px;font-weight:800;margin:40px 0 6px;}
+h2 .n{color:var(--teal);border:1.5px solid var(--teal);border-radius:6px;font-size:12px;padding:1px 8px;margin-right:8px;vertical-align:2px;}
+.desc{font-size:13px;color:var(--soft);margin-bottom:14px;max-width:900px;}
+.desc b{color:var(--ink);}
+.med{font-size:11px;color:#8a5a00;background:#fdf0cf;border-radius:7px;padding:1px 7px;font-weight:800;white-space:nowrap;}
+
+/* 가로 폰 */
+.phone{width:760px;max-width:100%;height:360px;background:#eef1f5;border:1px solid #dfe3e9;border-radius:28px;padding:14px;position:relative;
+  box-shadow:0 10px 28px rgba(30,42,56,.12);display:grid;grid-template-columns:64px 220px 1fr;gap:12px;font-feature-settings:'tnum';margin:18px 0 10px;}
+.phone .cap{position:absolute;top:-13px;left:20px;background:var(--ink);color:#fff;font-size:10.5px;font-weight:800;border-radius:9px;padding:2px 10px;}
+.rail{background:#e3e8ee;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 0;}
+.rail .ico{width:40px;height:40px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.rail .ico.on{background:var(--ink);color:#fff;}
+.rail .lab{font-size:8.5px;color:#6a7a85;font-weight:700;text-align:center;margin-top:-6px;}
+.col{background:#fff;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden;position:relative;}
+.col .h{font-size:9.5px;color:#98a2ad;font-weight:800;letter-spacing:.04em;}
+.item{border:1.2px solid #dfe4ea;border-radius:12px;padding:7px 10px;font-size:11px;font-weight:700;color:#4a5a63;display:flex;justify-content:space-between;align-items:center;}
+.item .s{font-size:9px;color:#98a2ad;font-weight:600;}
+.item.cur{border-color:var(--ink);background:#f1f4f8;color:#1d2b38;box-shadow:inset 3px 0 0 var(--blue);}
+.item.done{color:#1c6b39;border-color:#cfe6d4;background:#f4faf5;}
+.item.visit{border-color:#e9d9a6;background:#fdf8ec;}
+.updown{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;}
+.updown span{width:22px;height:22px;border-radius:50%;background:#eef2f8;color:#33506e;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.tool{background:#fff;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+.tool .tt{display:flex;justify-content:space-between;align-items:baseline;}
+.tool .tt .t{font-size:13px;font-weight:800;}
+.tool .tt .s{font-size:9.5px;color:#98a2ad;font-weight:600;}
+.modes{display:flex;gap:6px;}
+.chip{display:inline-flex;align-items:center;font-size:10px;font-weight:700;border:1.2px solid #c9d2dc;color:#4a5a63;border-radius:9px;padding:3px 9px;white-space:nowrap;}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;border-radius:9px;padding:6px 12px;white-space:nowrap;}
+.btn.pri{background:var(--blue);color:#fff;}
+.btn.ghost{background:#eef2f8;color:#33506e;}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;flex:1;}
+.pad span{background:#f4f6f8;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#1d2b38;}
+.pad span.mic{background:#FDEDEB;color:var(--g4);}
+.pad span.auto{background:#e8f3f3;color:#0c5a5f;font-size:10px;}
+.big{font-size:34px;font-weight:800;text-align:center;color:#1d2b38;}
+.big small{font-size:14px;color:#98a2ad;font-weight:700;}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;color:#98a2ad;font-weight:700;}
+.alertline{font-size:10px;font-weight:800;color:#B03A2E;background:#FDEDEB;border-radius:8px;padding:4px 8px;}
+
+/* 신호등 가로 뷰 */
+.sig{background:#fff;border-radius:14px;padding:8px;flex:1;display:grid;grid-template-columns:64px repeat(7,1fr);gap:2px;font-size:8.5px;}
+.sig .hd{background:#fbe3d9;font-weight:800;text-align:center;padding:2px 0;color:#7a2e26;}
+.sig .rl{font-weight:800;color:#33506e;padding:2px 4px;background:#f4f6f8;}
+.sig .c{background:#fafbfc;border:1px solid #eef1f5;min-height:14px;text-align:center;color:#4a5a63;}
+.sig .temp{grid-column:2 / span 7;height:56px;background:repeating-linear-gradient(90deg,#f4f6f8 0 1px,transparent 1px 9px);position:relative;border:1px solid #eef1f5;}
+.sig .temp::before{content:'';position:absolute;left:0;right:0;top:34%;border-top:1.5px solid #DD5244;}
+.sig .temp::after{content:'';position:absolute;left:0;right:0;top:62%;border-top:1.5px solid #4A80F0;}
+.sig .temp svg{position:absolute;inset:0;width:100%;height:100%;}
+
+.zlist{display:flex;flex-direction:column;gap:8px;max-width:900px;}
+.zrow{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:12.5px;color:#4a5a63;line-height:1.65;}
+.zrow b{color:var(--ink);}
+.zn{display:inline-flex;width:19px;height:19px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:800;align-items:center;justify-content:center;margin-right:7px;vertical-align:-3px;}
+table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12px;max-width:900px;}
+th,td{border-bottom:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top;line-height:1.55;}
+th{background:#efeadf;font-size:11.5px;}
+tr:last-child td{border-bottom:none;}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:12px;font-size:11px;color:var(--soft);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">CANMORE CHILD · GUARDIAN MODE</div>
+  <h1>가로 기록 브레인스토밍 <span class="ver">아이디어 노트</span></h1>
+  <div class="sub">8/21 회의에서 나온 안 — <b>보호자 모드 전체를 가로로</b> 두고, 의료진이 보는 신호등 가로 화면과 보호자가 기록하는 화면을 같은 방향·같은 축으로 맞춘다. 왼쪽은 기록할 항목을 위아래로 넘기는 카드 열, 오른쪽은 항목에 따라 바뀌는 입력 도구. 한 손으로 툭툭 넘기며 기록하고, 끝나면 같은 화면에서 신호등 기록을 편다. 확정안이 아니라 테스트용 아이디어 — 항목·값은 기록항목 문서 v0.9, 세로 기록 확정안은 항목기록 상세화면 와이어프레임 v0.2.</div>
+  <span class="worker">sol 박지현 · 2026-08-21 (아이디어)</span>
+</header>
+
+<h2><span class="n">1</span>기록 화면 — 왼쪽 항목 열 · 오른쪽 입력 도구</h2>
+<p class="desc">한 화면에 <b>① 레일(모드 전환)</b> · <b>② 항목 열(위아래로 넘김)</b> · <b>③ 입력 도구(항목마다 바뀜)</b>. 항목 열에서 현재 항목을 잡으면 오른쪽이 그 항목의 도구로 바뀐다. 저장하면 다음 미기록 항목으로 내려가고, 언제든 멈춘다.</p>
+
+<div class="phone">
+  <span class="cap">체온 — 숫자 키패드 · 마이크 · 자동</span>
+  <div class="rail">
+    <div><div class="ico on">✍</div><div class="lab">기록</div></div>
+    <div><div class="ico">📋</div><div class="lab">신호등</div></div>
+    <div><div class="ico">🚨</div><div class="lab">응급</div></div>
+    <div><div class="ico">☰</div><div class="lab">설정</div></div>
+  </div>
+  <div class="col">
+    <div class="h">8/21 (목) · D14 · 남은 3</div>
+    <div class="item done">4 가글 <span class="s">2회 · 13:05</span></div>
+    <div class="item cur">3 체온 <span class="s">마지막 36.8 · 14:20</span></div>
+    <div class="item">18 컨디션 <span class="s">하루 1회</span></div>
+    <div class="item">17 배변 <span class="s">오늘 2회</span></div>
+    <div class="item">20 수분 <span class="s">650mL</span></div>
+    <div class="item">5 좌욕 <span class="s">0회</span></div>
+    <div class="item visit">12 수치주사 · 13 수혈 · 14 CBC <span class="s">외래일만</span></div>
+    <div class="updown"><span>▲</span><span>▼</span></div>
+  </div>
+  <div class="tool">
+    <div class="tt"><span class="t">체온</span><span class="s">2시간마다 · 다음 16:20</span></div>
+    <div class="modes"><span class="chip on">⌨ 직접</span><span class="chip">🎤 음성</span><span class="chip">📶 자동</span><span class="chip">겨드랑이</span></div>
+    <div class="big">37.2<small>℃</small></div>
+    <div class="pad">
+      <span>7</span><span>8</span><span>9</span>
+      <span>4</span><span>5</span><span>6</span>
+      <span>1</span><span>2</span><span>3</span>
+      <span class="mic">🎤</span><span>0</span><span class="auto">📶 자동</span>
+    </div>
+    <div class="foot"><span class="alertline">기준 37.5℃ — 넘으면 응급 신호 안내</span><span class="btn pri">저장 → 다음</span></div>
+  </div>
+</div>
+
+<div class="phone" style="height:300px;">
+  <span class="cap">가글 — 체크형은 도구가 버튼 두 개로 줄어든다</span>
+  <div class="rail">
+    <div><div class="ico on">✍</div><div class="lab">기록</div></div>
+    <div><div class="ico">📋</div><div class="lab">신호등</div></div>
+    <div><div class="ico">🚨</div><div class="lab">응급</div></div>
+    <div><div class="ico">☰</div><div class="lab">설정</div></div>
+  </div>
+  <div class="col">
+    <div class="h">8/21 (목) · D14 · 남은 2</div>
+    <div class="item done">3 체온 <span class="s">37.2 · 16:21</span></div>
+    <div class="item cur">4 가글 <span class="s">2회</span></div>
+    <div class="item">18 컨디션 <span class="s">하루 1회</span></div>
+    <div class="item">17 배변 <span class="s">오늘 2회</span></div>
+    <div class="updown"><span>▲</span><span>▼</span></div>
+  </div>
+  <div class="tool">
+    <div class="tt"><span class="t">가글</span><span class="s">시행 시 · 오늘 09:10 · 13:05</span></div>
+    <div class="modes" style="margin-top:8px;"><span class="btn pri" style="font-size:13px;padding:14px 22px;">했어요</span><span class="btn ghost" style="font-size:13px;padding:14px 22px;">이상 없어요</span></div>
+    <div style="font-size:10.5px;color:#4a5a63;margin-top:6px;">입안 통증, 출혈 등이 있다면 <b>증상 기록</b>을 해 주세요 →</div>
+    <div class="foot" style="margin-top:auto;"><span>시각은 저장 시각으로</span><span class="btn ghost">다음 ▼</span></div>
+  </div>
+</div>
+
+<div class="phone" style="height:300px;">
+  <span class="cap">배변 — 카운터형은 [+1]과 양상 칩</span>
+  <div class="rail">
+    <div><div class="ico on">✍</div><div class="lab">기록</div></div>
+    <div><div class="ico">📋</div><div class="lab">신호등</div></div>
+    <div><div class="ico">🚨</div><div class="lab">응급</div></div>
+    <div><div class="ico">☰</div><div class="lab">설정</div></div>
+  </div>
+  <div class="col">
+    <div class="h">8/21 (목) · D14 · 남은 1</div>
+    <div class="item done">4 가글 <span class="s">3회</span></div>
+    <div class="item done">18 컨디션 <span class="s">잘 논다</span></div>
+    <div class="item cur">17 배변 <span class="s">오늘 2회</span></div>
+    <div class="item">20 수분 <span class="s">650mL</span></div>
+    <div class="updown"><span>▲</span><span>▼</span></div>
+  </div>
+  <div class="tool">
+    <div class="tt"><span class="t">배변</span><span class="s">배변 후 · 오늘 2회</span></div>
+    <div class="modes" style="margin-top:6px;"><span class="btn pri" style="font-size:15px;padding:14px 26px;">+1</span></div>
+    <div class="modes"><span class="chip">딱딱함</span><span class="chip on">보통</span><span class="chip">묽음</span><span class="chip">물설사</span><span class="chip" style="border-color:#e5a49c;color:#B03A2E;">혈변</span></div>
+    <div class="foot" style="margin-top:auto;"><span>+1 직후 칩이 펼쳐져 1탭 추가로 완료</span><span class="btn ghost">다음 ▼</span></div>
+  </div>
+</div>
+
+<h2><span class="n">2</span>신호등 화면 — 같은 방향에서 바로 펼침</h2>
+<p class="desc">레일의 [신호등]을 누르면 기록 화면과 같은 가로 방향으로 신호등 레이아웃이 열린다. 보호자가 보는 것과 의료진에게 내미는 것이 같은 화면 — 돌려 잡을 필요가 없다. 위 체온 격자 + 아래 항목 행, 일주일 7칸.</p>
+
+<div class="phone" style="height:330px;grid-template-columns:64px 1fr;">
+  <span class="cap">신호등 기록 — 기록 화면과 같은 가로</span>
+  <div class="rail">
+    <div><div class="ico">✍</div><div class="lab">기록</div></div>
+    <div><div class="ico on">📋</div><div class="lab">신호등</div></div>
+    <div><div class="ico">🚨</div><div class="lab">응급</div></div>
+    <div><div class="ico">☰</div><div class="lab">설정</div></div>
+  </div>
+  <div class="sig">
+    <div class="rl">Dday</div><div class="hd">D8 · 8/15</div><div class="hd">D9 · 8/16</div><div class="hd">D10 · 8/17</div><div class="hd">D11 · 8/18</div><div class="hd">D12 · 8/19</div><div class="hd">D13 · 8/20</div><div class="hd">D14 · 8/21</div>
+    <div class="rl">체온</div><div class="temp"><svg viewBox="0 0 700 56" preserveAspectRatio="none"><polyline fill="none" stroke="#22303a" stroke-width="1.4" points="0,40 30,38 60,36 90,30 120,22 150,14 180,20 210,28 240,34 270,38 300,36 330,37 360,35 390,38 420,39 450,37 480,36 510,38 540,40 570,39 600,37 630,36 660,35 700,34"/></svg></div>
+    <div class="rl">가글</div><div class="c">✓✓</div><div class="c">✓</div><div class="c">✓✓</div><div class="c">✓✓✓</div><div class="c">✓✓</div><div class="c">✓✓</div><div class="c">✓✓✓</div>
+    <div class="rl">좌욕</div><div class="c">✓</div><div class="c">✓</div><div class="c"></div><div class="c">✓</div><div class="c">✓</div><div class="c">✓</div><div class="c"></div>
+    <div class="rl">중심정맥관</div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c">교환</div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="rl">체중/키</div><div class="c">21.6</div><div class="c">21.5</div><div class="c">21.5</div><div class="c">21.4</div><div class="c">21.4</div><div class="c">21.4</div><div class="c">21.3</div>
+    <div class="rl">컨디션</div><div class="c">잘 놈</div><div class="c">잘 놈</div><div class="c">처짐</div><div class="c">처짐</div><div class="c">잘 놈</div><div class="c">잘 놈</div><div class="c">잘 놈</div>
+    <div class="rl">배변</div><div class="c">2</div><div class="c">1</div><div class="c">0</div><div class="c">0</div><div class="c">1</div><div class="c">2</div><div class="c">2</div>
+    <div class="rl">수치주사</div><div class="c"></div><div class="c"></div><div class="c">↑</div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="rl">수혈</div><div class="c"></div><div class="c"></div><div class="c">혈소판</div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+    <div class="rl">CBC</div><div class="c"></div><div class="c"></div><div class="c">A)850</div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c">A)5130</div>
+  </div>
+</div>
+
+<h2><span class="n">3</span>이 안이 말이 되려면 — 판단 포인트</h2>
+<table>
+  <tr><th style="width:200px;">쟁점</th><th>가로 전체안</th><th>세로 기록 + 가로 제시(현재 확정 방향)</th></tr>
+  <tr><td>입력 편의</td><td>한 손 조작은 어려움 — 가로 폰은 보통 두 손. 키보드 · 숫자 키패드가 가로로 눕는 점도 테스트 필요</td><td>세로가 익숙, 한 손 1탭 동선 유지</td></tr>
+  <tr><td>보는 편의</td><td>기록 → 신호등 전환에 회전 없음. 의료진과 같은 화면을 보호자도 봄</td><td>진료노트 열 때 회전 또는 세로 압축안 필요</td></tr>
+  <tr><td>수시 기록</td><td>열 때마다 가로로 잡아야 함 — 체온 2시간마다 · 가글 시행 시 같은 짧은 기록엔 부담</td><td>알림 → 세로로 열어 1탭</td></tr>
+  <tr><td>항목 열 넘김</td><td>조이패드식 위아래 넘김이 의도대로 쓰일지 미지수 — 게임 외엔 익숙한 패턴이 아님</td><td>카드 스택 세로 스크롤</td></tr>
+  <tr><td>태블릿</td><td>태블릿이면 가로 전체안이 자연스러움</td><td>태블릿은 현 단계 우선순위 아님(8/11)</td></tr>
+</table>
+<div class="zlist" style="margin-top:14px;">
+  <div class="zrow"><span class="zn">1</span><b>따로 가는 이유</b> — 세로 기록 확정안(상세화면 v0.2)은 "홈에서 1탭, 시트는 값 입력만"을 전제로 항목마다 카드·시트를 확정해 가고 있다. 가로 전체안은 그 전제를 바꾸는 것이라 같은 문서에 섞으면 어느 쪽도 확정이 안 된다. 아이디어 노트로 두고, 데모 후 테스트 여부를 결정한다.</div>
+  <div class="zrow"><span class="zn">2</span><b>공통으로 쓰이는 것</b> — 항목 · 값 · 기록 주기 · 수치 입력 3방식 · 케어 공통 흐름은 방향과 무관하게 같다(기록항목 문서 v0.9). 바뀌는 것은 배치뿐 — 세로에서는 카드 스택, 가로에서는 항목 열 + 도구 영역.</div>
+  <div class="zrow"><span class="zn">3</span><b>테스트하려면</b> — 체온 · 가글 · 배변 세 항목만 가로로 만들어 보호자 인터뷰에 들고 간다. 보는 질문 하나 — "두 손으로 잡고 툭툭 넘기는 게 세로 1탭보다 편한가". <span class="med">▲ 기술 검토 — 가로 고정 시 키보드 · 음성 팝업 처리 (개발)</span></div>
+</div>
+
+<footer>캔모어차일드 보호자 모드 · 가로 기록 브레인스토밍 · 근거 : 8/21 내부 회의 · 기록항목 문서 v0.9 · 항목기록 상세화면 와이어프레임 v0.2 · sol 박지현 · 2026-08-21</footer>
+</div>
+</body>
+</html>
