@@ -1740,14 +1740,14 @@ function buildSymGrid(fromNote){
     if(g===null||g===undefined) return `<span class="sn-c nr${tdy?' tdy2':''}"></span>`;
     if(g===0) return `<span class="sn-c g0${tdy?' tdy2':''}"></span>`;
     if(!fromNote){
-      if(sym==='통증'&&window.PAIN_REC&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}</span>`;
+      if(sym==='통증'&&window.PAIN_REC&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}${PICON}</span>`;
       const hasImg=SYM_IMG[day]&&SYM_IMG[day][sym];
       return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>G${g}${hasImg?PICON:''}</span>`;
     }
     return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
   };
   const grid=rows.map(sym=>{
-    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt">${gSymName(sym)}</span></span>`;
+    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt"${(!fromNote&&sym==='통증')?' style="width:auto;"':''}>${gSymName(sym)}</span>${(!fromNote&&sym==='통증')?PICON:''}</span>`;
     days.forEach(d=>{
       if(d.type==='future'){ tds+='<span class="sn-c nr"></span>'; return; }
       const g = d.type==='today'? symToday(sym) : (SYM_DATA[d.d]?SYM_DATA[d.d][sym]:undefined);
