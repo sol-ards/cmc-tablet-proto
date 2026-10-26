@@ -1747,7 +1747,7 @@ function buildSymGrid(fromNote){
     return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
   };
   const grid=rows.map(sym=>{
-    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt"${(!fromNote&&sym==='통증')?' style="width:auto;"':''}>${gSymName(sym)}</span>${(!fromNote&&sym==='통증')?PICON:''}</span>`;
+    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt">${gSymName(sym)}</span></span>`;
     days.forEach(d=>{
       if(d.type==='future'){ tds+='<span class="sn-c nr"></span>'; return; }
       const g = d.type==='today'? symToday(sym) : (SYM_DATA[d.d]?SYM_DATA[d.d][sym]:undefined);
