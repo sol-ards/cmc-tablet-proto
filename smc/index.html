@@ -608,6 +608,17 @@ body{background:#14181d;}
 .tablet{max-width:none;position:absolute;left:50%;top:50%;transform-origin:center center;box-shadow:0 30px 80px rgba(0,0,0,.55);}
 .tablet.bare{border-width:0;border-radius:0;width:1280px;height:800px;box-shadow:none;}
 body.bare{background:#F5F5F5;}
+.painv{position:absolute;inset:0;background:#fff;z-index:46;display:flex;flex-direction:column;}
+.painv[hidden]{display:none;}
+.painv .hd{flex:none;height:72px;display:flex;align-items:center;padding:0 16px 0 28px;border-bottom:1px solid #E5E7EB;font-size:20px;font-weight:700;color:#1F2937;}
+.painv .hd small{font-size:16px;font-weight:500;color:#6B7280;margin-left:12px;}
+.painv .x{margin-left:auto;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.painv .bd2{flex:1;display:flex;align-items:center;justify-content:center;gap:140px;min-height:0;}
+.painv .fig{display:flex;flex-direction:column;align-items:center;gap:14px;font-size:16px;font-weight:600;color:#6B7280;}
+.painv .fig .b{width:142px;height:510px;}
+.painv .pt.on path{fill:#D9D3FB;fill-opacity:1;}
+.painv .ft{flex:none;padding:0 28px 30px;text-align:center;font-size:18px;font-weight:600;color:#374151;}
+.painv .ft b{color:#6D5DD3;margin-right:10px;}
 #dmpanel{position:fixed;top:16px;right:16px;width:340px;max-height:calc(100vh - 32px);overflow:auto;z-index:9999;background:rgba(24,29,36,.97);color:#E5E7EB;border-radius:16px;padding:16px 16px 12px;font-size:13px;box-shadow:0 16px 48px rgba(0,0,0,.5);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;}
 #dmpanel[hidden]{display:none;}
 #dmpanel h3{font-size:14px;font-weight:800;margin-bottom:2px;color:#fff;display:flex;align-items:center;}
@@ -1729,13 +1740,14 @@ function buildSymGrid(fromNote){
     if(g===null||g===undefined) return `<span class="sn-c nr${tdy?' tdy2':''}"></span>`;
     if(g===0) return `<span class="sn-c g0${tdy?' tdy2':''}"></span>`;
     if(!fromNote){
+      if(sym==='통증'&&window.PAIN_REC&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}</span>`;
       const hasImg=SYM_IMG[day]&&SYM_IMG[day][sym];
       return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>G${g}${hasImg?PICON:''}</span>`;
     }
     return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
   };
   const grid=rows.map(sym=>{
-    let tds=`<span class="sn-l" title="${gSymName(sym)}"><span class="snt">${gSymName(sym)}</span></span>`;
+    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt">${gSymName(sym)}</span></span>`;
     days.forEach(d=>{
       if(d.type==='future'){ tds+='<span class="sn-c nr"></span>'; return; }
       const g = d.type==='today'? symToday(sym) : (SYM_DATA[d.d]?SYM_DATA[d.d][sym]:undefined);
@@ -3333,7 +3345,7 @@ const DM={
  },
  toggle(v){ const p=$('dmpanel'); p.hidden=(v===undefined)?!p.hidden:!v; if(!p.hidden) this.sync(); },
  inChild(){ return !$('childview').hidden; },
- ready(){ if(!OB.done) obFinish(true); $('splov')&&$('splov').remove(); $('cmov').hidden=true; $('ftipov').hidden=true; },
+ ready(){ if(window.closePainImg) closePainImg(); if(!OB.done) obFinish(true); $('splov')&&$('splov').remove(); $('cmov').hidden=true; $('ftipov').hidden=true; },
  restart(to){
   try{ localStorage.removeItem('cmc_demo_smc'); sessionStorage.setItem('cmc_demo_go',to); }catch(e){}
   location.reload();
@@ -3348,6 +3360,25 @@ const DM={
  tap(){ this.o.tap=!this.o.tap; this.save(); this.sync(); }
 };
 CH.scn='none';
+/* 의료진 열람 통증 예시 — 외래 진료일 */
+window.PAIN_REC={[mdOf(-2)]:{score:5,t:'14:20',parts:['앞-왼쪽 다리','앞-오른쪽 다리']}};
+SYM_DATA[mdOf(-2)]['통증']=2;
+function openPainImg(day){
+ if(!day){ const ds=VD.map(d=>d.d).filter(d=>PAIN_REC[d]); day=ds[ds.length-1]; if(!day) return; }
+ const r=PAIN_REC[day], g=(SYM_DATA[day]||{})['통증']||'', off=(day in MDOFF)?MDOFF[day]:0;
+ const hm=r.t.split(':').map(Number), tm=(hm[0]<12?'오전 ':'오후 ')+((hm[0]%12)||12)+':'+String(hm[1]).padStart(2,'0');
+ const svg=src=>src.replace(/class="pt" data-k="([^"]+)"/g,(m,k)=>`class="pt${r.parts.includes(k)?' on':''}" data-k="${k}"`);
+ const nm=k=>k.replace(/^(앞|뒤)-/,'');
+ const front=r.parts.filter(k=>k.startsWith('앞-')).map(nm), back=r.parts.filter(k=>k.startsWith('뒤-')).map(nm);
+ const list=[front.length?'앞 '+front.join(' · '):'', back.length?'뒤 '+back.join(' · '):''].filter(Boolean).join('   ');
+ let el=$('painviewer'); if(!el){ el=document.createElement('div'); el.id='painviewer'; el.className='painv'; $('tablet').appendChild(el); }
+ el.hidden=false;
+ el.innerHTML=`<div class="hd">통증 · ${day}(${wdOf(off)}) ${tm}<small>G${g} · 통증 점수 ${r.score}점</small>
+   <span class="x" onclick="closePainImg()"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="#4B5563" stroke-width="1.8" stroke-linecap="round"/></svg></span></div>
+  <div class="bd2"><div class="fig">앞<div class="b">${svg(CH.SR_BODY.f)}</div></div><div class="fig">뒤<div class="b">${svg(CH.SR_BODY.b)}</div></div></div>
+  <div class="ft"><b>아픈 곳</b>${list}</div>`;
+}
+function closePainImg(){ const el=$('painviewer'); if(el) el.hidden=true; }
 (()=>{ const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
  const sh=Math.round((_RT-new Date(CH.TODAY+'T00:00:00'))/864e5);
  const mv=v=>{ const t=new Date(v+'T00:00:00'); t.setDate(t.getDate()+sh); return ymd(t); };
