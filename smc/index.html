@@ -619,6 +619,8 @@ body.bare{background:#F5F5F5;}
 .painv .pt.on path{fill:#D9D3FB;fill-opacity:1;}
 .painv .ft{flex:none;padding:0 28px 30px;text-align:center;font-size:18px;font-weight:600;color:#374151;}
 .painv .ft b{color:#6D5DD3;margin-right:10px;}
+.medpill .pwar{border:0;background:#F3F4F6;color:#4B5563;font-size:18px;font-weight:700;width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;font-family:inherit;flex:none;}
+.medpill .pwar:disabled{opacity:.3;cursor:default;}
 #dmpanel{position:fixed;top:16px;right:16px;width:340px;max-height:calc(100vh - 32px);overflow:auto;z-index:9999;background:rgba(24,29,36,.97);color:#E5E7EB;border-radius:16px;padding:16px 16px 12px;font-size:13px;box-shadow:0 16px 48px rgba(0,0,0,.5);font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;}
 #dmpanel[hidden]{display:none;}
 #dmpanel h3{font-size:14px;font-weight:800;margin-bottom:2px;color:#fff;display:flex;align-items:center;}
@@ -730,7 +732,7 @@ const TODAY=3;
 const PRE7=[...Array(3)].map((_,i)=>({d:mdOf(-6+i),w:wdOf(-6+i),off:-6+i}));
 let VD=DAYS, TIDX=TODAY;
 function calcView(){
-  VD = S.present ? [...PRE7.map(x=>({d:x.d,w:x.w,off:x.off,type:'past',hidx:null})), DAYS[0], DAYS[1], DAYS[2], DAYS[3]] : DAYS;
+  VD = (S.present&&window.presentDays) ? presentDays() : S.present ? [...PRE7.map(x=>({d:x.d,w:x.w,off:x.off,type:'past',hidx:null})), DAYS[0], DAYS[1], DAYS[2], DAYS[3]] : DAYS;
   TIDX = VD.findIndex(x=>x.type==='today');
 }
 const S={
@@ -886,7 +888,7 @@ function weightRow(){
   const H2=84, PADT=10, PADB=32;
   const vals=[];
   VD.forEach((d,vi)=>{ if(d.hidx!=null&&H[d.hidx].wk) vals.push([vi,parseFloat(H[d.hidx].wk)]); });
-  if(S.weightToday!==null) vals.push([TIDX,parseFloat(S.weightToday)]);
+  if(S.weightToday!==null&&TIDX>=0) vals.push([TIDX,parseFloat(S.weightToday)]);
   const vmin=Math.min(...vals.map(v=>v[1]))-0.35, vmax=Math.max(...vals.map(v=>v[1]))+0.35;
   const Y=v=>PADT+(vmax-v)/(vmax-vmin)*(H2-PADT-PADB);
   const pts=vals.map(([i,v],k)=>({i:i,v:v,px:(i+0.5)/7*100,y:Y(v),diff:k>0?(v-vals[k-1][1]):null}));
@@ -963,7 +965,7 @@ function render(){ syncDemoHW();
   calcView();
   $('ttop').innerHTML = S.present ? `
     <div class="tt2">
-      <span class="medpill"><b>이서준 2018. 05. 30</b><span>${VD[0].d}(${VD[0].w}) ~ ${VD[6].d}(${VD[6].w})</span></span>
+      <span class="medpill"><b>이서준 2018. 05. 30</b><button class="pwar" ${PW<=PW_MIN?'disabled':''} onclick="pwNav(-1)">‹</button><span>${VD[0].d}(${VD[0].w}) ~ ${VD[6].d}(${VD[6].w})</span><button class="pwar" ${PW>=0?'disabled':''} onclick="pwNav(1)">›</button></span>
       <span class="sp"></span>
       <button class="pill" style="background:var(--blue);border-color:var(--blue);color:#fff;border-radius:99px;font-size:16px;font-weight:600;padding:9px 18px;display:inline-flex;align-items:center;gap:8px;" onclick="togglePresent()"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M7.5 10V8.2a4.5 4.5 0 0 1 9 0V10" fill="none" stroke="#FDE68A" stroke-width="2.4" stroke-linecap="round"/><rect x="5" y="10" width="14" height="9.6" rx="2.4" fill="#FDE68A"/><circle cx="12" cy="14" r="1.4" fill="#3B82F6"/><rect x="11.3" y="14.3" width="1.4" height="2.5" rx="0.7" fill="#3B82F6"/></svg>의료진 열람 해제</button>
     </div>` : `
@@ -1022,7 +1024,7 @@ function render(){ syncDemoHW();
   const GH=112, AXTOP=36;
   const TPTS=[];
   VD.forEach((d,vi)=>{ if(d.hidx!=null) H[d.hidx].temp.forEach(p=>TPTS.push({day:vi,h:p.h,v:p.v})); });
-  S.temp.readings.forEach(p=>TPTS.push({day:TIDX,h:p.h,v:p.v}));
+  if(TIDX>=0) S.temp.readings.forEach(p=>TPTS.push({day:TIDX,h:p.h,v:p.v}));
   const _mn=Math.min(35.6,...TPTS.map(p=>p.v)), _mx=Math.max(39.6,...TPTS.map(p=>p.v)); const _lo=_mn<35.6?_mn-0.2:35.6, _hi=_mx>39.6?_mx+0.2:39.6;
   const Y=v=>Math.max(6,Math.min(GH-6,(_hi-v)/(_hi-_lo)*GH));
   TPTS.forEach(p=>{p.x=(p.day+p.h/24)/7*100;p.y=Y(p.v);});
@@ -1046,7 +1048,7 @@ function render(){ syncDemoHW();
   <div class="ampm">${VD.map((d,i)=>`<div class="dy${i===TIDX?' tdd':''}">${['오전','오후'].map(ap=>`<span class="hf"><span class="ap">${ap}</span><span class="tk">${[1,3,5,7,9,11].map(n=>`<span>${n}</span>`).join('')}</span></span>`).join('')}</div>`).join('')}</div>
   <div class="temp">
     <div class="cols">${VD.map((d,i)=>`<i class="${_flash&&_flash.key==='temp'&&_flash.i===i?'flash':''}"></i>`).join('')}</div>
-    <div class="tdcol" style="left:${TIDX/7*100}%;width:calc(${(100/7).toFixed(4)}% - 1px);"></div>
+    <div class="tdcol" style="${TIDX<0?'display:none;':''}left:${TIDX/7*100}%;width:calc(${(100/7).toFixed(4)}% - 1px);"></div>
     <div class="base" style="top:${Y(37.5)}px;"></div>
     <svg viewBox="0 0 700 ${GH}" preserveAspectRatio="none">${tsegs}</svg>
     <div class="zones">${VD.map((d,i)=>`<i class="${d.type==='future'?'fut':''}" ${d.type!=='future'?`onclick="cellTap('temp',${i})"`:''}></i>`).join('')}</div>
@@ -1078,7 +1080,7 @@ function render(){ syncDemoHW();
     d=>({html:d.shot,cls:d.shot?'fill':''}));
   if(S.items.trans) h+=row('수혈','trans',
     (S.visitAsk==='clinic'||S.visitAsk==='inpat')?(S.visit.trans.length?fill(S.visit.trans.join(' · ')):(S.visit.transNone?fill('안 받음'):emp())):lockCel,
-    (d,hi)=>d.trans?{html:d.trans,cls:'fill'}:((DAYS[hi].visit||DAYS[hi].inpat)&&!S.present?{html:'<span class="addbtn p">＋</span>',cls:'emp'}:{html:''}));
+    (d,hi)=>d.trans?{html:d.trans,cls:'fill'}:((!S.present&&(DAYS[hi].visit||DAYS[hi].inpat))?{html:'<span class="addbtn p">＋</span>',cls:'emp'}:{html:''}));
   h+=cbcRows();
   // 보호자 선택 행 · [항목]에서 켜면 하단 노출
   if(S.items.condition) h+=row('컨디션','cond',
@@ -3354,12 +3356,34 @@ const DM={
  present(){ this.ready(); if(this.inChild()) CH.exit(); togglePresent(); this.sync(); },
  go(fn){ this.ready(); if(this.inChild()) CH.exit(); if(S.present) togglePresent(); fn(); this.sync(); },
  child(fn){ this.ready(); closePop(); if(!this.inChild()) CH.enter(); if(fn) fn(); },
- scn(k){ this.child(()=>{ CH.tutDone=true; CH.tutStep=0; CH.setScn(k); }); },
+ scn(k){ this.child(()=>{ CH.tutStep=0; CH.setScn(k); }); },
  full(){ const d=document; if(d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen().catch(()=>{}); },
  bare(){ this.o.bare=!this.o.bare; this.save(); this.fit(); this.sync(); },
  tap(){ this.o.tap=!this.o.tap; this.save(); this.sync(); }
 };
 CH.scn='none';
+/* 의료진 열람 이전 주 — 지난 날짜 예시 기록(가입일 ~ 4일 전) */
+let PW=0; const PW_MIN=Math.floor((SIGNUP_OFF+6)/7)-0; const EXT={}, EXT_VIS={'-9':1,'-16':1,'-23':1};
+(()=>{ const rnd=(o,k)=>{ const x=Math.sin(o*12.9898+k*78.233)*43758.5453; return x-Math.floor(x); };
+ const FEVER={'-24':38.0,'-7':37.9}, CVC=[-25,-18,-11,-4];
+ const CBCV={'-23':{wbc:'3,200',hb:'10.8',plt:'180',reti:'1.2',anc:'1,900'},'-16':{wbc:'1,100',hb:'8.6',plt:'38',reti:'0.6',anc:'400'},'-9':{wbc:'2,600',hb:'9.4',plt:'95',reti:'1.0',anc:'1,300'}};
+ for(let off=SIGNUP_OFF; off<=-4; off++){
+  const r=k=>rnd(off,k), fv=FEVER[off];
+  const temp=[1,3,5,7,9,11,13,15,17,19,21,23].map((h,i)=>({h:h,v:+(fv&&i===5?fv:fv&&(i===4||i===6)?37.3+r(i)*0.3:36.7+r(i)*0.5).toFixed(1)}));
+  const wk=(21.9-(off-SIGNUP_OFF)*0.02+(r(20)-0.5)*0.2).toFixed(1);
+  const g=r(21)<0.5?'3회':'2회', z=r(22)<0.6?'2회':'1회', wat=Math.round((500+r(23)*400)/50)*50;
+  const cv=CBCV[off], k=100-off;
+  H[k]={temp:temp,gargle:g,sitz:z,cvc:CVC.includes(off)?'드레싱 교환 · 소독':'',wk:(off%2===0)?wk:'',ht:EXT_VIS[off]&&off===-23?'118.0cm':'',cond:'',meal:'',bowel:'',water:wat,sym:'',chemo:off===SIGNUP_OFF?'투여':'',
+   abx:(off===-7||off===-6)?'세페핌':'',shot:(off>=-15&&off<=-13)?'↑ 그라신':'',trans:off===-16?'혈소판':'',cbc:cv?'A)'+cv.anc:'',cbcv:cv};
+  H[k].gargleE=Array(parseInt(g)).fill('일괄'); H[k].sitzE=Array(parseInt(z)).fill('일괄'); H[k].waterE=[{t:'일괄',n:wat}];
+  EXT[off]=k;
+ }
+})();
+function presentDays(){ const end=PW*7; return [...Array(7)].map((_,i)=>{ const off=end-6+i;
+  if(off===0) return DAYS[3]; if(off>=-3&&off<=-1) return DAYS[off+3];
+  return {d:mdOf(off),w:wdOf(off),off:off,type:'past',hidx:EXT[off]!=null?EXT[off]:null,visit:!!EXT_VIS[off],inpat:false,answered:EXT[off]!=null}; }); }
+function pwNav(d){ PW=Math.max(PW_MIN,Math.min(0,PW+d)); if(window.closePainImg) closePainImg(); render(); }
+const _togglePresent=togglePresent; togglePresent=function(){ PW=0; _togglePresent(); };
 /* 의료진 열람 통증 예시 — 외래 진료일 */
 window.PAIN_REC={[mdOf(-2)]:{score:5,t:'14:20',parts:['앞-왼쪽 다리','앞-오른쪽 다리']}};
 SYM_DATA[mdOf(-2)]['통증']=2;
@@ -3406,7 +3430,7 @@ document.addEventListener('pointerdown',e=>{
 DM.fit();
 (()=>{ let go=null; try{ go=sessionStorage.getItem('cmc_demo_go'); sessionStorage.removeItem('cmc_demo_go'); }catch(e){}
  if(go==='sheet') DM.ready();
- else if(go==='child'){ DM.ready(); CH.enter(); }
+ else if(go==='child'){ DM.ready(); CH.enter(); CH.tutStep=0; CH.render(); }
 })();
 </script>
 </body>
