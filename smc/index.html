@@ -1759,8 +1759,6 @@ function buildSymGrid(fromNote){
     if(g===0) return `<span class="sn-c g0${tdy?' tdy2':''}"></span>`;
     if(!fromNote){
       if(sym==='통증'&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}${BICON}</span>`;
-      if(window.BLEED_REC&&BLEED_REC[day]&&sym===BLEED) return `<span class="sn-c gc g${g}">G${g}(${BLEED_PART[BLEED_REC[day]]})</span>`;
-      if(sym==='통증'&&window.PAIN_REC&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}${window.BICON||''}</span>`;
       const hasImg=SYM_IMG[day]&&SYM_IMG[day][sym];
       return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>${cellG(sym,day,g)}${hasImg?PICON:''}</span>`;
     }
@@ -3416,17 +3414,9 @@ function presentDays(){ const end=PW*7; return [...Array(7)].map((_,i)=>{ const 
   return {d:mdOf(off),w:wdOf(off),off:off,type:'past',hidx:EXT[off]!=null?EXT[off]:null,visit:!!EXT_VIS[off],inpat:false,answered:EXT[off]!=null}; }); }
 function pwNav(d){ PW=Math.max(PW_MIN,Math.min(0,PW+d)); if(window.closePainImg) closePainImg(); render(); }
 const _togglePresent=togglePresent; togglePresent=function(){ PW=0; _togglePresent(); };
-/* 통증 칸 = 아픈 곳(몸 그림) 아이콘 — 사진 아이콘과 같은 바탕, 그림만 사람 실루엣 */
-window.BICON='<i class="picon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="3.6" fill="#3B82F6"/><path d="M4.5 21.5v-5.2a5.4 5.4 0 0 1 5.4-5.4h4.2a5.4 5.4 0 0 1 5.4 5.4v5.2z" fill="#B1CDFB"/><rect x="9.6" y="10.9" width="4.8" height="10.6" rx="1.2" fill="#3B82F6"/></svg></i>';
-/* 의료진 열람 출혈 예시 — 칸 = G등급 · 출혈 종류 */
-window.BLEED='출혈(구토, 가래, 소변, 대변, 상처부위)';
-window.BLEED_REC={[mdOf(-1)]:'혈변',[mdOf(-15)]:'혈뇨'};
-SYM_DATA[mdOf(-1)][BLEED]=3; (SYM_DATA[mdOf(-15)]=SYM_DATA[mdOf(-15)]||{})[BLEED]=3; /* 출혈 = 부위를 고르면 모두 G3 */
-/* 출혈 칸 = G3(고른 부위) — 혈변 → G3(대변) */
-window.BLEED_PART={'객혈':'가래','토혈':'구토','혈뇨':'소변','혈변':'대변','상처 부위의 출혈':'상처부위'};
-/* 의료진 열람 통증 예시 — 외래 진료일 */
-window.PAIN_REC={[mdOf(-2)]:{score:5,t:'14:20',parts:['앞-왼쪽 다리','앞-오른쪽 다리']}};
-SYM_DATA[mdOf(-2)]['통증']=2;
+/* 의료진 열람 출혈 예시 추가 — 지난 주 혈뇨(v17 예시 = 어제 대변) · 칸 G3(소변) */
+BLEED_REC[mdOf(-15)]=['소변']; (SYM_DATA[mdOf(-15)]=SYM_DATA[mdOf(-15)]||{})[BLEED]=3;
+/* 증상명 「통증」 터치 = 보이는 주의 마지막 통증 기록 몸 그림(v17은 칸 터치만) */
 function openPainImg(day){
  if(!day){ const ds=VD.map(d=>d.d).filter(d=>PAIN_REC[d]); day=ds[ds.length-1]; if(!day) return; }
  const r=PAIN_REC[day], g=(SYM_DATA[day]||{})['통증']||'', off=(day in MDOFF)?MDOFF[day]:0;
