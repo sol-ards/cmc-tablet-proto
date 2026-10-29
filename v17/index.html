@@ -415,7 +415,12 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .pv .pvar.l{left:22px;}
 .pv .pvar.r{right:22px;}
 .pv .pvpg{flex:none;height:66px;display:flex;align-items:center;justify-content:center;}
-.pv .pvpg span{background:rgba(255,255,255,.16);color:#fff;font-size:14px;font-weight:500;border-radius:8px;padding:6px 14px;}
+.pv .pvpg span{background:rgba(255,255,255,.3);color:#fff;font-size:18px;font-weight:500;line-height:28px;border-radius:20px;padding:4px 16px;}
+.pv .pvhd{font-size:18px;}
+.pv .pvx,.pv .pvar{width:36px;height:36px;background:#4D4D4D;}
+.pv .pvx{right:32px;}
+.pv .pvar.l{left:32px;}
+.pv .pvar.r{right:32px;}
 /* G셀 사진 아이콘 */
 .picon{display:inline-flex;width:24px;height:24px;border-radius:50%;background:#fff;align-items:center;justify-content:center;margin-left:6px;flex:none;box-shadow:0 1px 2px rgba(20,30,42,.12);}
 .toast{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;background:#22303a;color:#fff;font-size:15px;font-weight:700;border-radius:14px;padding:13px 20px;z-index:40;display:none;align-items:center;gap:12px;white-space:nowrap;box-shadow:0 10px 26px rgba(20,30,42,.45);}
@@ -1721,7 +1726,7 @@ function renderSymImg(){
  if(!el){ el=document.createElement('div'); el.id='symviewer'; el.className='pv'; $('tablet').appendChild(el); }
  el.classList.add('on');
  el.innerHTML=`<div class="pvhd">${gSymName(_si.sym)} · ${_si.day} (${w}) ${p.t}${g?` · G${g}`:''}<span class="pvx" onclick="closeSymImg()">✕</span></div>
-  <div class="pvbody">${_si.ph.length>1?`<span class="pvar l" onclick="symImgNav(-1)">‹</span><span class="pvar r" onclick="symImgNav(1)">›</span>`:''}<img src="${cimg(p.src)}" alt="${_si.sym} 사진"></div>
+  <div class="pvbody">${_si.ph.length>1?`<span class="pvar l" onclick="symImgNav(-1)"><svg width="7" height="14" viewBox="0 0 7 14" fill="none"><path d="M6 1L1 7l5 6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="pvar r" onclick="symImgNav(1)"><svg width="7" height="14" viewBox="0 0 7 14" fill="none"><path d="M1 1l5 6-5 6" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`:''}<img src="${cimg(p.src)}" alt="${_si.sym} 사진"></div>
   <div class="pvpg"><span>${_si.i+1} / ${_si.ph.length}</span></div>`;
 }
 function closeSymImg(){ const el=$('symviewer'); if(el) el.classList.remove('on'); }
