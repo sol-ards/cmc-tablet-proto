@@ -1724,7 +1724,7 @@ function buildSymGrid(fromNote){
     });
     return `<div class="sn-row">${tds}</div>`;
   }).join('');
-  const head=`<div class="sn-row sn-head"><span class="sn-l" style="color:#9CA3AF;font-size:14px;font-weight:600;">날짜</span>${days.map(d=>`<span class="sn-c hd2${d.type==='today'?' tdy2':''}">${d.d}(${d.w})</span>`).join('')}</div>`;
+  const head=`<div class="sn-row sn-head"><span class="sn-l" style="color:#9CA3AF;font-size:16px;font-weight:600;">날짜</span>${days.map(d=>`<span class="sn-c hd2${d.type==='today'?' tdy2':''}">${d.d}(${d.w})</span>`).join('')}</div>`;
   return (fromNote?head:'')+(grid||(fromNote?'<div class="psub" style="padding:10px 12px;">이 주에는 증상 기록이 없어요</div>':''));
 }
 function tSym(){
