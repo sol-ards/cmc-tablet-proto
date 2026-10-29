@@ -381,6 +381,28 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .emcard.red .emwhy{color:#7a3a32;}
 .emcard.red .emex{color:#8d5049;}
 .emfoot{font-size:14px;color:#9CA3AF;margin-top:14px;}
+#centerpop.pop.emg{width:1000px;max-width:1000px;}
+.emg .emsub{font-size:20px;font-weight:500;line-height:30px;color:#374151;margin-top:0;}
+.emg .emsub b{color:#EF4444;font-weight:500;}
+.emg .emgrid{gap:8px;margin-top:32px;}
+.emg .emcol{gap:8px;}
+.emg .emcard{border-radius:8px;border:1px solid #E5E7EB;background:#fff;}
+.emg .emcard .emhd{padding:15px 16px;font-size:20px;font-weight:500;line-height:28px;color:#374151;}
+.emg .emcard .emhd .cv{color:#D1D5DB;}
+.emg .emcard.open{background:#F5F5F5;border-color:#E5E7EB;}
+.emg .emcard.red{background:#FFEDED;border-color:#FEE2E2;}
+.emg .emcard.red .emhd{color:#DC2626;font-weight:600;}
+.emg .emcard.red .emhd .cv{color:#FCA5A5;}
+.emg .emcard.open .emhd{border-bottom:0;margin:0 16px;padding:15px 0 16px;}
+.emg .emcard .embody{padding:16px 16px 16px;border-top:1px solid #E5E7EB;margin:0 16px;padding-left:0;padding-right:0;}
+.emg .emcard.red .embody{border-top-color:#FECACA;}
+.emg .emcard li{font-size:18px;font-weight:500;line-height:28px;color:#374151;}
+.emg .emcard.red li{color:#DC2626;}
+.emg .emcard .emwhy{font-size:18px;font-weight:500;line-height:28px;color:#4B5563;margin-top:24px;padding-left:8px;}
+.emg .emcard .emex{font-size:18px;font-weight:500;line-height:28px;color:#6B7280;margin-top:8px;padding-left:8px;}
+.emg .emcard.red .emwhy{color:#4B5563;}
+.emg .emcard.red .emex{color:#6B7280;}
+.emg .emfoot{font-size:18px;font-weight:500;line-height:28px;color:#6B7280;margin-top:16px;}
 /* 증상 사진 뷰어 */
 .pv{position:absolute;inset:0;background:#000;z-index:45;display:none;flex-direction:column;}
 .pv.on{display:flex;}
@@ -2002,7 +2024,7 @@ function openMemo(){
     const dots=ms.length?`<span class="dt ${ms.some(m=>m.q)?'q':'n'}"></span>`:'';
     return `<span class="md ${memoSel===x.d?'on':''}" onclick="memoSel='${x.d}';memoEditIdx=null;openMemo()"><b>${x.d}</b><small>${x.w}</small><span class="dots">${dots}</span></span>`;
   }).join('');
-  const wnav=`<div class="hact" style="justify-content:center;margin-top:10px;">
+  const wnav=`<div class="hact" style="justify-content:flex-start;margin-top:10px;">
     <span class="wnav"><button class="ar" ${memoWeek<=memoMinWeek()?WNAV_OFF:''} onclick="memoWeek--;openMemo();">‹</button>
     <span>${wd[0].d}(${wd[0].w}) ~ ${wd[6].d}(${wd[6].w})</span>
     <button class="ar" ${memoWeek>=4?WNAV_OFF:''} onclick="memoWeek++;openMemo();">›</button></span></div>`;
@@ -2104,14 +2126,14 @@ function emCard(i){
 function openEmergency(keep){
   if(!keep&&window._emgFrom!=='temp') window._emgFrom=null;
   if(!keep) _emOpen=[0];
-  const L=[0,2,4,6,8], R=[1,3,5,7];
-  openPop(`<div class="pt"><span class="t" style="color:var(--red);">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;if(window._emgFrom==='temp'){window._emgFrom=null;tempCanvas();}else closePop()">닫기</button></span></div>
+  const L=[0,4,6,8], R=[1,2,3,5,7];
+  openPop(`<div class="pt"><span class="t" style="color:#DC2626;">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;if(window._emgFrom==='temp'){window._emgFrom=null;tempCanvas();}else closePop()">닫기</button></span></div>
     <div class="emsub">다음과 같은 신호가 보이면 <b>바로 병원 진료</b>를 받으세요. 의식이 흐리거나 숨쉬기 힘들어하면 <b>119</b>입니다.</div>
     <div class="emgrid">
       <div class="emcol">${L.map(emCard).join('')}</div>
       <div class="emcol">${R.map(emCard).join('')}</div>
     </div>
-    <div class="emfoot">여기 없는 모습이라도 아이가 평소와 많이 다르면 병원에 연락하세요.</div>`,'wide');
+    <div class="emfoot">여기 없는 모습이라도 아이가 평소와 많이 다르면 병원에 연락하세요.</div>`,'wide emg');
   window._noOut=true;
 }
 
