@@ -200,6 +200,17 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .snbig .sn-c{min-height:44px;font-size:16px;}
 .sn-c.hd2.td,.snpop .sn-c.hd2.tdy2{background:#EFF6FF;color:#374151;font-weight:600;outline:0;}
 .sn-c.tapg{cursor:pointer;}
+.painv{position:absolute;inset:0;background:#fff;z-index:46;display:flex;flex-direction:column;}
+.painv[hidden]{display:none;}
+.painv .hd{flex:none;height:72px;display:flex;align-items:center;padding:0 16px 0 28px;border-bottom:1px solid #E5E7EB;font-size:20px;font-weight:700;color:#1F2937;}
+.painv .hd small{font-size:16px;font-weight:500;color:#6B7280;margin-left:12px;}
+.painv .x{margin-left:auto;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.painv .bd2{flex:1;display:flex;align-items:center;justify-content:center;gap:140px;min-height:0;}
+.painv .fig{display:flex;flex-direction:column;align-items:center;gap:14px;font-size:16px;font-weight:600;color:#6B7280;}
+.painv .fig .b{width:142px;height:510px;}
+.painv .pt.on path{fill:#D9D3FB;fill-opacity:1;}
+.painv .ft{flex:none;padding:0 28px 30px;text-align:center;font-size:18px;font-weight:600;color:#374151;}
+.painv .ft b{color:#6D5DD3;margin-right:10px;}
 .sn-c.nr{background:transparent;}
 .sn-c.nr.tdy2,.sn-c.g0.tdy2{background:#EFF6FF;border-color:#EFF6FF;}
 .snbig .sn-row:nth-child(even){background:transparent;}
@@ -1690,6 +1701,11 @@ const SYM_DATA={
  [mdOf(-2)]:{'열':2,'메스꺼움':2,'구토':0,'피로 · 기운 없음':2,'구내염':1,'식욕감소':1,'두드러기':3},
  [mdOf(-1)]:{'구토':1,'피로 · 기운 없음':1}
 };
+/* 시연 예시 — 통증(17) 기록 1건 · 출혈(65) 기록 1건 */
+const PAIN_REC={[mdOf(-2)]:{score:5,t:'14:20',parts:['앞-왼쪽 다리','앞-오른쪽 다리']}};
+SYM_DATA[mdOf(-2)]['통증']=2;
+const BLEED='출혈(구토, 가래, 소변, 대변, 상처부위)', BLEED_REC={[mdOf(-1)]:['대변']};
+SYM_DATA[mdOf(-1)][BLEED]=3; /* 출혈 보기는 모두 G3 */
 const SYM_TODAY_CHILD=[{sym:'피로 · 기운 없음',g:1}];
 let symWeek=0;
 function wkOf(off){ return Math.floor((off+3)/7); }
@@ -1742,15 +1758,16 @@ function buildSymGrid(fromNote){
     if(g===null||g===undefined) return `<span class="sn-c nr${tdy?' tdy2':''}"></span>`;
     if(g===0) return `<span class="sn-c g0${tdy?' tdy2':''}"></span>`;
     if(!fromNote){
-      if(window.BLEED_REC&&BLEED_REC[day]&&sym===BLEED) return `<span class="sn-c gc g${g}">G${g}${bleedParts().length>1?' · '+BLEED_PART[BLEED_REC[day]]:''}</span>`;
+      if(sym==='통증'&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}${BICON}</span>`;
+      if(window.BLEED_REC&&BLEED_REC[day]&&sym===BLEED) return `<span class="sn-c gc g${g}">G${g}(${BLEED_PART[BLEED_REC[day]]})</span>`;
       if(sym==='통증'&&window.PAIN_REC&&PAIN_REC[day]) return `<span class="sn-c gc g${g} tapg" onclick="openPainImg('${day}')" style="cursor:pointer;">G${g}/${PAIN_REC[day].score}${window.BICON||''}</span>`;
       const hasImg=SYM_IMG[day]&&SYM_IMG[day][sym];
-      return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>G${g}${hasImg?PICON:''}</span>`;
+      return `<span class="sn-c gc g${g}${hasImg?' tapg':''}"${hasImg?` onclick="openSymImg('${sym}','${day}')" style="cursor:pointer;"`:''}>${cellG(sym,day,g)}${hasImg?PICON:''}</span>`;
     }
-    return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">G${g}</span>`;
+    return `<span class="sn-c gc g${g} tapg" onclick="openSymGuide('${sym}',${g},'${day}',true)">${cellG(sym,day,g)}</span>`;
   };
   const grid=rows.map(sym=>{
-    let tds=`<span class="sn-l" title="${snLabel(sym,fromNote)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt">${snLabel(sym,fromNote)}</span></span>`;
+    let tds=`<span class="sn-l" title="${gSymName(sym)}"${(!fromNote&&sym==='통증')?` onclick="openPainImg()" style="cursor:pointer;"`:''}><span class="snt">${gSymName(sym)}</span></span>`;
     days.forEach(d=>{
       if(d.type==='future'){ tds+='<span class="sn-c nr"></span>'; return; }
       const g = d.type==='today'? symToday(sym) : (SYM_DATA[d.d]?SYM_DATA[d.d][sym]:undefined);
@@ -1777,6 +1794,20 @@ function guideFor(sym){
   return k?SYM_GUIDE[k]:null;
 }
 function gSymName(s){ /* 보호자 모드에서는 CH.D가 아직 없을 수 있어 원천 목록을 직접 씀 */ const L=(window.CHDATA||{}).symptoms||[]; const k=L.includes(s)?s:(SYM_ALIAS[s]&&L.includes(SYM_ALIAS[s])?SYM_ALIAS[s]:L.find(x=>x.startsWith(s+'('))); const no=k?L.indexOf(k)+1:0; return (no&&no!==65&&CH.SR_NAME[no])||k||s; }
+function cellG(sym,day,g){ const b=sym===BLEED&&BLEED_REC[day]; return 'G'+g+(b&&b.length?'('+CH.SR_BT.filter(x=>b.includes(x)).join(', ')+')':''); } /* 출혈 = 그날 고른 종류(증상기록 9-1 순서) */
+const BICON='<i class="picon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="3.6" fill="#3B82F6"/><path d="M4.5 21.5v-5.2a5.4 5.4 0 0 1 5.4-5.4h4.2a5.4 5.4 0 0 1 5.4 5.4v5.2z" fill="#B1CDFB"/><rect x="9.6" y="10.9" width="4.8" height="10.6" rx="1.2" fill="#3B82F6"/></svg></i>';
+function openPainImg(day){ /* 의료진 열람 통증 칸 → 아픈 곳 몸 그림(부위 값으로 다시 그림) */
+ const r=PAIN_REC[day]; if(!r) return; const g=(SYM_DATA[day]||{})['통증']||'', off=(day in MDOFF)?MDOFF[day]:0;
+ const hm=r.t.split(':').map(Number), tm=(hm[0]<12?'오전 ':'오후 ')+((hm[0]%12)||12)+':'+String(hm[1]).padStart(2,'0');
+ const svg=src=>src.replace(/class="pt" data-k="([^"]+)"/g,(m,k)=>`class="pt${r.parts.includes(k)?' on':''}" data-k="${k}"`), nm=k=>k.replace(/^(앞|뒤)-/,'');
+ const front=r.parts.filter(k=>k.startsWith('앞-')).map(nm), back=r.parts.filter(k=>k.startsWith('뒤-')).map(nm);
+ const list=[front.length?'앞 '+front.join(' · '):'', back.length?'뒤 '+back.join(' · '):''].filter(Boolean).join('   ');
+ let el=$('painviewer'); if(!el){ el=document.createElement('div'); el.id='painviewer'; el.className='painv'; $('tablet').appendChild(el); }
+ el.hidden=false;
+ el.innerHTML=`<div class="hd">통증 · ${day}(${wdOf(off)}) ${tm}<small>G${g} · 통증 점수 ${r.score}점</small><span class="x" onclick="closePainImg()"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="#4B5563" stroke-width="1.8" stroke-linecap="round"/></svg></span></div>`
+  +`<div class="bd2"><div class="fig">앞<div class="b">${svg(CH.SR_BODY.f)}</div></div><div class="fig">뒤<div class="b">${svg(CH.SR_BODY.b)}</div></div></div><div class="ft"><b>아픈 곳</b>${list}</div>`;
+}
+function closePainImg(){ const el=$('painviewer'); if(el) el.hidden=true; }
 function openSymGuide(sym,g,day,fromNote){
   const gd=guideFor(sym)||{};
   const tip=gd['G'+g]||'이 증상은 등록된 자가 관리 지침이 없어요.';
@@ -3391,10 +3422,8 @@ window.BICON='<i class="picon"><svg width="15" height="15" viewBox="0 0 24 24" f
 window.BLEED='출혈(구토, 가래, 소변, 대변, 상처부위)';
 window.BLEED_REC={[mdOf(-1)]:'혈변',[mdOf(-15)]:'혈뇨'};
 SYM_DATA[mdOf(-1)][BLEED]=3; (SYM_DATA[mdOf(-15)]=SYM_DATA[mdOf(-15)]||{})[BLEED]=3; /* 출혈 = 부위를 고르면 모두 G3 */
-/* 출혈 증상명 = 보이는 주에 고른 부위만 괄호에(혈변 → 출혈(대변)) · 부위가 둘 이상일 때만 칸에 부위 표시 */
+/* 출혈 칸 = G3(고른 부위) — 혈변 → G3(대변) */
 window.BLEED_PART={'객혈':'가래','토혈':'구토','혈뇨':'소변','혈변':'대변','상처 부위의 출혈':'상처부위'};
-function bleedParts(){ const ts=new Set(VD.map(d=>BLEED_REC[d.d]).filter(Boolean).map(x=>BLEED_PART[x])); return CH.SR_BT.filter(x=>ts.has(x)); }
-function snLabel(sym,fromNote){ if(fromNote||sym!==BLEED) return gSymName(sym); const l=bleedParts(); return l.length?`출혈(${l.join(', ')})`:gSymName(sym); }
 /* 의료진 열람 통증 예시 — 외래 진료일 */
 window.PAIN_REC={[mdOf(-2)]:{score:5,t:'14:20',parts:['앞-왼쪽 다리','앞-오른쪽 다리']}};
 SYM_DATA[mdOf(-2)]['통증']=2;
