@@ -716,6 +716,8 @@ body.bare{background:#F5F5F5;}
 #dmbar button{border:1px solid #3b4552;background:#232b35;color:#E5E7EB;border-radius:10px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
 #dmbar button:hover{border-color:#60A5FA;}
 #dmbar .by{margin-left:auto;color:#9CA3AF;font-size:12.5px;}
+#dmbar .sep{width:1px;height:18px;background:#3b4552;margin:0 8px;}
+#dmbar .lb{color:#9CA3AF;font-size:13px;margin-right:2px;}
 body.bare #dmbar{display:none;}
 </style>
 </head>
@@ -760,8 +762,8 @@ body.bare #dmbar{display:none;}
 </div>
 <div id="dmbar"><b>캔모어차일드 태블릿 프로토타입</b>
   <button onclick="DM.restart('ob')">처음부터(회원가입)</button>
-  <button onclick="DM.noTip();DM.guardian()">보호자 기록 화면</button>
-  <button onclick="DM.noTip();DM.present()">의료진 열람</button>
+  <span class="sep"></span><span class="lb">바로 가기 :</span>
+  <button onclick="DM.noTip();DM.guardian()">보호자 기록</button>
   <button onclick="DM.childNoTut()">환아 모드</button>
   <span class="by">제작 · 올라운드닥터스 기획자 박지현</span>
 </div>
