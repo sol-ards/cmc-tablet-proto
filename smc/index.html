@@ -710,8 +710,6 @@ body.bare{background:#F5F5F5;}
 #dmpanel button.go{background:#2563EB;border-color:#2563EB;color:#fff;}
 #dmpanel .tip{font-size:11px;color:#9CA3AF;margin-top:12px;line-height:1.6;border-top:1px solid #2f3843;padding-top:10px;}
 #dmpanel kbd{background:#2f3843;border-radius:4px;padding:0 5px;font-family:inherit;color:#E5E7EB;}
-.dmtap{position:fixed;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:3px solid rgba(59,130,246,.85);background:rgba(59,130,246,.18);pointer-events:none;z-index:9997;animation:dmtap .5s ease-out forwards;}
-@keyframes dmtap{from{transform:scale(.4);opacity:1;}to{transform:scale(1.25);opacity:0;}}
 </style>
 </head>
 <body>
@@ -750,7 +748,6 @@ body.bare{background:#F5F5F5;}
   <div class="row">
     <button onclick="DM.full()">전체 화면</button>
     <button data-dm="bare" onclick="DM.bare()">테두리 없이</button>
-    <button data-dm="tap" onclick="DM.tap()">터치 표시</button>
   </div>
   <div class="tip">열기 · 닫기 = <kbd>`</kbd> 키 또는 화면 왼쪽 위 모서리 3번 탭<br>전체 화면 = <kbd>F</kbd> · 패널은 청중 화면에 보이지 않게 닫고 진행</div>
 </div>
@@ -3495,7 +3492,7 @@ function resetSess(){ try{ localStorage.removeItem('cmc_demo_smc'); }catch(e){} 
 window.DS=1;
 const DM={
  K:'cmc_demo_smc_ui',
- o:(()=>{ try{ return Object.assign({bare:false,tap:true},JSON.parse(localStorage.getItem('cmc_demo_smc_ui')||'{}')); }catch(e){ return {bare:false,tap:true}; } })(),
+ o:(()=>{ try{ return Object.assign({bare:false},JSON.parse(localStorage.getItem('cmc_demo_smc_ui')||'{}')); }catch(e){ return {bare:false}; } })(),
  save(){ try{ localStorage.setItem(this.K,JSON.stringify(this.o)); }catch(e){} },
  fit(){
   const tb=$('tablet'), bare=this.o.bare, w=bare?1280:1304, h=bare?800:824, m=bare?0:28;
@@ -3506,7 +3503,7 @@ const DM={
  },
  sync(){
   const q=s=>document.querySelector(`#dmpanel [data-dm="${s}"]`);
-  q('present').classList.toggle('on',!!S.present); q('bare').classList.toggle('on',this.o.bare); q('tap').classList.toggle('on',this.o.tap);
+  q('present').classList.toggle('on',!!S.present); q('bare').classList.toggle('on',this.o.bare);
  },
  toggle(v){ const p=$('dmpanel'); p.hidden=(v===undefined)?!p.hidden:!v; if(!p.hidden) this.sync(); },
  inChild(){ return !$('childview').hidden; },
@@ -3522,7 +3519,6 @@ const DM={
  scn(k){ this.child(()=>{ CH.tutStep=0; CH.setScn(k); }); },
  full(){ const d=document; if(d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen().catch(()=>{}); },
  bare(){ this.o.bare=!this.o.bare; this.save(); this.fit(); this.sync(); },
- tap(){ this.o.tap=!this.o.tap; this.save(); this.sync(); }
 };
 CH.scn='none';
 /* 의료진 열람 이전 주 — 지난 날짜 예시 기록(가입일 ~ 4일 전) */
@@ -3568,11 +3564,6 @@ document.addEventListener('keydown',e=>{
  else if((e.key==='f'||e.key==='F'||e.key==='ㄹ')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ DM.full(); }
 });
 (()=>{ let n=0,t=0; document.addEventListener('pointerdown',e=>{ if(e.clientX>48||e.clientY>48) return; const now=Date.now(); n=(now-t<600)?n+1:1; t=now; if(n>=3){ n=0; DM.toggle(); } },true); })();
-document.addEventListener('pointerdown',e=>{
- if(!DM.o.tap||e.target.closest('#dmpanel')) return;
- const d=document.createElement('div'); d.className='dmtap'; d.style.left=e.clientX+'px'; d.style.top=e.clientY+'px';
- document.body.appendChild(d); setTimeout(()=>d.remove(),520);
-},true);
 DM.fit();
 (()=>{ let go=null; try{ go=sessionStorage.getItem('cmc_demo_go'); sessionStorage.removeItem('cmc_demo_go'); }catch(e){}
  if(go==='sheet') DM.ready();
