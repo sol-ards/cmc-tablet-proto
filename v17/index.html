@@ -2639,9 +2639,9 @@ const CH={
 
   r_s2(){
    const sv=this.S.sv, n=sv.sel.length;
-   /* 목록 = 최근 기록 증상(주요 12개 밖 · 가장 최근 2개) + 주요 증상 12개. 신체 부위로 찾아 담은 증상은 목록에 넣지 않는다(담은 증상 칸에만) */
+   /* 목록 = 최근 기록 증상(주요 12개 밖 · 모두 · 최근 순) + 주요 증상 12개. 신체 부위로 찾아 담은 증상은 목록에 넣지 않는다(담은 증상 칸에만) */
    const rec=new Set(this.recentSyms());
-   const extra=[...new Set(this.g1p(this.records()).map((r,i)=>[r,i]).filter(([r])=>rec.has(r.sym)&&!this.P.top12.includes(r.sym)).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[1]-a[1]).map(([r])=>r.sym))].slice(0,2); /* 같은 날 = 나중에 쌓인 기록이 최근(프로토 시연 기록 시각과 실제 시계가 섞여 시각 비교 불가) */
+   const extra=[...new Set(this.g1p(this.records()).map((r,i)=>[r,i]).filter(([r])=>rec.has(r.sym)&&!this.P.top12.includes(r.sym)).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[1]-a[1]).map(([r])=>r.sym))]; /* 같은 날 = 나중에 쌓인 기록이 최근(프로토 시연 기록 시각과 실제 시계가 섞여 시각 비교 불가) */
    const list=[...extra,...this.P.top12];
    this._s2list=list;
    const cards=list.map((s,i)=>{const on=sv.sel.includes(s);return `<button class="sym${on?' on':''}" onclick="CH.togIdx(${i})"><i class="sq">${this.SR_ICSVG[this.SR_SYMIC[this.srNo(s)]]||''}</i><span class="tx">${this.srName(s)}</span>${rec.has(s)?'<b class="new">최근</b>':''}<span class="rd"></span></button>`;}).join('');
