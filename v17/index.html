@@ -419,7 +419,8 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 #tablet .rowg .wval{font-size:16px;font-weight:500;color:#4B5563;}
 #tablet .rowg .wval small{font-size:16px;font-weight:500;}
 #tablet .wtxt{font-size:16px;}
-#tablet .medpill{gap:16px;padding:4px 16px;border:1px solid #E5E7EB;box-shadow:none;font-size:18px;line-height:28px;}
+#tablet .medpill{gap:16px;padding:4px 8px 4px 16px;border:1px solid #E5E7EB;box-shadow:none;font-size:18px;line-height:28px;}
+#tablet .medpill .ar{flex:none;width:20px;height:20px;border:0;border-radius:50%;background:#E5E7EB;color:#9CA3AF;font-size:13px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;font-family:inherit;}
 #tablet .medpill b{font-weight:600;color:#374151;}
 #tablet .medpill span{font-weight:600;color:#6B7280;}
 #tablet .qc{border-color:#E5E7EB;border-radius:16px;padding:16px;}
@@ -980,7 +981,7 @@ function render(){ syncDemoHW();
   calcView();
   $('ttop').innerHTML = S.present ? `
     <div class="tt2">
-      <span class="medpill"><b>이서준 2018. 05. 30</b><span>${VD[0].d}(${VD[0].w}) ~ ${VD[6].d}(${VD[6].w})</span></span>
+      <span class="medpill"><b>이서준 2018. 05. 30</b><button class="ar" onclick="toast('이전 7일 · 열람 전용 (데모 범위 외)')">‹</button><span>${VD[0].d}(${VD[0].w}) ~ ${VD[6].d}(${VD[6].w})</span><button class="ar" ${WNAV_OFF}>›</button></span>
       <span class="sp"></span>
       <button class="pill" style="background:var(--blue);border-color:var(--blue);color:#fff;border-radius:99px;font-size:18px;font-weight:600;line-height:28px;padding:4px 16px;display:inline-flex;align-items:center;gap:4px;" onclick="togglePresent()"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7.5 10V8.2a4.5 4.5 0 0 1 9 0V10" fill="none" stroke="#FDE68A" stroke-width="2.4" stroke-linecap="round"/><rect x="5" y="10" width="14" height="9.6" rx="2.4" fill="#FDE68A"/><circle cx="12" cy="14" r="1.4" fill="#3B82F6"/><rect x="11.3" y="14.3" width="1.4" height="2.5" rx="0.7" fill="#3B82F6"/></svg>의료진 열람 해제</button>
     </div>` : `
