@@ -150,7 +150,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .ttip.blue{border-color:#BFDBFE;color:var(--gblue);font-weight:600;font-size:15px;}
 .ttip.blue b{color:var(--gblue);font-weight:600;margin:0;}
 .ttip.blue::after{border-right-color:#BFDBFE;border-bottom-color:#BFDBFE;}
-.ttip.sntip{left:12px;top:0;transform:translate(0,calc(-100% - 8px));color:#374151;}
+.ttip.sntip{transform:translate(0,calc(-100% - 8px));color:#374151;z-index:60;}
 .ttip.sntip::after{left:24px;}
 .tbtn{position:absolute;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;width:110px;height:34px;line-height:1;background:var(--gred);color:#fff;font-size:14.5px;font-weight:600;border-radius:9px;padding:0;z-index:4;cursor:pointer;box-shadow:0 1px 4px rgba(226,87,75,.25);white-space:nowrap;letter-spacing:-0.2px;}
 
@@ -845,10 +845,12 @@ function fmtTime(h){ const hh=Math.floor(h), m=Math.round((h-hh)*60); const ap=h
 function tempTip(i,ev){ ev.stopPropagation(); tipT=tipT===i?null:i; tipW=null; render(); }
 function wtTip(i,ev){ ev.stopPropagation(); tipW=tipW===i?null:i; tipT=null; render(); }
 /* 증상 노트 · 의료진 열람 격자 — 말줄임된 증상명 터치 = 전체 증상명 툴팁(신호등 기획서 3장 · 5장) */
-function snTip(el,ev){ ev.stopPropagation(); const o=document.querySelector('.sntip'), same=o&&o.parentNode===el; if(o) o.remove(); if(same) return;
+function snTip(el,ev){ ev.stopPropagation(); const o=document.querySelector('.sntip'), same=o&&o._el===el; if(o) o.remove(); if(same) return;
   const t=el.querySelector('.snt'); if(!t||t.scrollWidth<=t.clientWidth) return;
-  el.style.position='relative'; el.insertAdjacentHTML('beforeend',`<div class="ttip sntip">${t.textContent}</div>`); }
-document.addEventListener('click',()=>{ const o=document.querySelector('.sntip'); if(o) o.remove(); });
+  const tb=$('tablet'), a=el.getBoundingClientRect(), b=tb.getBoundingClientRect(), k=b.width/tb.offsetWidth, d=document.createElement('div'); /* 격자 overflow에 잘리지 않게 태블릿 층에 띄움 */
+  d.className='ttip sntip'; d.textContent=t.textContent; d._el=el; d.style.left=((a.left-b.left)/k+12)+'px'; d.style.top=((a.top-b.top)/k)+'px'; tb.appendChild(d); }
+const snTipClose=()=>{ const o=document.querySelector('.sntip'); if(o) o.remove(); };
+document.addEventListener('click',snTipClose); document.addEventListener('scroll',snTipClose,true);
 function toast(msg,undo){
   if(undo){ const _u=undo, _dc=DC; undo=()=>{ const sv=DC; DC=_dc; try{ _u(); } finally { DC=sv; } }; }
   const t=$('toast');
