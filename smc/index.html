@@ -710,6 +710,13 @@ body.bare{background:#F5F5F5;}
 #dmpanel button.go{background:#2563EB;border-color:#2563EB;color:#fff;}
 #dmpanel .tip{font-size:11px;color:#9CA3AF;margin-top:12px;line-height:1.6;border-top:1px solid #2f3843;padding-top:10px;}
 #dmpanel kbd{background:#2f3843;border-radius:4px;padding:0 5px;font-family:inherit;color:#E5E7EB;}
+/* 상단 바로 가기(검토용 — 태블릿 화면 바깥) */
+#dmbar{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;gap:6px;padding:0 20px;z-index:9998;font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;color:#E5E7EB;font-size:13px;}
+#dmbar b{font-size:14px;font-weight:700;color:#fff;margin-right:10px;}
+#dmbar button{border:1px solid #3b4552;background:#232b35;color:#E5E7EB;border-radius:10px;padding:6px 11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+#dmbar button:hover{border-color:#60A5FA;}
+#dmbar .by{margin-left:auto;color:#9CA3AF;font-size:12.5px;}
+body.bare #dmbar{display:none;}
 </style>
 </head>
 <body>
@@ -750,6 +757,14 @@ body.bare{background:#F5F5F5;}
     <button data-dm="bare" onclick="DM.bare()">테두리 없이</button>
   </div>
   <div class="tip">열기 · 닫기 = <kbd>`</kbd> 키 또는 화면 왼쪽 위 모서리 3번 탭<br>전체 화면 = <kbd>F</kbd> · 패널은 청중 화면에 보이지 않게 닫고 진행</div>
+</div>
+<div id="dmbar"><b>캔모어차일드 태블릿 프로토타입</b>
+  <button onclick="DM.restart('ob')">처음부터(회원가입)</button>
+  <button onclick="DM.guardian()">보호자 기록 화면</button>
+  <button onclick="DM.present()">의료진 열람</button>
+  <button onclick="DM.go(()=>openEmergency())">응급신호</button>
+  <button onclick="DM.child()">환아 모드</button>
+  <span class="by">제작 · 올라운드닥터스 기획자 박지현</span>
 </div>
 <div class="stage">
   <div class="tablet" id="tablet">
@@ -3497,7 +3512,9 @@ const DM={
  fit(){
   const tb=$('tablet'), bare=this.o.bare, w=bare?1280:1304, h=bare?800:824, m=bare?0:28;
   tb.classList.toggle('bare',bare); document.body.classList.toggle('bare',bare);
-  window.DS=Math.min((innerWidth-m*2)/w,(innerHeight-m*2)/h);
+  const top=bare?0:52; /* 상단 바로 가기 높이 */
+  window.DS=Math.min((innerWidth-m*2)/w,(innerHeight-top-m*2)/h);
+  tb.style.top=`calc(50% + ${top/2}px)`;
   tb.style.transform=`translate(-50%,-50%) scale(${window.DS})`;
   if(!$('cmov').hidden) cmRender();
  },
