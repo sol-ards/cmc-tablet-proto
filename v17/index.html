@@ -2012,26 +2012,40 @@ function cbcNone(){
 }
 function tCbc(){
   if(cbcCur()===true){ openLab(dcToday()?'today':DC); return; }
-  openPop(`<div class="pt"><span class="t">CBC 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b class="stv">${cbcCur()==='none'?'검사 없음':'기록 전'}</b></span></span><span class="r"><button class="btn sm" onclick="cbcConfirm('manual')">⌨ 직접 입력</button><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
-    <div class="cam"><div class="guide">WBC · Hb · Plt · Reti<br>스티커를 테두리 안에 맞춰 주세요</div><button class="shutter" onclick="cbcScan()"></button></div>
-    <div class="hact"><button class="btn ${cbcCur()==='none'?'pri':''}" onclick="cbcNone()">${cbcCur()==='none'?'✓ ':''}검사 없음</button></div>
+  cbcConfirm('manual');
+}
+function cbcLeft(){ return CB_FIELDS.filter(([k])=>!(_cbV[k]||'').trim()).map(([,n])=>n); }
+function cbcCam(){
+  const filled=CB_FIELDS.some(([k])=>(_cbV[k]||'').trim()), left=cbcLeft();
+  openPop(`<div class="pt"><span class="t">CBC 촬영</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+    ${filled&&left.length?`<div class="psub">남은 값 : ${left.join(' · ')} · 앱 화면을 내려 남은 값이 보이게 찍어 주세요</div>`:''}
+    <div class="cam"><div class="guide">환자 앱 CBC 화면을<br>테두리 안에 맞춰 주세요</div><button class="shutter" onclick="cbcScan()"></button></div>
+    <div class="hact"><span class="chip" onclick="cbcDraw()">← 입력 화면으로</span></div>
     <div class="psub">OCR은 목업</div>`);
 }
 function cbcScan(){
   window._cbScan=true;
-  openPop(`<div class="pt"><span class="t">CBC · 인식 중</span><span class="r"><button class="btn sm" onclick="window._cbScan=false;closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">CBC · 인식 중</span><span class="r"><button class="btn sm" onclick="window._cbScan=false;cbcDraw()">닫기</button></span></div>
     <div style="font-size:12.5px;font-weight:800;color:#33506e;background:#eef2f8;border-radius:12px;padding:14px;text-align:center;margin-top:12px;">🔍 인식 중 · 값을 읽고 있어요 …</div>`);
-  window._cbT=setTimeout(()=>{ window._cbT=null; if(window._cbScan&&$('centerov').classList.contains('on')){ window._cbScan=false; cbcConfirm('ocr'); } },1100);
+  window._cbT=setTimeout(()=>{ window._cbT=null; if(window._cbScan&&$('centerov').classList.contains('on')){ window._cbScan=false; cbcFill(); } },1100);
 }
-let _cbMode='ocr', _cbDate=0, _cbF='wbc', _cbV={}, _cbTouched={}, _cbWarned=false;
+function cbcFill(){
+  let n=0;
+  CB_FIELDS.forEach(([k])=>{ const v=(CBCV[k]||'')==='—'?'':(CBCV[k]||''); if(!v||(_cbV[k]||'').trim()||n>=3) return; _cbV[k]=v; _cbTouched[k]=false; _cbOcr[k]=true; n++; });
+  cbcDraw();
+  const left=cbcLeft(), tail=left.length?' · 남은 값 '+left.join(' · '):'';
+  toast(n?`${n}개 채웠어요${tail}`:`새로 채운 값이 없어요${tail}`);
+}
+let _cbMode='manual', _cbDate=0, _cbF='wbc', _cbV={}, _cbTouched={}, _cbWarned=false, _cbOcr={};
 const CB_FIELDS=[['wbc','WBC','/µL',{int:1,min:100,max:100000}],['hb','Hb','g/dL',{hb:1,min:3,max:25}],['plt','Plt','×10³/µL',{int:1,min:1,max:1000}],['reti','Reti','%',{dec:1,min:0,max:30}],['anc','ANC','/µL',{int:1,min:0,max:60000}]];
 function cbSel(k){ _cbF=k; cbcDraw(); }
 function cbKey(key){
   if(key!=='next') _cbWarned=false;
   const spec=CB_FIELDS.find(f=>f[0]===_cbF)[3];
-  if(!_cbTouched[_cbF]){ _cbV[_cbF]=''; _cbTouched[_cbF]=true; }
-  let v=_cbV[_cbF];
   if(key==='next'){ const i=CB_FIELDS.findIndex(f=>f[0]===_cbF); _cbF=CB_FIELDS[(i+1)%CB_FIELDS.length][0]; cbcDraw(); return; }
+  if(!_cbTouched[_cbF]){ _cbV[_cbF]=''; _cbTouched[_cbF]=true; }
+  delete _cbOcr[_cbF];
+  let v=_cbV[_cbF];
   if(key==='back'){
     if(spec.hb){ let d=v.replace('.',''); d=d.slice(0,-1); _cbV[_cbF]=d.length>1?d.slice(0,-1)+'.'+d.slice(-1):d; }
     else _cbV[_cbF]=v.slice(0,-1);
@@ -2043,21 +2057,22 @@ function cbKey(key){
   cbcDraw();
 }
 function cbcDraw(){
-  const title=_cbMode==='ocr'?'인식 결과 확인':(_cbMode==='edit'?'CBC 수정':'CBC 직접 입력');
-  const psub=_cbMode==='ocr'?'인식된 값을 확인하고, 다르면 칸을 눌러 고쳐 주세요.':(_cbMode==='edit'?'값을 고치고 저장해 주세요.':'검사 결과지의 값을 입력해 주세요. 없는 값은 비워 두면 돼요.');
+  const edit=_cbMode==='edit', none=cbcCur()==='none';
+  const title=edit?'CBC 수정':`CBC 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b class="stv">${none?'검사 없음':'기록 전'}</b></span>`;
+  const psub=edit?'값을 고치고 저장해 주세요.':'환자 앱의 CBC 값을 입력해 주세요. 없는 값은 비워 두면 돼요.';
   const KEYS=['7','8','9','4','5','6','1','2','3','.','0','back'];
   const decOK=CB_FIELDS.find(f=>f[0]===_cbF)[3].dec;
-  openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" ${Object.values(_cbV).some(v=>(v||'').trim())?'':'disabled'} onclick="saveCbcV()">저장</button><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t">${title}</span><span class="r"><button class="btn pri sm" ${Object.values(_cbV).some(v=>(v||'').trim())?'':'disabled'} onclick="saveCbcV()">저장</button><button class="btn sm" style="margin-left:6px;" onclick="cbcCam()">📷 촬영으로 입력</button><button class="btn sm" style="margin-left:6px;" onclick="closePop()">닫기</button></span></div>
     <div class="psub">${psub}</div>
-    <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
+    <div style="display:flex;gap:8px;margin-top:10px;">${CB_FIELDS.map(([k,n])=>`<div onclick="cbSel('${k}')" style="flex:1;border:1.5px solid ${_cbF===k?'var(--blue)':'#E5E7EB'};border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;${_cbF===k?'background:#eff6ff;':''}"><div style="font-size:12px;font-weight:700;color:#33506e;">${n}${_cbOcr[k]?' 📷':''}</div><div style="font-size:17px;font-weight:600;min-height:24px;color:${_cbV[k]?'#374151':'#c0c8d2'};">${_cbV[k]||'—'}</div></div>`).join('')}</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:300px;margin:14px auto 0;">${KEYS.map(x=>`<button class="btn" style="padding:10px 0;font-size:18px;${x==='.'&&!decOK?'opacity:.3;pointer-events:none;':''}" onclick="cbKey('${x}')">${x==='back'?'⌫':x}</button>`).join('')}</div>
-    <div class="hact" style="justify-content:center;margin-top:8px;"><span class="chip" onclick="tCbc()">← CBC 기록으로</span><button class="btn" onclick="cbKey('next')">다음</button></div>
+    <div class="hact" style="justify-content:space-between;margin-top:8px;">${edit?'<span></span>':`<button class="btn ${none?'pri':''}" onclick="cbcNone()">${none?'✓ ':''}검사 없음</button>`}<button class="btn" onclick="cbKey('next')">다음</button></div>
     `);
 }
 function cbcConfirm(mode){
-  _cbMode=mode; _cbDate=0; _cbF='wbc'; _cbTouched={}; _cbWarned=false;
-  const pre=(mode==='ocr'||mode==='edit');
-  const SRC=(mode==='edit'&&!dcToday())?(dcH().cbcv||{}):CBCV;
+  _cbMode=mode; _cbDate=0; _cbF='wbc'; _cbTouched={}; _cbWarned=false; _cbOcr={};
+  const pre=mode==='edit';
+  const SRC=(pre&&!dcToday())?(dcH().cbcv||{}):CBCV;
   _cbV={}; ['wbc','hb','plt','reti','anc'].forEach(k=>{ _cbV[k]=pre?((SRC[k]||'')==='—'?'':(SRC[k]||'')):''; if(pre&&_cbV[k]) _cbTouched[k]=false; });
   cbcDraw();
 }
@@ -2067,14 +2082,15 @@ function saveCbcV(){
   if(!any){ toast('값을 입력해 주세요'); return; }
   const off=CB_FIELDS.filter(([k,,,s])=>{ const v=vals[k]; if(v==='—')return false; const n=parseFloat(v.replace(/,/g,'')); return isFinite(n)&&(n<s.min||n>s.max); }).map(([,n])=>n);
   if(off.length&&!_cbWarned){ _cbWarned=true; toast(`값을 한 번 더 확인해 주세요 · ${off.join(' · ')} · 자릿수 오류가 아닌지 확인 후 다시 저장`); return; }
+  const ocr=CB_FIELDS.some(([k])=>_cbOcr[k]&&vals[k]!=='—');
   if(dcToday()){
     Object.assign(CBCV,vals);
-    S.visit.cbc=true; S.visit.cbcSrc=(_cbMode==='ocr')?'ocr':(S.visit.cbcSrc==='ocr'&&_cbMode==='edit'?'ocr':'manual');
-    if(_cbMode==='manual') S.visit.cbcSrc='manual';
+    S.visit.cbcSrc=ocr?'ocr':(_cbMode==='edit'?(S.visit.cbcSrc||'manual'):'manual');
+    S.visit.cbc=true;
   } else {
-    const h=dcH(); h.cbcv={...vals}; h.cbc=vals.anc!=='—'?('A)'+vals.anc):'기록'; h.cbcSrc=(_cbMode==='ocr')?'ocr':(_cbMode==='manual'?'manual':(h.cbcSrc||'manual'));
+    const h=dcH(); h.cbcv={...vals}; h.cbc=vals.anc!=='—'?('A)'+vals.anc):'기록'; h.cbcSrc=ocr?'ocr':(_cbMode==='edit'?(h.cbcSrc||'manual'):'manual');
   }
-    closePop(); render();
+  closePop(); render();
 }
 
 /* ---------- 메모 · 항목 · 응급 ---------- */
