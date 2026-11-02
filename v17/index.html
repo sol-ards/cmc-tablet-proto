@@ -299,6 +299,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .btn:disabled{opacity:.45;cursor:default;}
 .btn.pri:disabled,.btn.warn:disabled{background:#F3F4F6;color:#C3C9D1;opacity:1;box-shadow:none;}
 .opts{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.opts .o.on{border-color:var(--blue);color:var(--blue);}
 .opts .o{border:1.2px solid #d7dde5;border-radius:14px;padding:13px 15px;min-height:48px;font-size:16px;font-weight:500;color:#39434e;background:#fff;cursor:pointer;text-align:left;font-family:inherit;}
 .prolink{font-size:14px;color:#4a5a63;margin-top:10px;border-top:1px dashed var(--line);padding-top:9px;cursor:pointer;line-height:1.55;}
 .prolink b{color:var(--ink);}
@@ -869,6 +870,7 @@ function doUndo(){ if(undoFn){undoFn(); undoFn=null;} $('toast').classList.remov
 function openPop(html,cls){ window._noOut=false; const p=$('centerpop'); p.className='pop'+(cls?' '+cls:''); p.innerHTML=html; $('centerov').classList.add('on'); }
 function closePop(byOutside){ if(byOutside&&window._noOut) return; if(window._cbT){ clearTimeout(window._cbT); window._cbT=null; window._cbScan=false; } $('centerov').classList.remove('on'); if(window._snap){ const sn=window._snap; window._snap=null; if(recSnap()!==sn.s) flashCell(sn.key,sn.i); } if(byOutside){ if(window.OB&&OB.done){ render(); } else if(window.OB&&typeof renderOB==='function'){ renderOB(); } } }
 function afterSave(){ closePop(); render(); }
+function pickClose(reopen,after){ reopen(); const ov=$('centerov'); ov.style.pointerEvents='none'; setTimeout(()=>{ ov.style.pointerEvents=''; closePop(); render(); if(after) after(); },300); }
 
 /* ---------- PRO 인라인 문진 ---------- */
 let proState=null;
@@ -1660,15 +1662,13 @@ function vqSet(v){
   if(hosp&&has&&val!==cur&&val!=='clinic'&&val!=='inpat'){ vqChange(val); return; }
   if(hosp&&has&&cur===val){ vqChange(null); return; }
   if(cur===val){
-    vqWrite(null); closePop(); render();
-    toast(`지웠어요 · ${dcLab()} 진료 응답`); return;
+    vqWrite(null); pickClose(tVisitQ,()=>toast(`지웠어요 · ${dcLab()} 진료 응답`)); return;
   }
   const fromInpat=false;
   vqWrite(val);
-  closePop(); render();
-  const pre=fromInpat?'입원을 마치고 ':'';
-    if(dcToday()&&val==='clinic') toast('오늘 외래 진료. 수혈 · CBC 기록이 열렸어요');
-  else if(dcToday()&&val==='inpat') toast('오늘 입원. 알림은 쉬어요');
+  const today=dcToday();
+  pickClose(tVisitQ,()=>{ if(today&&val==='clinic') toast('오늘 외래 진료. 수혈 · CBC 기록이 열렸어요');
+  else if(today&&val==='inpat') toast('오늘 입원. 알림은 쉬어요'); });
 }
 function tVisitQ(){
   const cur=vqCur();
@@ -1688,23 +1688,23 @@ function condSet(c){
   const cur=dcToday()?S.condition:Object.keys(COND_SHORT).find(x=>COND_SHORT[x]===dcH().cond&&dcH().cond);
   if(cur===c){ if(dcToday()) S.condition=null; else dcH().cond=''; toast(`지웠어요 · ${dcLab()} 컨디션 기록`); }
   else { if(dcToday()) S.condition=c; else dcH().cond=COND_SHORT[c]; }
-  afterSave();
+  pickClose(tCond);
 }
 function tCond(){
   const cur=dcToday()?S.condition:Object.keys(COND_SHORT).find(x=>COND_SHORT[x]===dcH().cond&&dcH().cond);
   openPop(`<div class="pt"><span class="t">${dcToday()?'':dcLab()+' '}서준이 컨디션은 ${dcToday()?'어때요':'어땠어요'}?</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
-    <div class="opts">${CONDS.map(c=>`<button class="o" onclick="condSet('${c}')">${cur===c?'✓ ':''}${c}</button>`).join('')}</div>`);
+    <div class="opts">${CONDS.map(c=>`<button class="o ${cur===c?'on':''}" onclick="condSet('${c}')">${cur===c?'✓ ':''}${c}</button>`).join('')}</div>`);
 }
 function mealSet(m){
   const cur=dcToday()?S.meal:dcH().meal;
   if(cur===m){ if(dcToday()) S.meal=null; else dcH().meal=''; toast(`지웠어요 · ${dcLab()} 식사량 기록`); }
   else { if(dcToday()) S.meal=m; else dcH().meal=m; }
-  afterSave();
+  pickClose(tMeal);
 }
 function tMeal(){
   const cur=dcToday()?S.meal:dcH().meal;
   openPop(`<div class="pt"><span class="t">${dcToday()?'오늘':dcLab()} 식사는 어땠어요?</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
-    <div class="opts">${MEALS.map(m=>`<button class="o" onclick="mealSet('${m}')">${cur===m?'✓ ':''}${m}</button>`).join('')}</div>`);
+    <div class="opts">${MEALS.map(m=>`<button class="o ${cur===m?'on':''}" onclick="mealSet('${m}')">${cur===m?'✓ ':''}${m}</button>`).join('')}</div>`);
 }
 function bowelCur(){
   if(dcToday()) return S.bowel.count;
@@ -1716,7 +1716,7 @@ function tBowel(){
   const recs=dcToday()?proBySrc('bowel'):[];
   openPop(`<div class="pt"><span class="t">${dcToday()?'오늘':dcLab()} 배변은 몇 번 했나요?</span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
     <div class="opts">
-      ${[0,1,2,3].map(c=>`<button class="o" onclick="bowelSet(${c})">${cur===c?'✓ ':''}${c===3?'3회 이상':c+'회'}</button>`).join('')}
+      ${[0,1,2,3].map(c=>`<button class="o ${cur===c?'on':''}" onclick="bowelSet(${c})">${cur===c?'✓ ':''}${c===3?'3회 이상':c+'회'}</button>`).join('')}
     </div>
     ${recs.length?`<div class="prolink" style="cursor:default;">기록한 증상 · ${recs.map(r=>`<span class="gbadge g${r.g}">${gSymName(r.sym)} G${r.g}</span>`).join('')} <span class="ar">＋</span></div>`
       :`<div class="prolink" style="cursor:default;">변비 · 무른 변(설사) · 출혈(구토, 가래, 소변, 대변, 상처부위) 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
@@ -1729,7 +1729,7 @@ function bowelSet(c){
   } else {
     if(dcToday()) S.bowel.count=c; else dcH().bowel=c===3?'3회 이상':c+'회';
       }
-  afterSave();
+  pickClose(tBowel);
 }
 function waterRef(){ return dcToday()?S.waterLog:dcH().waterE; }
 function tWater(){
@@ -1957,9 +1957,9 @@ function shotWrite(d){
 function shotSet(d){
   _shotCustom=false;
   if(d&&d!=='안 맞음'&&!['그라신','뉴라스타','류코스팀'].includes(d)&&!CUSTOM_MEDS.shot.includes(d)) CUSTOM_MEDS.shot.push(d);
-  if(shotCur()===d){ shotWrite(null); closePop(); render(); toast(`지웠어요 · ${dcLab()} 수치주사 기록`); return; }
+  if(shotCur()===d){ shotWrite(null); pickClose(tShot,()=>toast(`지웠어요 · ${dcLab()} 수치주사 기록`)); return; }
   shotWrite(d);
-  closePop(); render();
+  pickClose(tShot);
   }
 function tShot(){
   const cur=shotCur();
@@ -2005,10 +2005,10 @@ function cbcCur(){ return dcToday()?S.visit.cbc:(dcH().cbc==='검사 없음'?'no
 function cbcNone(){
   if(cbcCur()==='none'){
     if(dcToday()) S.visit.cbc=false; else dcH().cbc='';
-    closePop(); render(); toast(`지웠어요 · ${dcLab()} CBC 기록`); return;
+    pickClose(cbcDraw,()=>toast(`지웠어요 · ${dcLab()} CBC 기록`)); return;
   }
   if(dcToday()) S.visit.cbc='none'; else { dcH().cbc='검사 없음'; delete dcH().cbcv; }
-  closePop(); render();
+  pickClose(cbcDraw);
 }
 function tCbc(){
   if(cbcCur()===true){ openLab(dcToday()?'today':DC); return; }
