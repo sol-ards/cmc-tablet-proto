@@ -1533,7 +1533,7 @@ function tCvc(){
     <div class="hact">${[['ok','이상 없음'],['bad','이상 있음']].map(([v,l])=>`<span class="chip ${st.obs===v?'on':''}" onclick="cvcObs('${v}')">${st.obs===v?'✓ ':''}${l}</span>`).join('')}</div>
     ${st.obs==='bad'?`<div class="hv" style="background:#FEF2F2;border-radius:10px;padding:9px 12px;margin:8px 0 0;color:#B03A2E;font-weight:700;">${CVC_ALERT} <button class="btn warn sm" style="margin-left:6px;" onclick="window._emgFrom='cvc';openEmergency()">응급 신호 안내</button></div>`:''}
     <div class="hv" style="margin-top:14px;">관리</div>
-    <div class="hact">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}${due&&k===CVC_DUE?' · 예정':''}</span>`).join('')}</div>
+    <div class="hact">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}</span>`).join('')}</div>
     ${st.checks.dress?`<div class="hact" style="margin-top:6px;">${['필름','거즈'].map(x=>`<span class="chip ${st.dress===x?'on':''}" onclick="cvcDress('${x}')">${st.dress===x?'✓ ':''}${x}</span>`).join('')}</div>`:''}
     <div class="hv" style="margin-top:8px;color:#6B7280;font-weight:500;">병원에서 한 관리도 기록해 주세요</div>`);
 }
