@@ -798,7 +798,7 @@ function dLab(off){ const b=dBase(off); return (b===null||off-b+1<=0)?'':'D'+(of
 const DAYS=[...Array(7)].map((_,i)=>{const off=i-3;
   return {d:mdOf(off),w:wdOf(off),off:off,type:off<0?'past':(off===0?'today':'future'),hidx:off<0?i:undefined,visit:off===-2,inpat:false,answered:off<0?off!==-1:undefined};});
 const H={
-  0:{temp:[{h:1,v:37.0},{h:3,v:37.1},{h:5,v:36.9},{h:7,v:37.2},{h:9,v:37.8},{h:11,v:37.3},{h:13,v:37.0},{h:15,v:37.2},{h:17,v:36.9},{h:19,v:37.1},{h:21,v:37.3},{h:23,v:37.0}],gargle:'3회',sitz:'3회',cvc:'드레싱 교환 · 소독',wk:'21.5',ht:'',cond:'잘 논다',meal:'평소만큼',bowel:'2회',water:650,sym:'<span class="gbadge g1">구내염 G1</span>',chemo:'',abx:'',shot:'',trans:'',cbc:''},
+  0:{temp:[{h:1,v:37.0},{h:3,v:37.1},{h:5,v:36.9},{h:7,v:37.2},{h:9,v:37.8},{h:11,v:37.3},{h:13,v:37.0},{h:15,v:37.2},{h:17,v:36.9},{h:19,v:37.1},{h:21,v:37.3},{h:23,v:37.0}],gargle:'3회',sitz:'3회',cvc:'이상 없음 · 드레싱(필름)',wk:'21.5',ht:'',cond:'잘 논다',meal:'평소만큼',bowel:'2회',water:650,sym:'<span class="gbadge g1">구내염 G1</span>',chemo:'',abx:'',shot:'',trans:'',cbc:''},
   1:{temp:[{h:1,v:37.0},{h:3,v:37.2},{h:5,v:37.1},{h:7,v:37.4},{h:9,v:38.0},{h:11,v:37.3},{h:13,v:37.0},{h:15,v:37.1},{h:17,v:37.2},{h:19,v:37.0},{h:21,v:37.3},{h:23,v:37.1}],gargle:'2회',sitz:'2회',cvc:'',wk:'21.4',ht:'118.2cm',cond:'처짐',meal:'절반쯤',bowel:'1회',water:700,sym:'<span class="gbadge g2">열 G2</span><span class="gbadge g2">피로 G2</span>',chemo:'',abx:'세페핌',shot:'↑ 그라신',trans:'혈소판',cbc:'A)850',cbcv:{wbc:'1,400',hb:'9.1',plt:'45',reti:'—',anc:'850'}},
   2:{temp:[],gargle:'',sitz:'',cvc:'',wk:'',ht:'',cond:'',meal:'',bowel:'',water:0,sym:'',chemo:'',abx:'',shot:'',trans:'',cbc:''}
 };
@@ -967,7 +967,7 @@ function row(label,key,todayCel,pastFn){
 }
 function emp(hint){ return {html:hint?`<span class="pillbtn">＋ ${hint}</span>`:'<span class="addbtn">＋</span>', cls:'emp'}; }
 function fill(html){ return {html:html, cls:'fill'}; }
-function cvcCellHtml(items){ return items.map(l=>`<span style="white-space:nowrap">${l}</span>`).join(' · '); }
+function cvcCellHtml(items){ return items.map(l=>`<span style="white-space:nowrap;${l==='이상 있음'?'color:#B03A2E;':''}">${l}</span>`).join(' · '); }
 let _flash=null;
 function flashCell(key,i){ _flash={key:key, i:i}; render(); setTimeout(()=>{ _flash=null; },900); }
 function recSnap(){ return JSON.stringify([S.temp.readings,S.gargle,S.sitz,S.cvc,S.weightToday,S.condition,S.meal,S.bowel,S.water,S.waterLog,S.abx,S.abxNone,S.visit,S.visitAsk,S.waterGoal,CBCV,H,DAYS.map(d=>[d.visit,d.inpat,d.answered])]); }
@@ -1154,8 +1154,8 @@ function render(){ syncDemoHW();
     S.sitz.times.length?fill(S.sitz.times.length+'회'):(S.sitz.none?fill('안 함'):emp()),
     d=>d.sitz?{html:d.sitz,cls:'fill'}:{html:''});
   if(S.items.cvc) h+=row('중심정맥관','cvc',
-    (S.cvc.done||S.cvc.obs==='ok')?fill(cvcCellHtml([...CVC_KEYS.filter(([k])=>S.cvc.checks[k]).map(([,l])=>l),S.cvc.obs==='ok'?'특이사항 없음':null].filter(Boolean))):{html:'<span class="pillbtn">＋ 교환일 지남</span>',cls:'alert'},
-    d=>({html:d.cvc?cvcCellHtml(CVC_KEYS.map(([,l])=>l).filter(l=>d.cvc.includes(l)).concat(d.cvc.includes('특이사항')?['특이사항 없음']:[])):''}));
+    S.cvc.done?fill(cvcCellHtml(cvcItems({checks:S.cvc.checks,obs:S.cvc.obs,dress:S.cvc.dress||'필름'}))):{html:`<span class="pillbtn">＋ ${cvcDueLabel()} 예정</span>`,cls:'alert'},
+    d=>({html:d.cvc?cvcCellHtml(d.cvc.split(' · ')):''}));
   h+=weightRow();
   h+=heightRow();
   h+=waterRow();
@@ -1503,47 +1503,58 @@ function delTime(key,i){
   render(); tCare(key);
 }
 
-/* 중심정맥관 · C 누적형 : 체크 = 즉시 기록 · [특이사항 없음] = 같은 줄 마지막 칩(상호배타) */
-const CVC_KEYS=[['dress','드레싱 교환 · 소독'],['cap','캡 교환'],['hep','헤파린 잠금 주입']];
+/* 중심정맥관 · C 누적형 : ① 관찰 [이상 없음] [이상 있음] + ② 관리 칩 = 즉시 기록 */
+const CVC_KEYS=[['dress','드레싱'],['cap','캡 교환'],['flush','관 세척']];
+const CVC_ALERT='빨개짐 · 부기 / 진물 · 고름 / 열 · 오한 / 팔 · 목 부기 / 관 빠짐 · 깨짐 · 샘이 있다면 병원에 연락하세요.';
+const CVC_DUE='dress';
 function cvcSt(){
-  if(dcToday()) return {checks:S.cvc.checks, obs:S.cvc.obs==='ok'};
+  if(dcToday()) return {checks:S.cvc.checks, obs:S.cvc.obs, dress:S.cvc.dress||'필름'};
   const t=dcH().cvc||'';
-  return {checks:{dress:t.includes('드레싱'),cap:t.includes('캡'),hep:t.includes('헤파린')}, obs:t.includes('특이사항')};
+  return {checks:{dress:t.includes('드레싱'),cap:t.includes('캡'),flush:t.includes('관 세척')}, obs:t.includes('이상 있음')?'bad':(t.includes('이상 없음')?'ok':null), dress:t.includes('거즈')?'거즈':'필름'};
+}
+function cvcItems(st){
+  const a=[];
+  if(st.obs) a.push(st.obs==='bad'?'이상 있음':'이상 없음');
+  CVC_KEYS.forEach(([k,l])=>{ if(st.checks[k]) a.push(k==='dress'?`드레싱(${st.dress})`:l); });
+  return a;
 }
 function cvcWrite(st){
-  if(dcToday()){ S.cvc.checks={...st.checks}; S.cvc.obs=st.obs?'ok':null; S.cvc.done=Object.values(st.checks).some(Boolean); }
-  else {
-    const parts=CVC_KEYS.filter(([k])=>st.checks[k]).map(([,l])=>l);
-    if(st.obs) parts.push('특이사항 없음');
-    dcH().cvc=parts.join(' · ');
-  }
+  if(dcToday()){ S.cvc.checks={...st.checks}; S.cvc.obs=st.obs; S.cvc.dress=st.dress; S.cvc.done=cvcItems(st).length>0; }
+  else dcH().cvc=cvcItems(st).join(' · ');
 }
+function cvcDueLabel(){ return CVC_KEYS.find(([k])=>k===CVC_DUE)[1]; }
 function tCvc(){
   const st=cvcSt();
-  const any=Object.values(st.checks).some(Boolean);
-  const recs=dcToday()?proBySrc('cvc'):[];
-  const stv=any?CVC_KEYS.filter(([k])=>st.checks[k]).length+'건':(st.obs?'특이사항 없음':(dcToday()?'교환일 2일 지남':'기록 전'));
-  const sub=`${dcLab()} <b class="stv ${any?'on':''}">${stv}</b> · 히크만 · 7일 주기`;
-  openPop(`<div class="pt"><span class="t">중심정맥관 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${sub}</span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
-    <div class="hact" style="margin-top:10px;">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}</span>`).join('')}<span class="chip ${st.obs?'on':''}" onclick="cvcNone()">${st.obs?'✓ ':''}특이사항 없음</span></div>
-    ${recs.length?`<div class="prolink" style="cursor:default;">기록한 증상 · ${recs.map(r=>`<span class="gbadge g${r.g}">${gSymName(r.sym)} G${r.g}</span>`).join('')} <span class="ar">＋</span></div>`
-      :`<div class="prolink" style="cursor:default;">항암 주사 맞은 부위 통증, 부기, 빨개짐 · 피부 발진(빨개지거나 붓거나 표면이 울퉁불퉁해지는 증상) · 열 등의 증상이 있다면<br><b>환아 모드로 전환하여 증상을 기록</b>해 주세요</div>`}`);
+  const items=cvcItems(st);
+  const due=dcToday()&&!st.checks[CVC_DUE];
+  const stv=items.length?items.join(' · '):(due?`${cvcDueLabel()} 예정일 2일 지남`:'기록 전');
+  openPop(`<div class="pt"><span class="t">중심정맥관 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b class="stv ${items.length?'on':''}">${stv}</b> · 히크만</span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
+    <div class="hv" style="margin-top:12px;">관찰</div>
+    <div class="hact">${[['ok','이상 없음'],['bad','이상 있음']].map(([v,l])=>`<span class="chip ${st.obs===v?'on':''}" onclick="cvcObs('${v}')">${st.obs===v?'✓ ':''}${l}</span>`).join('')}</div>
+    ${st.obs==='bad'?`<div class="hv" style="background:#FEF2F2;border-radius:10px;padding:9px 12px;margin:8px 0 0;color:#B03A2E;font-weight:700;">${CVC_ALERT} <button class="btn warn sm" style="margin-left:6px;" onclick="window._emgFrom='cvc';openEmergency()">응급 신호 안내</button></div>`:''}
+    <div class="hv" style="margin-top:14px;">관리</div>
+    <div class="hact">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}${due&&k===CVC_DUE?' · 예정':''}</span>`).join('')}</div>
+    ${st.checks.dress?`<div class="hact" style="margin-top:6px;">${['필름','거즈'].map(x=>`<span class="chip ${st.dress===x?'on':''}" onclick="cvcDress('${x}')">${st.dress===x?'✓ ':''}${x}</span>`).join('')}</div>`:''}
+    <div class="hv" style="margin-top:8px;color:#6B7280;font-weight:500;">병원에서 한 관리도 기록해 주세요</div>`);
+}
+function cvcObs(v){
+  const st=cvcSt();
+  const off=st.obs===v;
+  cvcWrite({...st, obs:off?null:v});
+  if(off) toast(`지웠어요 · ${dcLab()} 중심정맥관 ${v==='bad'?'이상 있음':'이상 없음'}`);
+  render(); tCvc();
 }
 function cvcToggle(k){
   const st=cvcSt();
   const nc={...st.checks, [k]:!st.checks[k]};
-  const any=Object.values(nc).some(Boolean);
-  const wasAny=Object.values(st.checks).some(Boolean);
-  cvcWrite({checks:nc, obs:any?false:st.obs});
+  cvcWrite({...st, checks:nc});
   const _lb=CVC_KEYS.find(([q])=>q===k)[1];
   if(!nc[k]) toast(`지웠어요 · ${dcLab()} 중심정맥관 ${_lb}`);
   render(); tCvc();
 }
-function cvcNone(){
+function cvcDress(x){
   const st=cvcSt();
-  if(Object.values(st.checks).some(Boolean)){ toast('기록이 있어요. 먼저 지워 주세요'); return; }
-  cvcWrite({checks:st.checks, obs:!st.obs});
-  if(!cvcSt().obs) toast(`지웠어요 · ${dcLab()} 중심정맥관 특이사항 없음`);
+  cvcWrite({...st, dress:x});
   render(); tCvc();
 }
 
@@ -2244,10 +2255,10 @@ function emCard(i){
   </div>`;
 }
 function openEmergency(keep){
-  if(!keep&&window._emgFrom!=='temp') window._emgFrom=null;
+  if(!keep&&window._emgFrom!=='temp'&&window._emgFrom!=='cvc') window._emgFrom=null;
   if(!keep) _emOpen=[0];
   const L=[0,4,6,8], R=[1,2,3,5,7];
-  openPop(`<div class="pt"><span class="t" style="color:#DC2626;">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;if(window._emgFrom==='temp'){window._emgFrom=null;tempCanvas();}else closePop()">닫기</button></span></div>
+  openPop(`<div class="pt"><span class="t" style="color:#DC2626;">미리 준비하는 응급신호</span><span class="r"><button class="btn sm" onclick="window._noOut=false;if(window._emgFrom==='temp'){window._emgFrom=null;tempCanvas();}else if(window._emgFrom==='cvc'){window._emgFrom=null;tCvc();}else closePop()">닫기</button></span></div>
     <div class="emsub">다음과 같은 신호가 보이면 <b>바로 병원 진료</b>를 받으세요. 의식이 흐리거나 숨쉬기 힘들어하면 <b>119</b>입니다.</div>
     <div class="emgrid">
       <div class="emcol">${L.map(emCard).join('')}</div>
@@ -3362,7 +3373,7 @@ function openP1(){
   <div class="p1row"><span class="pk">첫 항암일</span><span class="pv">${d1Full()?d1Full()+" (D1)":"<span style='color:#9CA3AF;'>아직 몰라요</span>"}<small>고치면 전체 D 재계산</small></span><span class="pe" onclick="closePop();openDday()">${d1Full()?'수정':'등록'}</span></div>
   <div class="p1row"><span class="pk">다음 항암 예정일</span><span class="pv">${(d.next&&(()=>{const n=parseNext();return n&&offOfYMD(n.y,n.m,n.d)>=0;})())?d.next:'아직 몰라요'}</span><span class="pe" onclick="obNextCal('p1')">수정</span></div>
   <div class="p1row"><span class="pk">항암제</span><span class="pv">${d.drugs.length?d.drugs.join(' · '):`<span style='color:#9CA3AF;'>미입력</span>`}</span><span class="pe" onclick="p1Drugs()">${d.drugs.length?'수정':'입력'}</span></div>
-  <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:`${d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:''}<span class="pe" onclick="p1CvcEdit()">수정</span>`}</div>
+  <div class="p1row"><span class="pk">중심정맥관</span><span class="pv">${cvcVal}</span>${d.cvc==='none'?`<span class="pe go" onclick="p1Cvc()">등록하기</span>`:`${d.cvcType==='잘 모르겠어요'?`<span class="pe go" onclick="p1Cvc()">종류 등록</span>`:''}<span class="pe" onclick="p1Cvc()">수정</span>`}</div>
   <div class="p1row"><span class="pk">보호자 정보</span><span class="pv">${d.age||`<span style='color:#9CA3AF;'>연령대 미입력</span>`}<small>선택</small></span><span class="pe" onclick="p1Age()">입력</span></div>
   <div class="p1row"><span class="pk">데모 초기화</span><span class="pv">회원가입 · 튜토리얼부터 다시<small>새로고침해도 기록 화면이 유지되도록 기기에 저장돼요</small></span><span class="pe" onclick="resetSess()">초기화</span></div>
   <div class="p1row"><span class="pk">튜토리얼</span><span class="pv">화면 안내 8장</span><span class="pe" onclick="closePop();cmStart(true)">다시 보기</span></div>
@@ -3392,13 +3403,11 @@ function p1Drugs(){
   ${drugEditorHTML()}`);
  dgSug(); dgChips();
 }
-function p1Cvc(){ const t=OBD._ct||null;
- openPop(`<div class="pt"><span class="t">중심정맥관 등록</span><span class="r"><button class="btn sm" onclick="OBD._ct=null;openP1()">← 가입 정보</button></span></div>
+function p1Cvc(){ const t=OBD._ct||(OBD.cvc==='none'?null:OBD.cvcType);
+ openPop(`<div class="pt"><span class="t">중심정맥관</span><span class="r"><button class="btn sm" onclick="OBD._ct=null;openP1()">← 가입 정보</button></span></div>
  <div class="hv">관 종류</div>
- <div class="hact" style="flex-wrap:wrap;">${['히크만','케모포트','PICC','잘 모르겠어요'].map(x=>`<span class="chip ${t===x?'on':''}" onclick="OBD._ct='${x}';p1Cvc()">${x}</span>`).join('')}</div>
- <div class="hv" style="margin-top:10px;">삽입일 (선택 · 관리 주기 계산의 시작점 · 미입력 시 첫 수행 기록일부터)</div>
- <div class="hact">${[mdOf(-6),mdOf(-2)].map(x=>`<span class="chip ${OBD._ci===x?'on':''}" onclick="OBD._ci=OBD._ci==='${x}'?null:'${x}';p1Cvc()">${x}</span>`).join('')}</div>
- <div class="pact hact" style="justify-content:flex-end;margin-top:12px;"><button class="btn pri" ${t?'':'disabled'} onclick="OBD.cvc='yes';OBD.cvcType=OBD._ct;OBD._ct=null;OBD.cvcIns=(OBD._ci===mdOf(-6)?ymdOf(-6):OBD._ci===mdOf(-2)?ymdOf(-2):(OBD.cvcIns||null));OBD._ci=null;saveSess();openP1();toast(OBD.cvcType==='잘 모르겠어요'?'등록했어요 · 관 종류를 확인해 주세요':'등록했어요 · 중심정맥관 행이 활성돼요 (데모 시트 = 등록 상태 고정)')">저장</button></div>`); }
+ <div class="hact" style="flex-wrap:wrap;">${['히크만','케모포트','PICC','잘 모르겠어요','없어요'].map(x=>`<span class="chip ${t===x?'on':''}" onclick="OBD._ct='${x}';p1Cvc()">${x}</span>`).join('')}</div>
+ <div class="pact hact" style="justify-content:flex-end;margin-top:12px;"><button class="btn pri" ${t?'':'disabled'} onclick="if(OBD._ct==='없어요'){OBD.cvc='none';OBD.cvcType=null;}else{OBD.cvc='yes';OBD.cvcType=OBD._ct;}OBD._ct=null;saveSess();openP1()">저장</button></div>`); }
 /* 중심정맥관 수정 — 관 교체 · 관 제거 · 삽입일 (신호등기록 PRD 2장) */
 var CV=null;
 function cvFmt(o){ return o?`${o.y}. ${o.m}. ${o.d}`:''; }
