@@ -967,7 +967,7 @@ function row(label,key,todayCel,pastFn){
 }
 function emp(hint){ return {html:hint?`<span class="pillbtn">＋ ${hint}</span>`:'<span class="addbtn">＋</span>', cls:'emp'}; }
 function fill(html){ return {html:html, cls:'fill'}; }
-function cvcCellHtml(items){ return items.map(l=>`<span style="white-space:nowrap;${l==='이상 있음'?'color:#B03A2E;':''}">${l}</span>`).join(' · '); }
+function cvcCellHtml(items){ return items.map(l=>`<span style="white-space:nowrap;${l==='이상 있음'?'color:var(--red);font-weight:600;':''}">${l}</span>`).join(' · '); }
 let _flash=null;
 function flashCell(key,i){ _flash={key:key, i:i}; render(); setTimeout(()=>{ _flash=null; },900); }
 function recSnap(){ return JSON.stringify([S.temp.readings,S.gargle,S.sitz,S.cvc,S.weightToday,S.condition,S.meal,S.bowel,S.water,S.waterLog,S.abx,S.abxNone,S.visit,S.visitAsk,S.waterGoal,CBCV,H,DAYS.map(d=>[d.visit,d.inpat,d.answered])]); }
