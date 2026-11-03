@@ -1529,13 +1529,12 @@ function tCvc(){
   const due=dcToday()&&!st.checks[CVC_DUE];
   const stv=items.length?items.join(' · '):(due?`${cvcDueLabel()} 예정일 2일 지남`:'기록 전');
   openPop(`<div class="pt"><span class="t">중심정맥관 기록하기<br><span style="font-size:14px;font-weight:500;color:#6B7280;">${dcLab()} <b class="stv ${items.length?'on':''}">${stv}</b> · 히크만</span></span><span class="r"><button class="btn sm" onclick="closePop()">닫기</button></span></div>
-    <div class="hv" style="margin-top:12px;">관찰</div>
+    <div class="hv" style="margin-top:12px;">중심정맥관 관찰</div>
     <div class="hact">${[['ok','이상 없음'],['bad','이상 있음']].map(([v,l])=>`<span class="chip ${st.obs===v?'on':''}" onclick="cvcObs('${v}')">${st.obs===v?'✓ ':''}${l}</span>`).join('')}</div>
     ${st.obs==='bad'?`<div class="hv" style="background:#FEF2F2;border-radius:10px;padding:9px 12px;margin:8px 0 0;color:#B03A2E;font-weight:700;">${CVC_ALERT}</div>`:''}
-    <div class="hv" style="margin-top:14px;">관리</div>
+    <div class="hv" style="margin-top:14px;">중심정맥관 관리 <span style="color:#9CA3AF;font-weight:500;font-size:13px;">(병원 관리도 기록해 주세요.)</span></div>
     <div class="hact">${CVC_KEYS.map(([k,l])=>`<span class="chip ${st.checks[k]?'on':''}" onclick="cvcToggle('${k}')">${st.checks[k]?'✓ ':''}${l}</span>`).join('')}</div>
-    ${st.checks.dress?`<div class="hact" style="margin-top:6px;">${['필름','거즈'].map(x=>`<span class="chip ${st.dress===x?'on':''}" onclick="cvcDress('${x}')">${st.dress===x?'✓ ':''}${x}</span>`).join('')}</div>`:''}
-    <div class="hv" style="margin-top:8px;color:#6B7280;font-weight:500;">병원에서 한 관리도 기록해 주세요</div>`);
+    ${st.checks.dress?`<div class="hact" style="margin-top:6px;">${['필름','거즈'].map(x=>`<span class="chip ${st.dress===x?'on':''}" onclick="cvcDress('${x}')">${st.dress===x?'✓ ':''}${x}</span>`).join('')}</div>`:''}`);
 }
 function cvcObs(v){
   const st=cvcSt();
