@@ -689,6 +689,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;}
 body{background:#14181d;}
 .chdemo{display:none!important;}
+.sn-c.gc.g0n{background:#E8EEF9;color:#6B84B8;}
 /* 배율 축소 시 테두리 안쪽 1px 틈 가림 */
 .tablet{background-clip:padding-box;}
 #childview{background:#1b232b;}
@@ -1931,7 +1932,9 @@ function buildSymGrid(fromNote){
     return `<div class="sn-row">${tds}</div>`;
   }).join('');
   const head=`<div class="sn-row sn-head"><span class="sn-l" style="color:#9CA3AF;font-size:16px;font-weight:600;">날짜</span>${days.map(d=>`<span class="sn-c hd2${d.type==='today'?' tdy2':''}">${d.d}(${d.w})</span>`).join('')}</div>`;
-  return (fromNote?head:'')+(grid||(fromNote?'<div class="psub" style="padding:10px 12px;">이 주에는 증상 기록이 없어요</div>':''));
+  const _nd=d=>d.type!=='future'&&window.noSymOn&&noSymOn(d);
+  const noRow=days.some(_nd)?`<div class="sn-row"><span class="sn-l"><span class="snt">증상 없음</span></span>${days.map(d=>_nd(d)?`<span class="sn-c gc g0n${d.type==='today'?' tdy2':''}">G0</span>`:`<span class="sn-c nr${d.type==='today'?' tdy2':''}"></span>`).join('')}</div>`:'';
+  return (fromNote?head:'')+((grid+noRow)||(fromNote?'<div class="psub" style="padding:10px 12px;">이 주에는 증상 기록이 없어요</div>':''));
 }
 function tSym(){
   const wd=symDays();
@@ -3578,6 +3581,9 @@ const DM={
  bare(){ this.o.bare=!this.o.bare; this.save(); this.fit(); this.sync(); },
 };
 CH.scn='none';
+/* '증상 없음' 제출일 예시 + 오늘 환아 모드에서 '증상 없음'으로 기록하면 오늘 칸에도 */
+const NOSYM=new Set([mdOf(-3),mdOf(-11),mdOf(-19)]);
+function noSymOn(d){ if(NOSYM.has(d.d)) return true; return d.type==='today'&&((CH.S&&CH.S.newRecs)||[]).some(r=>r.sym===null&&r.d===CH.TODAY); }
 /* 의료진 열람 이전 주 — 지난 날짜 예시 기록(가입일 ~ 4일 전) */
 let PW=0; const PW_MIN=Math.floor((SIGNUP_OFF+6)/7)-0; const EXT={}, EXT_VIS={'-9':1,'-16':1,'-23':1};
 (()=>{ const rnd=(o,k)=>{ const x=Math.sin(o*12.9898+k*78.233)*43758.5453; return x-Math.floor(x); };
