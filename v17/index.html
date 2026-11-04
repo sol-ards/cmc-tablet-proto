@@ -12,7 +12,7 @@
   --line:#e6eaef; --red:#EF4444; --redbg:#FEF2F2; --green:#1c6b39; --greenbg:#e2f2e6;
   --cellb:#E5E7EB; --lab:#4B5563; --tdb:#EFF6FF; --tdr:#FEF2F2; --gred:#EF4444; --gblue:#3B82F6;
   --gnone:#f3ede0; --g1bg:#D5EBDE; --g1tx:#44B168; --g2bg:#FFF1D4; --g2tx:#FFB729;
-  --g3bg:#FFE4CF; --g3tx:#FF770F; --g4bg:#F8D6D3; --g4tx:#E03E36;
+  --g3bg:#FFE4CF; --g3tx:#FF770F; --g4bg:#F8D6D3; --g4tx:#DA3321;--g0bg:#D1E1F3;--g0tx:#2D75C8;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;background:#dfe4ea;color:var(--ink);line-height:1.5;font-feature-settings:'tnum';}
@@ -190,7 +190,7 @@ body{font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif;backgroun
 .sn-c{min-height:34px;border-radius:0;background:transparent;border-right:1px solid #E5E7EB;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;}
 .sn-c:last-child{border-right:0;}
 .sn-c.tdy2{background:#EFF6FF;border-color:#EFF6FF;}
-.sn-c.g0{background:transparent;}
+.sn-c.g0{background:transparent;} .sn-c.gc.g0n{background:var(--g0bg);color:var(--g0tx);}
 .sn-c.gc.g1{background:var(--g1bg);color:var(--g1tx);}
 .sn-c.gc.g2{background:var(--g2bg);color:var(--g2tx);}
 .sn-c.gc.g3{background:var(--g3bg);color:var(--g3tx);}
@@ -1833,6 +1833,8 @@ function renderSymImg(){
   <div class="pvpg"><span>${_si.i+1} / ${_si.ph.length}</span></div>`;
 }
 function closeSymImg(){ const el=$('symviewer'); if(el) el.classList.remove('on'); }
+/* '증상 없음' 제출일 — 예시(3일 전) + 오늘 환아 모드 '증상 없음' 기록 */
+function noSymOn(d){ if(d.d===mdOf(-3)) return true; return d.type==='today'&&typeof CH!=='undefined'&&((CH.S&&CH.S.newRecs)||[]).some(r=>r.sym===null&&r.d===CH.TODAY); }
 function buildSymGrid(fromNote){
   const days = fromNote? symDays() : VD;
   let rows=[];
@@ -1861,7 +1863,9 @@ function buildSymGrid(fromNote){
     return `<div class="sn-row">${tds}</div>`;
   }).join('');
   const head=`<div class="sn-row sn-head"><span class="sn-l" style="color:#9CA3AF;font-size:16px;font-weight:600;">날짜</span>${days.map(d=>`<span class="sn-c hd2${d.type==='today'?' tdy2':''}">${d.d}(${d.w})</span>`).join('')}</div>`;
-  return (fromNote?head:'')+(grid||(fromNote?'<div class="psub" style="padding:10px 12px;">이 주에는 증상 기록이 없어요</div>':''));
+  const _nd=d=>d.type!=='future'&&noSymOn(d);
+  const noRow=days.some(_nd)?`<div class="sn-row"><span class="sn-l"><span class="snt">증상 없음</span></span>${days.map(d=>_nd(d)?`<span class="sn-c gc g0n${d.type==='today'?' tdy2':''}">G0</span>`:`<span class="sn-c nr${d.type==='today'?' tdy2':''}"></span>`).join('')}</div>`:'';
+  return (fromNote?head:'')+((grid+noRow)||(fromNote?'<div class="psub" style="padding:10px 12px;">이 주에는 증상 기록이 없어요</div>':''));
 }
 function tSym(){
   const wd=symDays();
