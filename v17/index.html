@@ -2097,7 +2097,7 @@ function cbcConfirm(mode){
 }
 function saveCbcV(){
   const vals={}; let any=false;
-  ['wbc','hb','plt','reti','anc'].forEach(k=>{let v=(_cbV[k]||'').trim().replace(/\.$/,''); if(/^\d+$/.test(v)&&['wbc','plt','anc'].includes(k)) v=Number(v).toLocaleString(); vals[k]=v||'—'; if(v)any=true;});
+  ['wbc','hb','plt','reti','anc'].forEach(k=>{let v=(_cbV[k]||'').trim().replace(/\.$/,''); if(/^\d+$/.test(v)&&['wbc','plt','anc'].includes(k)) v=Number(v).toLocaleString(); const _dec=CB_FIELDS.find(f=>f[0]===k)[3].dec; if(_dec&&v) v=Number(v).toFixed(_dec); vals[k]=v||'—'; if(v)any=true;});
   if(!any){ toast('값을 입력해 주세요'); return; }
   const off=CB_FIELDS.filter(([k,,,s])=>{ const v=vals[k]; if(v==='—')return false; const n=parseFloat(v.replace(/,/g,'')); return isFinite(n)&&(n<s.min||n>s.max); }).map(([,n])=>n);
   if(off.length&&!_cbWarned){ _cbWarned=true; toast(`값을 한 번 더 확인해 주세요 · ${off.join(' · ')} · 자릿수 오류가 아닌지 확인 후 다시 저장`); return; }
