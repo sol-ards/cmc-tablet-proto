@@ -3008,13 +3008,13 @@ const SPL={
   ov.onclick=end; this.play(ov);
  }
 };
-const OB={step:'s1',slide:0,gslide:0,agree:[false,false,false,false,false],phone:'010',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
+const OB={step:'s1',slide:0,gslide:0,agree:[false,false,false,false],phone:'010',otp:'',done:false,c1:ymdOf(0),c2:null,ymY:_RT.getFullYear(),_nextFrom:null};
 const OB_CHEV='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 const OB_CAL='<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" fill="#3B82F6"/><path d="M8 3.2v3.6M16 3.2v3.6" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round"/><rect x="6.2" y="10.6" width="2.7" height="2.7" rx="0.6" fill="#fff"/><rect x="10.65" y="10.6" width="2.7" height="2.7" rx="0.6" fill="#fff"/><rect x="15.1" y="10.6" width="2.7" height="2.7" rx="0.6" fill="#fff"/><rect x="6.2" y="15" width="2.7" height="2.7" rx="0.6" fill="#fff"/><rect x="10.65" y="15" width="2.7" height="2.7" rx="0.6" fill="#fff"/><rect x="15.1" y="15" width="2.7" height="2.7" rx="0.6" fill="#fff"/></svg>';
 const OB_TODAY=ymdOf(0);
 const DXLIST=['급성 림프모구 백혈병(ALL)','급성 골수성 백혈병(AML)','만성 골수성 백혈병(CML)','호지킨림프종','비호지킨림프종','수모세포종','별아교세포종','교모세포종','뇌실막세포종','두개인두종','생식세포종양(뇌)','신경모세포종','윌름스종양(신모세포종)','간모세포종','골육종','유잉육종','횡문근육종','망막모세포종','생식세포종양(고환/난소)','갑상선암','랑게르한스세포조직구증','기타 (직접 입력)'];
 const DRUGLIST=['빈크리스틴','메토트렉세이트','사이클로포스파마이드','시타라빈','독소루비신','다우노루비신','시스플라틴','카보플라틴','에토포시드','이포스파마이드','닥티노마이신','엘-아스파라기나제','6-메르캅토퓨린','6-티오구아닌','빈블라스틴','블레오마이신','이리노테칸','토포테칸','테모졸로미드','미톡산트론','부설판','멜팔란','티오테파','카무스틴','덱사메타손','프레드니솔론','이소트레티노인','디누툭시맙베타','리툭시맙','이매티닙'];
-const TERMS5=['서비스 이용약관','개인정보처리방침','위치기반 서비스 이용약관','개인정보 수집 및 이용 동의','민감정보 수집 및 이용 동의'];
+const TERMS4=['서비스 이용약관','개인정보 수집 및 이용 동의','민감정보 수집 및 이용 동의','개인정보 제3자 제공 동의 (의료진 열람)'];const TERMS_POLICY='개인정보처리방침';
 /* O-6 입력 전 후보 = 진단명 연동 우선 노출 · 가안 매핑(PRD 8-1 · SMC 확인 전) */
 const DXDRUGS={
  '급성 림프모구 백혈병(ALL)':['빈크리스틴','메토트렉세이트','6-메르캅토퓨린','엘-아스파라기나제','덱사메타손'],
@@ -3060,7 +3060,7 @@ function obValid(){
 function obCtaSync(){ const b=document.getElementById('obcta'); if(b) b.classList.toggle('off',!obValid()); }
 function obTryNext(){
  if(!obValid()){
-  const hint={o1:'휴대폰 번호 11자리와 승인번호 6자리를 입력해 주세요',o2:'약관 5개에 모두 동의해 주세요',o3:'키와 체중을 입력해 주세요',o4:'진단명과 진단 시기를 선택해 주세요',o5:'첫 항암일을 달력에서 골라 주세요',o6:'항암제를 추가하거나 [나중에 기록할게요]를 눌러 주세요',o7:'삽입 여부를 골라 주세요 · [있어요]는 종류까지'}[OB.step];
+  const hint={o1:'휴대폰 번호 11자리와 승인번호 6자리를 입력해 주세요',o2:'약관 4개에 모두 동의해 주세요',o3:'키와 체중을 입력해 주세요',o4:'진단명과 진단 시기를 선택해 주세요',o5:'첫 항암일을 달력에서 골라 주세요',o6:'항암제를 추가하거나 [나중에 기록할게요]를 눌러 주세요',o7:'삽입 여부를 골라 주세요 · [있어요]는 종류까지'}[OB.step];
   toast(hint||'입력을 확인해 주세요'); return;
  }
  obGo({o1:'o2',o2:'o3',o3:'o4',o4:'o5',o5:'o6',o6:'o7',o7:'o10'}[OB.step]);
@@ -3194,7 +3194,7 @@ function renderOB(){
    <div class="obs">서비스 이용을 위해 아래 약관 동의가 필요해요.</div>
    <div class="obterms">
      <div class="obtrow" onclick="const v=!OB.agree.every(Boolean);OB.agree=OB.agree.map(()=>v);renderOB()"><span class="obcb ${all?'on':''}">✓</span>전체 약관에 동의합니다</div>
-     ${TERMS5.map((t,i)=>`<div class="obtrow" onclick="OB.agree[${i}]=!OB.agree[${i}];renderOB()"><span class="obcb ${OB.agree[i]?'on':''}">✓</span>${t}<span class="arw" onclick="event.stopPropagation();obTerm(${i})">›</span></div>`).join('')}
+     ${TERMS4.map((t,i)=>`<div class="obtrow" onclick="OB.agree[${i}]=!OB.agree[${i}];renderOB()"><span class="obcb ${OB.agree[i]?'on':''}">✓</span>${t}<span class="arw" onclick="event.stopPropagation();obTerm(${i})">›</span></div>`).join('')}<div style="padding:13px 2px;font-size:15px;color:#9CA3AF;text-decoration:underline;cursor:pointer;" onclick="obTerm(-1)">${TERMS_POLICY} 보기</div>
    </div>
    ${obCtaHTML()}</div>`;
  }
@@ -3286,9 +3286,9 @@ function renderOB(){
   if(_p&&OB.otp.length===0&&OB.phone.length<11){ _p.focus(); const _L=_p.value.length; try{_p.setSelectionRange(_L,_L);}catch(e){} }
  }
 }
-function obTerm(i){ openPop(`<div class="pt"><span class="t">${TERMS5[i]}</span></div>
+function obTerm(i){ openPop(`<div class="pt"><span class="t">${i<0?TERMS_POLICY:TERMS4[i]}</span></div>
  <div class="hv">약관 전문 · 추후 확정 (플레이스홀더)</div>
- <div class="pact hact" style="justify-content:flex-end;"><button class="btn pri" onclick="OB.agree[${i}]=true;closePop();renderOB()">뒤로가기 (자동 동의)</button></div>`); }
+ <div class="pact hact" style="justify-content:flex-end;"><button class="btn pri" onclick="if(${i}>=0)OB.agree[${i}]=true;closePop();renderOB()">${i<0?'뒤로가기':'뒤로가기 (자동 동의)'}</button></div>`); }
 function obKey(k){ keypadPop({noClose:true,noVoice:true,flex:true,title:k==='ht'?'키':'체중',unit:k==='ht'?'cm':'kg',dec:1,intLen:3,min:k==='ht'?40:2,max:k==='ht'?200:150,ghost:k==='ht'?'85.5':'12.3',onSave:(v)=>{OBD[k]=v; closePop(); renderOB();}}); }
 function obDx(){ openPop(`<div class="pt"><span class="t" style="font-size:21px;">진단명 - 소아암 목록</span></div>
  <div class="obchips" style="max-height:420px;overflow-y:auto;margin-top:14px;">${DXLIST.map(x=>`<span class="chip ${OBD.dx===x?'bfill':''}" onclick="OBD.dx='${x}';obDxDone()">${x}</span>`).join('')}</div>`); }
@@ -3380,7 +3380,7 @@ function openP1(){
   <div class="p1row"><span class="pk">보호자 정보</span><span class="pv">${d.age||`<span style='color:#9CA3AF;'>연령대 미입력</span>`}<small>선택</small></span><span class="pe" onclick="p1Age()">입력</span></div>
   <div class="p1row"><span class="pk">데모 초기화</span><span class="pv">회원가입 · 튜토리얼부터 다시<small>새로고침해도 기록 화면이 유지되도록 기기에 저장돼요</small></span><span class="pe" onclick="resetSess()">초기화</span></div>
   <div class="p1row"><span class="pk">튜토리얼</span><span class="pv">화면 안내 8장</span><span class="pe" onclick="closePop();cmStart(true)">다시 보기</span></div>
-  <div class="p1row"><span class="pk">약관</span><span class="pv">동의 5건 · 2026. 8. 26</span><span class="pe" onclick="p1Terms()">보기</span></div>
+  <div class="p1row"><span class="pk">약관</span><span class="pv">동의 4건 · 2026. 8. 26</span><span class="pe" onclick="p1Terms()">보기</span></div>
   </div>`); window._noOut=true;
 }
 function p1HW(){
@@ -3465,7 +3465,7 @@ function p1Age(){ openPop(`<div class="pt"><span class="t">보호자 정보 · �
  <div class="hv">사용성 분석 참고용이에요 · 성별 · 지역은 받지 않아요.</div>
  <div class="hact" style="flex-wrap:wrap;">${['20대','30대','40대','50대','60대 이상'].map(x=>`<span class="chip ${OBD.age===x?'on':''}" onclick="OBD.age=OBD.age==='${x}'?null:'${x}';openP1()">${x}</span>`).join('')}</div>`); window._noOut=true; }
 function p1Terms(){ openPop(`<div class="pt"><span class="t">약관</span><span class="r"><button class="btn sm" onclick="openP1()">← 회원가입 정보</button></span></div>
- <div style="margin-top:4px;">${TERMS5.map(t=>`<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 · 추후 확정 (열람 전용)')"><span class="pv">${t}</span><span class="pe" style="color:#9CA3AF;">2026. 8. 26 동의</span></div>`).join('')}</div>`); window._noOut=true; }
+ <div style="margin-top:4px;">${TERMS4.map(t=>`<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 · 추후 확정 (열람 전용)')"><span class="pv">${t}</span><span class="pe" style="color:#9CA3AF;">2026. 8. 26 동의</span></div>`).join('')}<div class="p1row" style="cursor:pointer;" onclick="toast('약관 전문 · 추후 확정 (열람 전용)')"><span class="pv">${TERMS_POLICY}</span></div></div>`); window._noOut=true; }
 
 function saveSess(){ try{ localStorage.setItem('cmc_proto15', JSON.stringify({obd:OBD,d1off:S.d1off,cyc:S.cyc||[]})); }catch(e){} }
 function resetSess(){ try{ localStorage.removeItem('cmc_proto15'); }catch(e){} location.reload(); }
